@@ -1,5 +1,10 @@
-import React from "react";
+import { ContactForm } from "./ContactForm";
 
-export default function ContactosPage() {
-  return <div>page</div>;
+export default function ContactoPage() {
+  return (
+    <main className="mx-auto max-w-2xl p-6">
+      <h1 className="mb-6 text-3xl font-bold">Contacto</h1>
+      <ContactForm />
+    </main>
+  );
 }
