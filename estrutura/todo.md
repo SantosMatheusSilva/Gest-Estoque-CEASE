@@ -11,22 +11,24 @@ _Smart Inventory Management for Growing Businesses_
 app/
  ├─ layout.tsx        ← Header + Footer (componentes estáticos)
  ├─ page.tsx          ← Home
- ├─ sobre/
+ ├─ sobrenos/
  │   └─ page.tsx
  ├─ features/
  │   └─ page.tsx
- ├─ contactos/
+ ├─ contacto/
  │   └─ page.tsx
  ├─ faq/
  │   └─ page.tsx
-components/
- ├─ Header.tsx
+ui/
+ ├─ Contacto/
+ │   └─ ContactoForm.tsx
+ ├─ SobreNos/
+ │   └─ Imagem.tsx
+     └─ Texto.tsx
+     └─ Titulo.tsx
+ ├─ Botao.tsx
  ├─ Footer.tsx
- ├─ Hero.tsx
- ├─ Section.tsx
- ├─ FeatureCard.tsx
- ├─ FAQItem.tsx
- ├─ ContactForm.tsx
+ ├─ Navbar.tsx
  └─ CTA.tsx
 
 
