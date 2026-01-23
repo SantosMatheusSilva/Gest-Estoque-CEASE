@@ -1,52 +1,104 @@
 "use client";
 
-import { Input, TextArea, Button } from "@heroui/react";
-import { useState } from "react";
+import { Check } from "@gravity-ui/icons";
+import {
+  Button,
+  FieldError,
+  Form,
+  Input,
+  Label,
+  TextField,
+  TextArea,
+} from "@heroui/react";
 
-export function ContactForm() {
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    message: "",
-  });
-
-  const handleSubmit = (e: React.FormEvent) => {
+export default function ContactForm() {
+  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log(formData);
+    
+    // Exibir mensagem de sucesso
+    alert("✅ Mensagem enviada com sucesso!\n\nEntraremos em contacto em breve.");
+    
+    // Limpar o formulário
+    e.currentTarget.reset();
   };
 
-  return {
-    /* <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-      <Input
+  return (
+    <Form className="flex w-full flex-col gap-6" onSubmit={onSubmit}>
+      {/* Nome */}
+      <TextField
+        isRequired
+        name="name"
         type="text"
-        label="Nome"
-        placeholder="Seu nome completo"
-        value={formData.name}
-        onValueChange={(value) => setFormData({ ...formData, name: value })}
-        isRequired
-      />
+        validate={(value) => {
+          if (value.length < 3) {
+            return "O nome deve ter pelo menos 3 caracteres";
+          }
+          return null;
+        }}
+      >
+        <Label>Nome</Label>
+        <Input placeholder="O seu nome" />
+        <FieldError />
+      </TextField>
 
-      <Input
+      {/* Email */}
+      <TextField
+        isRequired
+        name="email"
         type="email"
-        label="Email"
-        placeholder="seu@email.com"
-        value={formData.email}
-        onValueChange={(value) => setFormData({ ...formData, email: value })}
-        isRequired
-      />
+        validate={(value) => {
+          if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(value)) {
+            return "Por favor, insira um email válido";
+          }
+          return null;
+        }}
+      >
+        <Label>Email</Label>
+        <Input placeholder="seuemail@exemplo.com" />
+        <FieldError />
+      </TextField>
 
-      <TextArea
-        //label="Mensagem"
-        placeholder="Digite sua mensagem"
-        value={formData.message}
-        //onValueChange={(value) => setFormData({ ...formData, message: value })}
+      {/* Assunto */}
+      <TextField
         isRequired
-        minRows={4}
-      />
+        name="subject"
+        type="text"
+        validate={(value) => {
+          if (value.length < 5) {
+            return "O assunto deve ter pelo menos 5 caracteres";
+          }
+          return null;
+        }}
+      >
+        <Label>Assunto</Label>
+        <Input placeholder="Qual o motivo do contacto?" />
+        <FieldError />
+      </TextField>
 
-      <Button type="submit" color="primary">
-        Enviar
+      {/* Mensagem */}
+      <TextField
+        isRequired
+        name="message"
+        validate={(value) => {
+          if (value.length < 20) {
+            return "A mensagem deve ter pelo menos 20 caracteres";
+          }
+          return null;
+        }}
+      >
+        <Label>Mensagem</Label>
+        <TextArea 
+          placeholder="Escreva a sua mensagem aqui..."
+          rows={6}
+        />
+        <FieldError />
+      </TextField>
+
+      {/* Botão */}
+      <Button type="submit" className="w-full sm:w-auto">
+        <Check />
+        Enviar mensagem
       </Button>
-    </form> */
-  };
+    </Form>
+  );
 }

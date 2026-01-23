@@ -9,7 +9,8 @@
     "lint": "eslint"
   },
   "dependencies": {
-    "@heroui/react": "3.0.0-beta.5",
+    "@gravity-ui/icons": "^2.16.0",
+    "@heroui/react": "^3.0.0-beta.5",
     "@heroui/styles": "3.0.0-beta.5",
     "framer-motion": "^12.29.0",
     "next": "16.1.4",
