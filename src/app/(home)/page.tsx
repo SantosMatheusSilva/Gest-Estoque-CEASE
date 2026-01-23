@@ -1,4 +1,5 @@
 // import Footer from '@/components/footer';
+
 export default function Home() {
   return (
     <section className="min-h-screen flex flex-col items-center justify-center px-8 text-center text-white">
