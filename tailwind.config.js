@@ -1,5 +1,5 @@
-//const { nextui } = require("@nextui-org/react");
-import nextui from "@nextui-org/react"; // correção de importação
+const { nextui } = require("@nextui-org/react");
+//import nextui from "@nextui-org/react"; // correção de importação
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
