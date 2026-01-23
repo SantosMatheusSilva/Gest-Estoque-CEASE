@@ -34,7 +34,7 @@ ui/
 
 
 
-🏠 HOME (/)
+🏠 HOME (/) -> FEITO!
 Objetivo
 Apresentar o produto, valor principal e direcionar para as outras páginas. - Feito
 Estrutura sugerida
@@ -106,7 +106,7 @@ Armazéns
 Startups em crescimento
 
 
-⚙️ FEATURES (/features)
+⚙️ FEATURES (/features) -
 Objetivo
 Detalhar funcionalidades (mesmo que ainda não existam).
 Estrutura
@@ -145,7 +145,7 @@ Sem curva de aprendizagem
 
 
 
-📞 CONTACTOS (/contactos)
+📞 CONTACTOS (/contactos) - > FEITO
 Objetivo
 Página institucional com formulário (estático).
 Estrutura
@@ -175,7 +175,7 @@ Informações
 📍 Localização: Lisboa, Portugal
 
 
-❓ FAQ (/faq)
+❓ FAQ (/faq) -> FEITO - REMOVER ???
 Objetivo
 Responder dúvidas comuns.
 Estrutura
