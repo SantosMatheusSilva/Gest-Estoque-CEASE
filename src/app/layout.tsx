@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import Footer from "@/components/footer";
+import Footer from "@/src/ui/footer";
 //import {HeroUIProvider} from "@heroui/react"; // add by Ana // mat. v3 não precisda de providers
 import Navbar from "../ui/navbar";
 
