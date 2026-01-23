@@ -10,8 +10,8 @@ export default function SobreNosPage() {
       <section className="flex flex-col gap-4">
         <Titulo>Missão</Titulo>
         <Texto>
-          Ajudar pequenas e médias empresas a terem controle total do seu
-          estoque sem complexidade.
+         Simplificar a gestão de estoque para que empresas cresçam com
+        controle, clareza e confiança — sem processos complicados.
         </Texto>
       </section>
 
@@ -19,11 +19,11 @@ export default function SobreNosPage() {
       <section className="flex flex-col gap-4">
         <Titulo>O Problema</Titulo>
         <Texto>
-          Muitas empresas ainda controlam estoque com planilhas desatualizadas,
-          processos manuais e falta de visibilidade em tempo real.
+          Planilhas quebradas, controles manuais e informações desencontradas
+          fazem empresas perderem tempo, dinheiro e oportunidades todos os dias.
         </Texto>
         <Imagem
-          src="/images/problema-estoque.png"
+          src="/images/problema-estoque.jpg"
           alt="Controle de estoque manual"
         />
       </section>
@@ -32,8 +32,9 @@ export default function SobreNosPage() {
       <section className="flex flex-col gap-4">
         <Titulo>A Solução</Titulo>
         <Texto>
-          O StockFlow centraliza todas as informações de estoque em um único
-          sistema, reduzindo erros e melhorando decisões.
+          O StockManager reúne todo o controle de estoque em um único sistema
+          simples, visual e confiável — ajudando você a tomar decisões melhores,
+          mais rápido.
         </Texto>
         <Imagem
           src="/images/solucao-estoque.png"
@@ -45,7 +46,8 @@ export default function SobreNosPage() {
       <section className="flex flex-col gap-4">
         <Titulo>Para quem é?</Titulo>
         <Texto>
-          Pequenos negócios, lojas físicas, armazéns e startups em crescimento.
+          Para negócios que querem sair do improviso e assumir o controle:
+          pequenas empresas, lojas físicas, armazéns e startups em crescimento.
         </Texto>
       </section>
 
