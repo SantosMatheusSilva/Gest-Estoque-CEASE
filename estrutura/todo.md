@@ -34,7 +34,7 @@ components/
 
 🏠 HOME (/)
 Objetivo
-Apresentar o produto, valor principal e direcionar para as outras páginas.
+Apresentar o produto, valor principal e direcionar para as outras páginas. - Feito
 Estrutura sugerida
 
 Hero Section
