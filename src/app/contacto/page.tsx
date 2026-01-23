@@ -1,4 +1,4 @@
-import ContactForm from "@/src/ui/ContactForm";
+import ContactForm from "@/src/ui/Contacto/ContactForm";
 
 export default function ContactosPage() {
   return (
