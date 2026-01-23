@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Button, Link as HeroLink } from "@heroui/react";
+import { Button } from "@heroui/react";
 import { useState } from "react";
 
 export default function Navbar() {
@@ -28,11 +28,11 @@ export default function Navbar() {
 
         {/* Center links (desktop) */}
         <div className="hidden md:flex items-center gap-6">
-          <HeroLink href="/">Home</HeroLink>
-          <HeroLink href="/sobrenos">Sobre</HeroLink>
-          <HeroLink href="/funcionalidades">Funcionalidades</HeroLink>
-          <HeroLink href="/faq">FAQ</HeroLink>
-          <HeroLink href="/contacto">Contactos</HeroLink>
+          <Link href="/">Home</Link>
+          <Link href="/sobrenos">Sobre</Link>
+          <Link href="/funcionalidades">Funcionalidades</Link>
+          <Link href="/faq">FAQ</Link>
+          <Link href="/contacto">Contactos</Link>
         </div>
 
         {/* Right buttons (desktop) */}
@@ -54,10 +54,10 @@ export default function Navbar() {
       {/* Mobile dropdown */}
       {open && (
         <div className="md:hidden border-t px-4 py-4 flex flex-col gap-4">
-          <HeroLink href="/sobre">Sobre</HeroLink>
-          <HeroLink href="/features">Features</HeroLink>
-          <HeroLink href="/faq">FAQ</HeroLink>
-          <HeroLink href="/contactos">Contactos</HeroLink>
+          <Link href="/sobre">Sobre</Link>
+          <Link href="/features">Features</Link>
+          <Link href="/faq">FAQ</Link>
+          <Link href="/contactos">Contactos</Link>
 
           <div className="pt-2 flex flex-col gap-2">
             <Button variant="secondary">Login</Button>
