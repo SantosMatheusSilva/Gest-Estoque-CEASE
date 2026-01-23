@@ -13,7 +13,14 @@ export default function Navbar() {
       <nav className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2">
-          <Image src="/logo.png" alt="Logo" width={36} height={36} priority />
+          <Image
+            src="/logo.png"
+            alt="Logo"
+            width={50}
+            height={50}
+            priority
+            className=""
+          />
           <span className="hidden sm:block text-lg font-semibold">
             StockManager
           </span>

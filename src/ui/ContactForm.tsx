@@ -14,10 +14,12 @@ import {
 export default function ContactForm() {
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    
+
     // Exibir mensagem de sucesso
-    alert("✅ Mensagem enviada com sucesso!\n\nEntraremos em contacto em breve.");
-    
+    alert(
+      "✅ Mensagem enviada com sucesso!\n\nEntraremos em contacto em breve.",
+    );
+
     // Limpar o formulário
     e.currentTarget.reset();
   };
@@ -87,10 +89,7 @@ export default function ContactForm() {
         }}
       >
         <Label>Mensagem</Label>
-        <TextArea 
-          placeholder="Escreva a sua mensagem aqui..."
-          rows={6}
-        />
+        <TextArea placeholder="Escreva a sua mensagem aqui..." rows={6} />
         <FieldError />
       </TextField>
 
