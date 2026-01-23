@@ -25,7 +25,7 @@ export default function Navbar() {
           <HeroLink href="/sobrenos">Sobre</HeroLink>
           <HeroLink href="/funcionalidades">Funcionalidades</HeroLink>
           <HeroLink href="/faq">FAQ</HeroLink>
-          <HeroLink href="/contactos">Contactos</HeroLink>
+          <HeroLink href="/contacto">Contactos</HeroLink>
         </div>
 
         {/* Right buttons (desktop) */}
