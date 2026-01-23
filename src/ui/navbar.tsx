@@ -4,13 +4,18 @@ import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@heroui/react";
 import { useState } from "react";
+import { usePathname } from "next/navigation";
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
 
+  const pathname = usePathname();
+
+  const isActive = (href: string) => pathname === href;
+
   return (
     <header className="w-full border-b">
-      <nav className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3">
+      <nav className="mx-auto flex max-w-5xl  items-center justify-between px-4 py-3">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2">
           <Image
@@ -28,16 +33,49 @@ export default function Navbar() {
 
         {/* Center links (desktop) */}
         <div className="hidden md:flex items-center gap-6">
-          <Link href="/">Home</Link>
-          <Link href="/sobrenos">Sobre</Link>
-          <Link href="/funcionalidades">Funcionalidades</Link>
-          <Link href="/faq">FAQ</Link>
-          <Link href="/contacto">Contactos</Link>
+          <Link
+            href="/"
+            className={isActive("/") ? "font-semibold text-blue-500" : ""}
+          >
+            Home
+          </Link>
+          <Link
+            href="/sobrenos"
+            className={
+              isActive("/sobrenos") ? "font-semibold text-blue-500" : ""
+            }
+          >
+            Sobre
+          </Link>
+          <Link
+            href="/funcionalidades"
+            className={
+              isActive("/funcionalidades") ? "font-semibold text-blue-500" : ""
+            }
+          >
+            Funcionalidades
+          </Link>
+          <Link
+            href="/faq"
+            className={isActive("/faq") ? "font-semibold text-blue-500" : ""}
+          >
+            Faq
+          </Link>
+          <Link
+            href="/contacto"
+            className={
+              isActive("/contacto") ? "font-semibold text-blue-500" : ""
+            }
+          >
+            Contactos
+          </Link>
         </div>
 
         {/* Right buttons (desktop) */}
         <div className="hidden md:flex items-center gap-3">
-          <Button variant="secondary">Login</Button>
+          <Button variant="outline" className={"text-blue-400"}>
+            Login
+          </Button>
           <Button variant="primary">Sign up</Button>
         </div>
 
@@ -54,13 +92,41 @@ export default function Navbar() {
       {/* Mobile dropdown */}
       {open && (
         <div className="md:hidden border-t px-4 py-4 flex flex-col gap-4">
-          <Link href="/sobre">Sobre</Link>
-          <Link href="/features">Features</Link>
-          <Link href="/faq">FAQ</Link>
-          <Link href="/contactos">Contactos</Link>
+          <Link
+            href="/sobrenos"
+            className={
+              isActive("/sobrenos") ? "font-semibold text-blue-500" : ""
+            }
+          >
+            Sobre
+          </Link>
+          <Link
+            href="/funcionalidades"
+            className={
+              isActive("/funcionalidades") ? "font-semibold text-blue-500" : ""
+            }
+          >
+            Funcionalidades
+          </Link>
+          <Link
+            href="/faq"
+            className={isActive("/faq") ? "font-semibold text-blue-500" : ""}
+          >
+            FAQ
+          </Link>
+          <Link
+            href="/contacto"
+            className={
+              isActive("/contacto") ? "font-semibold text-blue-500" : ""
+            }
+          >
+            Contactos
+          </Link>
 
           <div className="pt-2 flex flex-col gap-2">
-            <Button variant="secondary">Login</Button>
+            <Button variant="outline" className={"text-blue-400"}>
+              Login
+            </Button>
             <Button variant="primary">Sign up</Button>
           </div>
         </div>
