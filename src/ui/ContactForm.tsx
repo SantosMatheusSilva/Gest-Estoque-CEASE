@@ -1,6 +1,6 @@
 "use client";
 
-import { Input, Textarea, Button } from "@nextui-org/react";
+import { Input, TextArea, Button } from "@heroui/react";
 import { useState } from "react";
 
 export function ContactForm() {
@@ -15,8 +15,8 @@ export function ContactForm() {
     console.log(formData);
   };
 
-  return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+  return {
+    /* <form onSubmit={handleSubmit} className="flex flex-col gap-4">
       <Input
         type="text"
         label="Nome"
@@ -35,11 +35,11 @@ export function ContactForm() {
         isRequired
       />
 
-      <Textarea
-        label="Mensagem"
+      <TextArea
+        //label="Mensagem"
         placeholder="Digite sua mensagem"
         value={formData.message}
-        onValueChange={(value) => setFormData({ ...formData, message: value })}
+        //onValueChange={(value) => setFormData({ ...formData, message: value })}
         isRequired
         minRows={4}
       />
@@ -47,6 +47,6 @@ export function ContactForm() {
       <Button type="submit" color="primary">
         Enviar
       </Button>
-    </form>
-  );
+    </form> */
+  };
 }
