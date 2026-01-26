@@ -50,3 +50,15 @@ export interface Produto {
   unidade: string;
   descricao?: string;
 }
+
+// USUARIO
+export type Usuario = {
+  id: string;
+  img_url: string;
+  nome: string;
+  sobrenome: string;
+  email: string;
+  senha: string;
+  adm: boolean;
+  criado_em: Date;
+  };
