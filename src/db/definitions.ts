@@ -5,7 +5,7 @@
 // Type Categoria
 
 export type Categoria = {
-  id_categoria: number;
+  id_categoria: string;
   nome: string;
   parentId?: string;
 };
@@ -23,11 +23,22 @@ export let produtos: Produto[] = [
     stockAtual: 50,
     stockMinimo: 10,
     unidade: "unidade",
-    descricao: "Mecanico hibrido"
-  }
+    descricao: "Mecanico hibrido",
+  },
 ];
 
 let proximoId: number = 2;
+
+// alterações:
+/* Export type Produto {
+id: string,
+nome: string,
+quantidade: number,
+preco: number,
+img_url?: string
+descricao?: string,
+id_categoria: string, 
+} */
 
 export interface Produto {
   id: number;
@@ -39,4 +50,3 @@ export interface Produto {
   unidade: string;
   descricao?: string;
 }
-
