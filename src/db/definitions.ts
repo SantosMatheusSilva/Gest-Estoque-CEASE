@@ -2,11 +2,15 @@
 
 // Type User
 
-//Type Grupo
+// Type Categoria
 
-//Type Sub_Grupo
+export type Categoria = {
+  id_categoria: number;
+  nome: string;
+  parentId?: string;
+};
 
-//Type Produto
+// Type Produto
 
 // Tipos de dados auxiliares ou derivados de entidades e interações
 
