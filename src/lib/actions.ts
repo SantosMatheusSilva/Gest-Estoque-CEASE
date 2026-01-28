@@ -41,15 +41,67 @@ export async function createInvoice(prevState: State, formData: FormData) {
 */
 
 
-
-// ADD BY ANA
-
-
-
 "use server";
 
 
+import { sql } from '../db';
+import type { Produto, CreateProduto } from '../db/definitions';
 
+type SqlResult<T> = any[];
+
+export async function getAllProdutos(): Promise<Produto[]> {
+  const result = await sql`SELECT * FROM produto ORDER BY criado_em DESC` as SqlResult<Produto>;
+  return result as Produto[];
+}
+
+export async function createProduto(produto: CreateProduto): Promise<Produto> {
+  const result = await sql`
+    INSERT INTO produto (
+      nome, quantidade, preco, img_url, descricao, 
+      id_categoria, adicionado_por
+    )
+    VALUES (
+      ${produto.nome},
+      ${Number(produto.quantidade) ?? 0},    // ✅ number sempre
+      ${Number(produto.preco) ?? 0},         // ✅ number sempre  
+      ${produto.img_url ?? null},            // ✅ null OK
+      ${produto.descricao ?? null},          // ✅ null OK
+      ${produto.id_categoria},
+      ${produto.adicionado_por}
+    )
+    RETURNING *
+  ` as SqlResult<Produto>;
+  return result[0] as Produto;
+}
+
+
+export async function getProdutoById(idUUID: string): Promise<Produto | null> {
+  const result = await sql`SELECT * FROM produto WHERE idUUID = ${idUUID}` as SqlResult<Produto>;
+  return result[0] ?? null;
+}
+
+export async function updateProduto(idUUID: string, data: Partial<CreateProduto>): Promise<Produto> {
+  const result = await sql`
+    UPDATE produto 
+    SET nome = COALESCE(${data.nome ?? null}, nome),
+    quantidade = COALESCE(${Number(data.quantidade) ?? null}, quantidade),
+    preco = COALESCE(${Number(data.preco) ?? null}, preco),
+    WHERE idUUID = ${idUUID}
+    RETURNING *
+  ` as SqlResult<Produto>;
+  return result[0] as Produto;
+}
+
+export async function deleteProduto(idUUID: string): Promise<void> {
+  await sql`DELETE FROM produto WHERE idUUID = ${idUUID}`;
+}
+
+
+
+
+// ADD BY ANA
+
+// USUARIO
 export async function criarUsuario(formData: FormData) {
   const email = formData.get("email") as string;
   const senha = formData.get("senha") as string;

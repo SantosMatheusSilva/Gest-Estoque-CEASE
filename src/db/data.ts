@@ -43,7 +43,7 @@ import { sql } from "@/src/db/index";
 
 import { UsuarioDB } from "./definitions"; // ADD BY ANA
 
-export async function fetchProdutoPorId(id: string) {
+/* export async function fetchProdutoPorId(id: string) {
   try {
     const data = await sql`
       SELECT
