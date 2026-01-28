@@ -1,6 +1,6 @@
 import FeatureIntro from "@/src/ui/funcionalidades/FeaturesIntro";
 import FeaturesGrid from "@/src/ui/funcionalidades/FeaturesGrid";
-import { Titulo } from "@/src/ui/Sobrenos/Titulo";
+import Titulo from "@/src/ui/Sobrenos/Titulo";
 
 export default function FuncPage() {
   return (

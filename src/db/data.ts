@@ -130,6 +130,6 @@ export async function fetchCategiriaPorId(id: string) {
   } catch (error) {
     console.error("Database Error:", error);
     throw new Error("Failed to fetch categoria.");
->>>>>>> 4bb98ea (categotias -fech functions)
+
   }
 }
