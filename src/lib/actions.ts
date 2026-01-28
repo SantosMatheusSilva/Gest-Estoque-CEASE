@@ -39,3 +39,24 @@ export async function createInvoice(prevState: State, formData: FormData) {
   redirect("/dashboard/invoices");
 }
 */
+
+
+
+// ADD BY ANA
+
+
+
+"use server";
+
+
+
+export async function criarUsuario(formData: FormData) {
+  const email = formData.get("email") as string;
+  const senha = formData.get("senha") as string;
+
+  if (!email || !senha) {
+    throw new Error("Dados inválidos");
+  }
+
+  console.log("Usuário:", email);
+}

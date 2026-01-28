@@ -5,31 +5,47 @@ _Smart Inventory Management for Growing Businesses_
 
 ---
 
-# 🧱 Estrutura geral (Next.js App Router)
+# Estrutura geral (Next.js App Router)
 
-```txt
-app/
- ├─ layout.tsx        ← Header + Footer (componentes estáticos)
- ├─ page.tsx          ← Home
- ├─ sobrenos/
- │   └─ page.tsx
- ├─ features/
- │   └─ page.tsx
- ├─ contacto/
- │   └─ page.tsx
- ├─ faq/
- │   └─ page.tsx
-ui/
- ├─ Contacto/
- │   └─ ContactoForm.tsx
- ├─ SobreNos/
- │   └─ Imagem.tsx
-     └─ Texto.tsx
-     └─ Titulo.tsx
- ├─ Botao.tsx
- ├─ Footer.tsx
- ├─ Navbar.tsx
- └─ CTA.tsx
+src
+ ├─app/
+    ├─ (marketing)/    
+        ├─ (home)/   
+            └─ page.tsx  
+        ├─ contacto/
+           └─ page.tsx
+        ├─ faq/
+            └─ page.tsx
+        ├─ funcionalidades/
+            └─ page.tsx
+        ├─ sobrenos/
+            └─ page.tsx
+    ├─ produtos/
+            └─ page.tsx
+    db/ - neon sql
+    ├─ data.ts              → queries (SELECT)
+    ├─ definition.ts        → tipos
+    └─ index.ts             → conexão
+    lib/
+    ├─ actions.ts
+    └─ utils.ts
+    ui/
+    ├─ Contacto/
+    │   └─ ContactoForm.tsx
+    ├─ Faq/
+    │   └─ FaqAccordion.tsx
+    ├─ Funcionalidades/
+        ├─ FeaturesCard.tsx
+        ├─ FeaturesGrid.tsx
+        └─ FeaturesIntro.tsx
+    ├─ SobreNos/
+    │   └─ Imagem.tsx
+        └─ Texto.tsx
+        └─ Titulo.tsx
+    ├─ Botao.tsx
+    ├─ Footer.tsx
+    ├─ Navbar.tsx
+    └─ SectionWrapper.tsx
 
 
 

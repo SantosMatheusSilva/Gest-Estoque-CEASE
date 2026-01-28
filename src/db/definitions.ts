@@ -45,14 +45,55 @@ export interface Produto {
   descricao?: string;
 }
 
+
 // USUARIO
+
+/*
+ALTERAÇOES
 export type Usuario = {
   id: string;
   img_url: string;
   nome: string;
   sobrenome: string;
   email: string;
-  senha: string;
+  senha_hash: string; // alteraçao
   adm: boolean;
   criado_em: Date;
-  };
+  }; */
+
+
+// =====================
+// USUÁRIO (Banco)
+// =====================
+export type UsuarioDB = {
+  id: string;
+  img_url?: string;
+  nome: string;
+  sobrenome: string;
+  email: string;
+  senha_hash: string;
+  adm: boolean;
+  criado_em: Date;
+};
+
+// =====================
+// INPUT (Action)
+// =====================
+export type CriarUsuarioInput = {
+  nome: string;
+  sobrenome: string;
+  email: string;
+  senha: string;
+};
+
+// =====================
+// OUTPUT (Seguro)
+// =====================
+export type UsuarioPublico = {
+  id: string;
+  nome: string;
+  sobrenome: string;
+  email: string;
+  adm: boolean;
+  img_url?: string;
+};

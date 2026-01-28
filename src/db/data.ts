@@ -41,6 +41,8 @@ export async function fetchFilteredInvoices(
 */
 import { sql } from "@/src/db/index";
 
+import { UsuarioDB } from "./definitions"; // ADD BY ANA
+
 export async function fetchProdutoPorId(id: string) {
   try {
     const data = await sql`
@@ -62,5 +64,35 @@ export async function fetchProdutoPorId(id: string) {
   } catch (error) {
     console.error("Database Error:", error);
     throw new Error("Failed to fetch produtos.");
+  }
+}
+
+
+// USUARIO ADD BY ANA
+
+// buscar usuário por email
+export async function fetchUsuarioPorEmail(
+  email: string
+): Promise<UsuarioDB | null> {
+  try {
+    const [user] = await sql<UsuarioDB[]>`
+      SELECT
+        id,
+        nome,
+        sobrenome,
+        email,
+        senha_hash,
+        adm,
+        img_url,
+        criado_em
+      FROM usuarios
+      WHERE email = ${email}
+      LIMIT 1;
+    `;
+
+    return user ?? null;
+  } catch (error) {
+    console.error("Database Error:", error);
+    throw new Error("Failed to fetch usuario.");
   }
 }
