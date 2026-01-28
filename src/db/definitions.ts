@@ -8,42 +8,31 @@
 
 // Tipos de dados auxiliares ou derivados de entidades e interações
 
-export let produtos: Produto[] = [
-  {
-    id: 1,
-    nome: "Teclado BENQ",
-    codigo: "BENQ123",
-    preco: 100.99,
-    stockAtual: 50,
-    stockMinimo: 10,
-    unidade: "unidade",
-    descricao: "Mecanico hibrido",
-  },
-];
-
-let proximoId: number = 2;
-
-// alterações:
-/* Export type Produto {
-id: string,
-nome: string,
-quantidade: number,
-preco: number,
-img_url?: string
-descricao?: string,
-id_categoria: string, 
-} */
 
 export interface Produto {
-  id: number;
+  idUUID: string;
   nome: string;
-  codigo: string;
+  quantidade: number;
   preco: number;
-  stockAtual: number;
-  stockMinimo: number;
-  unidade: string;
-  descricao?: string;
+  img_url?: string | null;
+  descricao?: string | null;
+  id_categoria: string;
+  criado_em: string;
+  atualizado_em: string;
+  adicionado_por: string;
 }
+
+export interface CreateProduto {
+  nome: string;
+  quantidade: number;
+  preco: number;
+  img_url?: string | null;        
+  descricao?: string | null;      
+  id_categoria: string;
+  adicionado_por: string;
+}
+
+
 
 // USUARIO
 export type Usuario = {
