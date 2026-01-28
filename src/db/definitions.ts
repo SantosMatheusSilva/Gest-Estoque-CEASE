@@ -77,7 +77,6 @@ export type Usuario = {
   senha_hash: string; // alteraçao
   adm: boolean;
   criado_em: Date;
-<<<<<<< HEAD
   }; */
 
 
@@ -115,6 +114,4 @@ export type UsuarioPublico = {
   email: string;
   adm: boolean;
   img_url?: string;
-=======
->>>>>>> 81f6d40387c0738542753be08b5ea082c7668d80
 };
