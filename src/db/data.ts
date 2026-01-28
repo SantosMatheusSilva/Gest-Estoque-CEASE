@@ -39,3 +39,28 @@ export async function fetchFilteredInvoices(
   }
 }
 */
+import { sql } from "@/src/db/index";
+
+export async function fetchProdutoPorId(id: string) {
+  try {
+    const data = await sql`
+      SELECT
+        produtos.id,
+        produtos.nome,
+        produtos.quantidade,
+        produtos.peco,
+        produtos.img_url,
+        produtos.descricao,
+        produtos.id_categoria,
+        produtos.adicionado_em,
+        produtos.atualizado_em,
+        produtos.adicionado_por,
+      FROM invoices
+      WHERE produtos.id = ${id};
+    `;
+    return data;
+  } catch (error) {
+    console.error("Database Error:", error);
+    throw new Error("Failed to fetch produtos.");
+  }
+}
