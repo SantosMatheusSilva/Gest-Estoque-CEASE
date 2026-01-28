@@ -39,7 +39,7 @@ export async function fetchFilteredInvoices(
   }
 }
 */
-// import { sql } from "@/src/db/index";
+import { sql } from "@/src/db/index";
 
 /* export async function fetchProdutoPorId(id: string) {
   try {
@@ -64,34 +64,3 @@ export async function fetchFilteredInvoices(
     throw new Error("Failed to fetch produtos.");
   }
 }
-  */
-
-import { 
-  createProduto, 
-  getAllProdutos, 
-  getProdutoById, 
-  updateProduto, 
-  deleteProduto 
-} from '../lib/actions';
-import type { Produto, CreateProduto } from '../db/definitions';
-
-export async function fetchAllProdutos(): Promise<Produto[]> {
-  return await getAllProdutos();
-}
-
-export async function fetchProduto(idUUID: string): Promise<Produto | null> {
-  return await getProdutoById(idUUID);
-}
-
-export async function adicionarProduto(produto: CreateProduto): Promise<Produto> {
-  return await createProduto(produto);
-}
-
-export async function editarProduto(idUUID: string, data: Partial<CreateProduto>): Promise<Produto> {
-  return await updateProduto(idUUID, data);
-}
-
-export async function removerProduto(idUUID: string): Promise<void> {
-  await deleteProduto(idUUID);
-}
-
