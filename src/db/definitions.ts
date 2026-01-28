@@ -9,7 +9,7 @@
 // Tipos de dados auxiliares ou derivados de entidades e interações
 
 
-export interface Produto {
+export type Produto = {
   idUUID: string;
   nome: string;
   quantidade: number;
@@ -22,7 +22,7 @@ export interface Produto {
   adicionado_por: string;
 }
 
-export interface CreateProduto {
+export type CreateProduto = {
   nome: string;
   quantidade: number;
   preco: number;
