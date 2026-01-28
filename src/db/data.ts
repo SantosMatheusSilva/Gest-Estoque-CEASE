@@ -66,6 +66,7 @@ import { UsuarioDB } from "./definitions"; // ADD BY ANA
     throw new Error("Failed to fetch produtos.");
   }
 }
+<<<<<<< HEAD
 
 
 // USUARIO ADD BY ANA
@@ -94,5 +95,41 @@ export async function fetchUsuarioPorEmail(
   } catch (error) {
     console.error("Database Error:", error);
     throw new Error("Failed to fetch usuario.");
+=======
+*/
+
+export async function fetchCategorias() {
+  try {
+    const data = await sql`
+      SELECT
+        categorias.id,
+        categorias.nome,
+        categorias.criado_em,
+        categorias.atualizado_em
+      FROM categorias;
+    `;
+    return data;
+  } catch (error) {
+    console.error("Database Error:", error);
+    throw new Error("Failed to fetch categorias.");
+  }
+}
+
+export async function fetchCategiriaPorId(id: string) {
+  try {
+    const data = await sql`
+      SELECT
+        categorias.id,
+        categorias.nome,
+        categorias.criado_em,
+        categorias.atualizado_em
+      FROM categorias
+      WHERE categorias.id = ${id};
+    `;
+    return data;
+  } catch (error) {
+    console.error("Database Error:", error);
+    throw new Error("Failed to fetch categoria.");
+>>>>>>> 4bb98ea (categotias -fech functions)
   }
 }
