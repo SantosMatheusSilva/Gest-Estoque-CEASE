@@ -41,7 +41,9 @@ export async function createInvoice(prevState: State, formData: FormData) {
 */
 
 
-'use server';
+"use server";
+
+
 import { sql } from '../db';
 import type { Produto, CreateProduto } from '../db/definitions';
 
@@ -96,3 +98,17 @@ export async function deleteProduto(idUUID: string): Promise<void> {
 
 
 
+
+// ADD BY ANA
+
+// USUARIO
+export async function criarUsuario(formData: FormData) {
+  const email = formData.get("email") as string;
+  const senha = formData.get("senha") as string;
+
+  if (!email || !senha) {
+    throw new Error("Dados inválidos");
+  }
+
+  console.log("Usuário:", email);
+}

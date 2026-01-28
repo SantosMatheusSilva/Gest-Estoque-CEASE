@@ -39,7 +39,9 @@ export async function fetchFilteredInvoices(
   }
 }
 */
-// import { sql } from "@/src/db/index";
+import { sql } from "@/src/db/index";
+
+import { UsuarioDB } from "./definitions"; // ADD BY ANA
 
 /* export async function fetchProdutoPorId(id: string) {
   try {
@@ -64,34 +66,70 @@ export async function fetchFilteredInvoices(
     throw new Error("Failed to fetch produtos.");
   }
 }
-  */
+<<<<<<< HEAD
 
-import { 
-  createProduto, 
-  getAllProdutos, 
-  getProdutoById, 
-  updateProduto, 
-  deleteProduto 
-} from '../lib/actions';
-import type { Produto, CreateProduto } from '../db/definitions';
 
-export async function fetchAllProdutos(): Promise<Produto[]> {
-  return await getAllProdutos();
+// USUARIO ADD BY ANA
+
+// buscar usuário por email
+export async function fetchUsuarioPorEmail(
+  email: string
+): Promise<UsuarioDB | null> {
+  try {
+    const [user] = await sql<UsuarioDB[]>`
+      SELECT
+        id,
+        nome,
+        sobrenome,
+        email,
+        senha_hash,
+        adm,
+        img_url,
+        criado_em
+      FROM usuarios
+      WHERE email = ${email}
+      LIMIT 1;
+    `;
+
+    return user ?? null;
+  } catch (error) {
+    console.error("Database Error:", error);
+    throw new Error("Failed to fetch usuario.");
+=======
+*/
+
+export async function fetchCategorias() {
+  try {
+    const data = await sql`
+      SELECT
+        categorias.id,
+        categorias.nome,
+        categorias.criado_em,
+        categorias.atualizado_em
+      FROM categorias;
+    `;
+    return data;
+  } catch (error) {
+    console.error("Database Error:", error);
+    throw new Error("Failed to fetch categorias.");
+  }
 }
 
-export async function fetchProduto(idUUID: string): Promise<Produto | null> {
-  return await getProdutoById(idUUID);
+export async function fetchCategiriaPorId(id: string) {
+  try {
+    const data = await sql`
+      SELECT
+        categorias.id,
+        categorias.nome,
+        categorias.criado_em,
+        categorias.atualizado_em
+      FROM categorias
+      WHERE categorias.id = ${id};
+    `;
+    return data;
+  } catch (error) {
+    console.error("Database Error:", error);
+    throw new Error("Failed to fetch categoria.");
+>>>>>>> 4bb98ea (categotias -fech functions)
+  }
 }
-
-export async function adicionarProduto(produto: CreateProduto): Promise<Produto> {
-  return await createProduto(produto);
-}
-
-export async function editarProduto(idUUID: string, data: Partial<CreateProduto>): Promise<Produto> {
-  return await updateProduto(idUUID, data);
-}
-
-export async function removerProduto(idUUID: string): Promise<void> {
-  await deleteProduto(idUUID);
-}
-
