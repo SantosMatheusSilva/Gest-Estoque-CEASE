@@ -70,12 +70,11 @@ import { UsuarioDB } from "./definitions"; // ADD BY ANA
 
 */
 
-
 // USUARIO ADD BY ANA
 
 // buscar usuário por email
 export async function fetchUsuarioPorEmail(
-  email: string
+  email: string,
 ): Promise<UsuarioDB | null> {
   try {
     const [user] = await sql<UsuarioDB[]>`
@@ -97,8 +96,8 @@ export async function fetchUsuarioPorEmail(
   } catch (error) {
     console.error("Database Error:", error);
     throw new Error("Failed to fetch usuario.");
-=======
-*/
+  }
+}
 
 export async function fetchCategorias() {
   try {
