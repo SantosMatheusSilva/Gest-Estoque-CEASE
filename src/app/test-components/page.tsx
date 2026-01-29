@@ -1,6 +1,6 @@
 "use client";
 
-import { PageLayout, type BreadcrumbItem } from "@/src/ui/PageLayout";
+import { PageLayout } from "@/src/ui/PageLayout";
 import { Button } from "@/src/ui/Button";
 import { IconButton } from "@/src/ui/IconButton";
 import { Plus, TrashBin } from "@gravity-ui/icons";
@@ -8,18 +8,17 @@ import { InputField } from "@/src/ui/InputField";
 import { FormSurface } from "@/src/ui/FormSurface";
 import Form from "next/form";
 
-export default function TestButtons() {
-  const breadcrumbs: BreadcrumbItem[] = [
+export default function TestComponentsPage() {
+  /*   const breadcrumbs: BreadcrumbItem[] = [
     { label: 'Home', href: '/' },
     { label: 'Tools', href: '/app' },
     { label: 'Component Testing', isActive: true }
-  ];
+  ];  */
 
   return (
     <PageLayout
       title="Component Testing"
       description="Test and demonstrate UI components and layouts"
-      breadcrumbs={breadcrumbs}
       actions={
         <div className="flex gap-2">
           <Button variant="outline">Reset</Button>
@@ -27,7 +26,6 @@ export default function TestButtons() {
         </div>
       }
     >
-
       {/* Enhanced Button Tests */}
       <section className="space-y-4">
         <h2 className="text-xl font-semibold">Enhanced Button</h2>

@@ -132,6 +132,65 @@ export async function fetchCategiriaPorId(id: string) {
   } catch (error) {
     console.error("Database Error:", error);
     throw new Error("Failed to fetch categoria.");
+  }
+}
 
+export async function fetchCategoriaComSubcategorias() {
+  try {
+    const data = await sql`
+    SELECT
+    c.id_categoria AS categoria_id,
+    c.nome AS categoria_nome,
+    c.parent_id AS categoria_parent_id,
+    sc.id_categoria AS subcategoria_id,
+    sc.nome AS subcategoria_nome,
+    c.created_at AS categoria_criada_em,
+    c.updated_at AS categoria_atualizada_em,
+    c.adicionado_por AS categoria_adicionado_por
+FROM 
+    categorias c
+LEFT JOIN 
+    categorias sc ON c.id_categoria = sc.parent_id
+ORDER BY 
+    c.nome, sc.nome;
+    `;
+    // Teste
+    console.log("categorias com subcategorias:", data);
+    return data;
+  } catch (error) {
+    console.error("Database Error:", error);
+    throw new Error("Failed to fetch categoria with subcategorias.");
+  }
+}
+
+export async function fetchCategoriaComSubcategoriasTeste() {
+  try {
+    const data = await sql`
+    SELECT
+    c.id_categoria AS categoria_id,
+    c.nome AS categoria_nome,
+    c.parent_id AS categoria_parent_id,
+    sc.id_categoria AS subcategoria_id,
+    sc.nome AS subcategoria_nome,
+    c.created_at AS categoria_criada_em,
+    c.updated_at AS categoria_atualizada_em,
+    c.adicionado_por AS categoria_adicionado_por
+FROM 
+    categorias c
+ORDER BY 
+    c.nome, sc.nome;
+    `;
+    // Teste
+    console.log("categorias com subcategorias:", data);
+    const categoriasMap = data.forEach((item, index) => {
+      const data = sql`
+      select * from categorias where parent_id = ${item.categoria_id};
+      `;
+      item.subcategoria = [data];
+    });
+    return data;
+  } catch (error) {
+    console.error("Database Error:", error);
+    throw new Error("Failed to fetch categoria with subcategorias.");
   }
 }
