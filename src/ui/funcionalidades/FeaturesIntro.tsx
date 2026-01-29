@@ -1,6 +1,6 @@
 import { Surface } from "@heroui/react";
 import { Texto } from "../Sobrenos/Texto";
-import { Titulo } from "../Sobrenos/Titulo";
+import Titulo from "../Sobrenos/Titulo";
 
 export default function FeatureIntro() {
   return (

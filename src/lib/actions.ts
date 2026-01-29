@@ -47,11 +47,11 @@ export async function createInvoice(prevState: State, formData: FormData) {
 import { sql } from '../db';
 import type { Produto, CreateProduto } from '../db/definitions';
 
-type SqlResult<T> = any[];
+// type SqlResult<T> = unknown[];
 
 export async function getAllProdutos(): Promise<Produto[]> {
-  const result = await sql`SELECT * FROM produto ORDER BY criado_em DESC` as SqlResult<Produto>;
-  return result as Produto[];
+  const result = await sql`SELECT * FROM produto ORDER BY criado_em DESC`;
+  return result as unknown as Produto[];
 }
 
 export async function createProduto(produto: CreateProduto): Promise<Produto> {
@@ -70,13 +70,13 @@ export async function createProduto(produto: CreateProduto): Promise<Produto> {
       ${produto.adicionado_por}
     )
     RETURNING *
-  ` as SqlResult<Produto>;
+  ` as unknown as Produto[];
   return result[0] as Produto;
 }
 
 
 export async function getProdutoById(idUUID: string): Promise<Produto | null> {
-  const result = await sql`SELECT * FROM produto WHERE idUUID = ${idUUID}` as SqlResult<Produto>;
+  const result = await sql`SELECT * FROM produto WHERE idUUID = ${idUUID}` as unknown as Produto[];
   return result[0] ?? null;
 }
 
@@ -88,7 +88,7 @@ export async function updateProduto(idUUID: string, data: Partial<CreateProduto>
     preco = COALESCE(${Number(data.preco) ?? null}, preco),
     WHERE idUUID = ${idUUID}
     RETURNING *
-  ` as SqlResult<Produto>;
+  ` as unknown as Produto[];
   return result[0] as Produto;
 }
 

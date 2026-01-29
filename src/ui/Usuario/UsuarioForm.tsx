@@ -1,6 +1,7 @@
 "use client";
 
-import { Input, Button, Label } from "@heroui/react";
+import { Input, Label } from "@heroui/react";
+import { Button } from "@/src/ui/Button";
 import { criarUsuario } from "@/src/lib/actions";
 
 export default function UsuarioForm() {

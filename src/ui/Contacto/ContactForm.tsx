@@ -2,7 +2,6 @@
 
 import { Check } from "@gravity-ui/icons";
 import {
-  Button,
   FieldError,
   Form,
   Input,
@@ -10,6 +9,7 @@ import {
   TextField,
   TextArea,
 } from "@heroui/react";
+import { IconButton } from "@/src/ui/IconButton";
 
 export default function ContactForm() {
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -94,10 +94,9 @@ export default function ContactForm() {
       </TextField>
 
       {/* Botão */}
-      <Button type="submit" className="w-full sm:w-auto">
-        <Check />
+      <IconButton startIcon={<Check />} type="submit" className="w-full sm:w-auto">
         Enviar mensagem
-      </Button>
+      </IconButton>
     </Form>
   );
 }

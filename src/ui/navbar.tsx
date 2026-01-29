@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Button } from "@heroui/react";
+import { Button } from "@/src/ui/Button";
 import { useState } from "react";
 import { usePathname } from "next/navigation";
 

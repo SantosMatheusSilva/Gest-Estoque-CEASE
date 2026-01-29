@@ -53,8 +53,8 @@ export type Produto = {
   atualizado_em: string;
   adicionado_por: string;
 }
- 
-export type CreateProduto = {
+
+export interface CreateProduto {
   nome: string;
   quantidade: number;
   preco: number;
