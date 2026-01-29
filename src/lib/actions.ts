@@ -100,7 +100,6 @@ export async function deleteProduto(idUUID: string): Promise<void> {
 
 
 // ADD BY ANA
-
 // USUARIO
 export async function criarUsuario(formData: FormData) {
   const email = formData.get("email") as string;
@@ -111,4 +110,5 @@ export async function criarUsuario(formData: FormData) {
   }
 
   console.log("Usuário:", email);
+  console.log("Senha:", senha);
 }
