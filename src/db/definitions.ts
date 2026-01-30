@@ -17,6 +17,7 @@ export type Categoria = {
 export type CategoriaRaiz = Categoria & {
   // tipo de categoria raiz/pai
   parent_id: null;
+  subcategorias?: SubCategoria[];
 };
 
 export type SubCategoria = Categoria & {
@@ -40,7 +41,6 @@ export type CriarSubCategoria = {
 
 // Tipos de dados auxiliares ou derivados de entidades e interações
 
-
 export type Produto = {
   idUUID: string;
   nome: string;
@@ -52,14 +52,14 @@ export type Produto = {
   criado_em: string;
   atualizado_em: string;
   adicionado_por: string;
-}
+};
 
 export interface CreateProduto {
   nome: string;
   quantidade: number;
   preco: number;
-  img_url?: string | null;        
-  descricao?: string | null;      
+  img_url?: string | null;
+  descricao?: string | null;
   id_categoria: string;
   adicionado_por: string;
 }
@@ -78,7 +78,6 @@ export type Usuario = {
   adm: boolean;
   criado_em: Date;
   }; */
-
 
 // =====================
 // USUÁRIO (Banco)
