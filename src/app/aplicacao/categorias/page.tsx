@@ -1,7 +1,11 @@
-import React from "react";
+import CategoryPageLayout from "@/src/ui/Categorias/CategoryPageLayout";
 
 function page() {
-  return <div>pagina Categorias</div>;
+  return (
+    <main>
+      <CategoryPageLayout />
+    </main>
+  );
 }
 
 export default page;

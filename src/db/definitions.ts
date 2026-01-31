@@ -6,7 +6,7 @@
 
 export type Categoria = {
   // tipo de dado - como esta na db
-  id: string;
+  id_categoria: string;
   nome: string;
   parent_id: string | null;
   created_at: Date;

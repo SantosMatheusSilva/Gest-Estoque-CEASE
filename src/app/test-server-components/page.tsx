@@ -1,8 +1,7 @@
-import { fetchCategoriaComSubcategoriasTeste } from "@/src/db/data";
+import { fetchCategoriaComSubcategorias } from "@/src/db/data";
 import { SubCategoria } from "@/src/db/definitions";
 export default async function TestPage() {
-  const categoriasComSubcategorias =
-    await fetchCategoriaComSubcategoriasTeste();
+  const categoriasComSubcategorias = await fetchCategoriaComSubcategorias();
   return (
     <div>
       <h1>Test Page</h1>

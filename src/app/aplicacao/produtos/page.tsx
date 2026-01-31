@@ -1,11 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { PageLayout, type BreadcrumbItem } from '@/src/ui/PageLayout';
-import { Button } from '@/src/ui/Button';
-import { IconButton } from '@/src/ui/IconButton';
-import { InputField } from '@/src/ui/InputField';
-import { FormSurface } from '@/src/ui/FormSurface';
-import { Plus } from '@gravity-ui/icons';
+import { PageLayout } from '@/src/ui/PageLayout';
+
 
 interface Produto {
   id: number;
@@ -24,10 +20,7 @@ export default function ProdutosPage() {
     stockAtual: 0
   });
 
-  const breadcrumbs: BreadcrumbItem[] = [
-    { label: 'Dashboard', href: '/app' },
-    { label: 'Produtos', isActive: true }
-  ];
+
 
   useEffect(() => {
     fetch('/api/produtos')
@@ -50,12 +43,6 @@ export default function ProdutosPage() {
     <PageLayout
       title="Gestão de Produtos"
       description="Gerencie seu inventário e níveis de stock"
-      breadcrumbs={breadcrumbs}
-      actions={
-        <IconButton variant="primary" startIcon={<Plus />}>
-          Novo Produto
-        </IconButton>
-      }
     >
       
       <div className="bg-white p-6 rounded-lg mb-8 shadow-md">

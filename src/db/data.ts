@@ -5,6 +5,7 @@
 import { sql } from "@/src/db/index";
 
 import { UsuarioDB, CategoriaRaiz } from "./definitions"; // ADD BY ANA
+import { create } from "domain";
 
 // USUARIO ADD BY ANA
 
@@ -55,23 +56,27 @@ export async function fetchCategorias() {
   }
 }
 
-export async function fetchCategiriaPorId(id: string) {
+export async function fetchCategoriaPorId(id: string) {
+  console.log("fetchCategoriaPorId received id:", id);
   try {
-    const data = await sql`
+    const data = await sql<CategoriaRaiz[]>`
       SELECT
-        categorias.id_categoria AS id,
+        categorias.id_categoria AS id_categoria,
         categorias.nome AS nome,
-        categorias.created_at AS criado_em,
-        categorias.updated_at AS atualizado_em
+        categorias.created_at AS criada_em,
+        categorias.updated_at AS atualizado_em,
         categorias.adicionado_por AS adicionado_por
       FROM categorias
-      WHERE categorias.parent_id IS NULL AND
-      WHERE categorias.id = ${id};
+      WHERE categorias.parent_id IS NULL 
+        AND categorias.id_categoria = ${id}
     `;
-    return data;
+    return data[0];
   } catch (error) {
     console.error("Database Error:", error);
-    throw new Error("Failed to fetch categoria.");
+    console.error("Full error object:", JSON.stringify(error, null, 2));
+    throw new Error(
+      `Failed to fetch categoria: ${error instanceof Error ? error.message : "Unknown error"}`,
+    );
   }
 }
 
@@ -96,7 +101,7 @@ export async function fetchSubcategorias() {
   }
 }
 
-export async function fetchCategoriaComSubcategoriasTeste() {
+export async function fetchCategoriaComSubcategorias() {
   try {
     // Buscar todas as categorias de uma vez
     const categorias = await sql`
@@ -117,7 +122,7 @@ export async function fetchCategoriaComSubcategoriasTeste() {
     // Inicializar todas as categorias com array vazio de subcategorias
     categorias.forEach((categoria) => {
       categoriasMap.set(categoria.id_categoria, {
-        id: categoria.id_categoria,
+        id_categoria: categoria.id_categoria,
         nome: categoria.nome,
         parent_id: categoria.parent_id,
         created_at: categoria.created_at,
