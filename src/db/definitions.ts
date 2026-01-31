@@ -64,21 +64,6 @@ export interface CreateProduto {
   adicionado_por: string;
 }
 
-// USUARIO
-
-/*
-ALTERAÇOES
-export type Usuario = {
-  id: string;
-  img_url: string;
-  nome: string;
-  sobrenome: string;
-  email: string;
-  senha_hash: string; // alteraçao
-  adm: boolean;
-  criado_em: Date;
-  }; */
-
 // =====================
 // USUÁRIO (Banco)
 // =====================
