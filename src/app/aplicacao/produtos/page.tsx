@@ -1,5 +1,11 @@
 'use client';
 import { useState, useEffect } from 'react';
+import { PageLayout, type BreadcrumbItem } from '@/src/ui/PageLayout';
+import { Button } from '@/src/ui/Button';
+import { IconButton } from '@/src/ui/IconButton';
+import { InputField } from '@/src/ui/InputField';
+import { FormSurface } from '@/src/ui/FormSurface';
+import { Plus } from '@gravity-ui/icons';
 
 interface Produto {
   id: number;
@@ -17,6 +23,11 @@ export default function ProdutosPage() {
     preco: 0,
     stockAtual: 0
   });
+
+  const breadcrumbs: BreadcrumbItem[] = [
+    { label: 'Dashboard', href: '/app' },
+    { label: 'Produtos', isActive: true }
+  ];
 
   useEffect(() => {
     fetch('/api/produtos')
@@ -36,8 +47,16 @@ export default function ProdutosPage() {
   };
 
   return (
-    <div className="p-8 max-w-4xl mx-auto min-h-screen bg-gray-50">
-      <h1 className="text-3xl font-bold mb-8 text-gray-900">Gestão de Produtos</h1>
+    <PageLayout
+      title="Gestão de Produtos"
+      description="Gerencie seu inventário e níveis de stock"
+      breadcrumbs={breadcrumbs}
+      actions={
+        <IconButton variant="primary" startIcon={<Plus />}>
+          Novo Produto
+        </IconButton>
+      }
+    >
       
       <div className="bg-white p-6 rounded-lg mb-8 shadow-md">
         <h2 className="text-xl mb-4 text-gray-800">Adicionar Produto</h2>
@@ -81,7 +100,7 @@ export default function ProdutosPage() {
         </button>
       </div>
 
-      <div>
+      <div className="mt-8">
         <h2 className="text-xl mb-4 text-gray-800">Lista de Produtos ({produtos.length})</h2>
         <div className="grid gap-4">
           {produtos.map(produto => (
@@ -92,7 +111,7 @@ export default function ProdutosPage() {
           ))}
         </div>
       </div>
-    </div>
+    </PageLayout>
   );
 }
 

@@ -1,17 +1,16 @@
-import { Titulo } from "@/src/ui/Sobrenos/Titulo";
+import Titulo from "@/src/ui/Sobrenos/Titulo";
 import { Texto } from "@/src/ui/Sobrenos/Texto";
 import { Imagem } from "@/src/ui/Sobrenos/Imagem";
 
 export default function SobreNosPage() {
   return (
     <main className="max-w-4xl mx-auto px-6 py-16 flex flex-col gap-16">
-
       {/* MISSÃO */}
       <section className="flex flex-col gap-4">
         <Titulo>Missão</Titulo>
         <Texto>
-         Simplificar a gestão de estoque para que empresas cresçam com
-        controle, clareza e confiança — sem processos complicados.
+          Simplificar a gestão de estoque para que empresas cresçam com
+          controle, clareza e confiança — sem processos complicados.
         </Texto>
       </section>
 
@@ -50,7 +49,6 @@ export default function SobreNosPage() {
           pequenas empresas, lojas físicas, armazéns e startups em crescimento.
         </Texto>
       </section>
-
     </main>
   );
 }
