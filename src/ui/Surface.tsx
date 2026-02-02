@@ -6,7 +6,7 @@ interface BaseSurfaceProps extends SurfaceProps {
 }
 
 export default function BaseSurface({
-  className = "flex min-w-[320px] flex-col gap-3 rounded-3xl p-6",
+  className = "flex min-w-[320px] flex-col gap-3 rounded-3xl p-6 overflow-y-auto max-h-[400px] p-4",
   variant = "secondary",
   ...props
 }: BaseSurfaceProps) {

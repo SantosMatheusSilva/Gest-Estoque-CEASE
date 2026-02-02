@@ -8,47 +8,44 @@ _Smart Inventory Management for Growing Businesses_
 # Estrutura geral (Next.js App Router)
 
 src
- ├─app/
-    ├─ (marketing)/    
-        ├─ (home)/   
-            └─ page.tsx  
-        ├─ contacto/
-           └─ page.tsx
-        ├─ faq/
-            └─ page.tsx
-        ├─ funcionalidades/
-            └─ page.tsx
-        ├─ sobrenos/
-            └─ page.tsx
-    ├─ produtos/
-            └─ page.tsx
-    db/ - neon sql
-    ├─ data.ts              → queries (SELECT)
-    ├─ definition.ts        → tipos
-    └─ index.ts             → conexão
-    lib/
-    ├─ actions.ts
-    └─ utils.ts
-    ui/
-    ├─ Contacto/
-    │   └─ ContactoForm.tsx
-    ├─ Faq/
-    │   └─ FaqAccordion.tsx
-    ├─ Funcionalidades/
-        ├─ FeaturesCard.tsx
-        ├─ FeaturesGrid.tsx
-        └─ FeaturesIntro.tsx
-    ├─ SobreNos/
-    │   └─ Imagem.tsx
-        └─ Texto.tsx
-        └─ Titulo.tsx
-    ├─ Botao.tsx
-    ├─ Footer.tsx
-    ├─ Navbar.tsx
-    └─ SectionWrapper.tsx
-
-
-
+├─app/
+├─ (marketing)/  
+ ├─ (home)/  
+ └─ page.tsx  
+ ├─ contacto/
+└─ page.tsx
+├─ faq/
+└─ page.tsx
+├─ funcionalidades/
+└─ page.tsx
+├─ sobrenos/
+└─ page.tsx
+├─ produtos/
+└─ page.tsx
+db/ - neon sql
+├─ data.ts → queries (SELECT)
+├─ definition.ts → tipos
+└─ index.ts → conexão
+lib/
+├─ actions.ts
+└─ utils.ts
+ui/
+├─ Contacto/
+│ └─ ContactoForm.tsx
+├─ Faq/
+│ └─ FaqAccordion.tsx
+├─ Funcionalidades/
+├─ FeaturesCard.tsx
+├─ FeaturesGrid.tsx
+└─ FeaturesIntro.tsx
+├─ SobreNos/
+│ └─ Imagem.tsx
+└─ Texto.tsx
+└─ Titulo.tsx
+├─ Botao.tsx
+├─ Footer.tsx
+├─ Navbar.tsx
+└─ SectionWrapper.tsx
 
 🏠 HOME (/) -> FEITO!
 Objetivo
@@ -69,7 +66,6 @@ Botões:
 Ver funcionalidades
 Saber mais
 
-
 Benefícios
 
 📦 Controle total do inventário
@@ -77,14 +73,12 @@ Benefícios
 ⚡ Interface rápida e intuitiva
 🔐 Dados seguros e centralizados
 
-
 Preview de features
 
 Monitoramento de estoque em tempo real
 Alertas de baixo estoque
 Histórico de movimentações
 Gestão de múltiplos produtos
-
 
 CTA
 Comece a organizar seu estoque hoje mesmo.
@@ -110,7 +104,6 @@ Planilhas desatualizadas
 Processos manuais
 Falta de visibilidade em tempo real
 
-
 A solução
 O StockFlow centraliza todas as informações de estoque num único sistema, reduzindo erros e melhorando decisões.
 
@@ -121,8 +114,7 @@ Lojas físicas
 Armazéns
 Startups em crescimento
 
-
-⚙️ FEATURES (/features) -
+⚙️ FEATURES (/features) - > FEITO
 Objetivo
 Detalhar funcionalidades (mesmo que ainda não existam).
 Estrutura
@@ -134,32 +126,25 @@ Gestão de Produtos
 Cadastro de produtos
 Categorias e quantidades
 
-
 Controle de Entradas e Saídas
 
 Registro de movimentações
 Histórico completo
-
 
 Alertas Inteligentes
 
 Notificação de estoque baixo
 Prevenção de rupturas
 
-
 Relatórios
 
 Visão geral do inventário
 Dados claros para decisão
 
-
 Interface Intuitiva
 
 Fácil de usar
 Sem curva de aprendizagem
-
-
-
 
 📞 CONTACTOS (/contactos) - > FEITO
 Objetivo
@@ -184,12 +169,10 @@ Assunto
 Mensagem
 Botão: Enviar mensagem
 
-
 Informações
 
 📧 Email: contacto@stockflow.com
 📍 Localização: Lisboa, Portugal
-
 
 ❓ FAQ (/faq) -> FEITO - REMOVER ???
 Objetivo
@@ -220,4 +203,7 @@ FeatureCard
 CTA
 FAQItem
 ContactForm
+
+```
+
 ```

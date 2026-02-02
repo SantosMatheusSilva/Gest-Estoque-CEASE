@@ -1,5 +1,5 @@
 import DetailPageLayout from "@/src/ui/Categorias/DetailPageLayout";
-import { fetchCategoriaPorId } from "@/src/db/data";
+import { fetchCategoriaComSubcategoriaPorId } from "@/src/db/data";
 
 type PageProps = {
   params: {
@@ -8,7 +8,7 @@ type PageProps = {
 };
 export default async function page({ params }: PageProps) {
   const { id } = await params;
-  const categoriaInfo = await fetchCategoriaPorId(id);
+  const categoriaInfo = await fetchCategoriaComSubcategoriaPorId(id);
 
   return (
     <main>
