@@ -50,7 +50,7 @@ export async function getProdutoById(idUUID: string): Promise<Produto | null> {
   const result = await sql`
     SELECT *
     FROM produtos
-    WHERE idUUID = ${idUUID}
+    WHERE id = ${idUUID}
   `;
   const rows = result as unknown as Produto[];
   return rows[0] ?? null;
@@ -68,9 +68,9 @@ export async function updateProduto(
       quantidade = COALESCE(${data.quantidade ?? null}, quantidade),
       preco      = COALESCE(${data.preco ?? null}, preco),
       img_url    = COALESCE(${data.img_url ?? null}, img_url),
-      descricao  = COALESCE(${data.descricao ?? null}, descricao)
+      descricao  = COALESCE(${data.descricao ?? null}, descricao),
       updated_at = NOW()
-    WHERE idUUID = ${idUUID}
+    WHERE id = ${idUUID}
     RETURNING *
   `;
   const rows = result as unknown as Produto[];
@@ -81,11 +81,11 @@ export async function updateProduto(
 export async function deleteProduto(idUUID: string): Promise<void> {
   await sql`
     DELETE FROM produtos
-    WHERE idUUID = ${idUUID}
+    WHERE id = ${idUUID}
   `;
 }
 
-// ========== USUÁRIO (o teu código antigo, podes manter aqui em baixo) ==========
+// ========== USUÁRIO ==========
 
 export async function criarUsuario(formData: FormData) {
   const email = formData.get("email") as string;
@@ -98,3 +98,4 @@ export async function criarUsuario(formData: FormData) {
   console.log("Usuário:", email);
   console.log("Senha:", senha);
 }
+
