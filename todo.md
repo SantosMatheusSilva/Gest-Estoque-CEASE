@@ -20,16 +20,40 @@ src
 └─ page.tsx
 ├─ sobrenos/
 └─ page.tsx
-├─ produtos/
-└─ page.tsx
+├─ layout/
+
+aplicacao/
+    └─(dashboard)
+        └─ page.tsx
+
+categorias/
+└─[id]
+        └─ detalhes
+        └─ page.tsx
 db/ - neon sql
 ├─ data.ts → queries (SELECT)
 ├─ definition.ts → tipos
 └─ index.ts → conexão
 lib/
 ├─ actions.ts
+├─ data.ts
 └─ utils.ts
 ui/
+├─ Categorias/
+    └─ CategoryCard.tsx
+    ├─ CategoryPageLayout.tsx
+    ├─ CreateCategoryForm.tsx
+    ├─ CreateSubcategoryForm.tsx
+    ├─ DetailPageLayout.tsx
+    ├─ EditCategoryForm.tsx
+    └─ EditSubcategoryForm.tsx
+├─ Faq/
+│ └─ FaqAccordion.tsx
+
+├─ Funcionalidades/
+├─ FeaturesCard.tsx
+├─ FeaturesGrid.tsx
+└─ FeaturesIntro.tsx
 ├─ Contacto/
 │ └─ ContactoForm.tsx
 ├─ Faq/

@@ -36,16 +36,15 @@ export async function fetchUsuarioPorEmail(
 }
 
 export async function fetchCategorias() {
-  // APENAS CATEGORIAS RAIZ
   try {
     const data = await sql`
       SELECT
-        categorias.id_categoria AS id,
-        categorias.nome AS nome,
-        categorias.created_at AS criado_em,
-        categorias.updated_at AS atualizado_em
-        categorias.adicionado_por AS adicionado_por
-      FROM categorias;
+        categorias.id_categoria,
+        categorias.nome,
+        categorias.created_at,
+        categorias.updated_at,
+        categorias.adicionado_por
+      FROM categorias
       WHERE categorias.parent_id IS NULL
     `;
     return data;
@@ -54,6 +53,7 @@ export async function fetchCategorias() {
     throw new Error("Failed to fetch categorias.");
   }
 }
+
 
 export async function fetchCategoriaPorId(id: string) {
   console.log("fetchCategoriaPorId received id:", id);
@@ -211,4 +211,126 @@ export async function fetchCategoriaComSubcategorias() {
     console.error("Database Error:", error);
     throw new Error("Failed to fetch categoria with subcategorias.");
   }
+}
+
+
+// Função para criar categoria raiz
+
+import { CriarCategoria, CriarSubCategoria, Categoria } from "./definitions";
+
+// criar categoria raiz
+export async function criarCategoria(
+  data: CriarCategoria,
+): Promise<Categoria> {
+  try {
+    const [categoria] = await sql<Categoria[]>`
+      INSERT INTO categorias (
+        nome,
+        parent_id,
+        adicionado_por
+      )
+      VALUES (
+        ${data.nome},
+        NULL,
+        ${data.adicionado_por}
+      )
+      RETURNING
+        id_categoria,
+        nome,
+        parent_id,
+        created_at,
+        updated_at,
+        adicionado_por;
+    `;
+    return categoria;
+  } catch (error) {
+    console.error("Database Error:", error);
+    throw new Error("Failed to create categoria.");
+  }
+}
+
+
+// Função para criar subcategoria
+
+export async function criarSubCategoria(
+  data: CriarSubCategoria,
+): Promise<Categoria> {
+  try {
+    const [subcategoria] = await sql<Categoria[]>`
+      INSERT INTO categorias (
+        nome,
+        parent_id,
+        adicionado_por
+      )
+      VALUES (
+        ${data.nome},
+        ${data.parent_id},
+        ${data.adicionado_por}
+      )
+      RETURNING
+        id_categoria,
+        nome,
+        parent_id,
+        created_at,
+        updated_at,
+        adicionado_por;
+    `;
+    return subcategoria;
+  } catch (error) {
+    console.error("Database Error:", error);
+    throw new Error("Failed to create subcategoria.");
+  }
+}
+
+
+// Função para atualizar categoria ou subcategoria
+
+export async function atualizarCategoria(
+  id_categoria: string,
+  nome: string,
+): Promise<Categoria> {
+  try {
+    const [categoria] = await sql<Categoria[]>`
+      UPDATE categorias
+      SET
+        nome = ${nome},
+        updated_at = NOW()
+      WHERE id_categoria = ${id_categoria}
+      RETURNING
+        id_categoria,
+        nome,
+        parent_id,
+        created_at,
+        updated_at,
+        adicionado_por;
+    `;
+    return categoria;
+  } catch (error) {
+    console.error("Database Error:", error);
+    throw new Error("Failed to update categoria.");
+  }
+}
+
+
+// Função para deletar categoria
+
+
+export async function deletarCategoria(
+  id_categoria: string,
+): Promise<void> {
+  try {
+    await sql`
+      DELETE FROM categorias
+      WHERE id_categoria = ${id_categoria};
+    `;
+  } catch (error) {
+    console.error("Database Error:", error);
+    throw new Error("Failed to delete categoria.");
+  }
+}
+
+
+export async function testDbConnection() {
+  const result = await sql`SELECT 1 as ok`;
+  return result;
 }
