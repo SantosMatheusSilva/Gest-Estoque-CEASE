@@ -12,8 +12,8 @@ import type { Produto, CreateProduto } from '../db/definitions';
 export async function getAllProdutos(): Promise<Produto[]> {
   const result = await sql`
     SELECT *
-    FROM produto
-    ORDER BY criado_em DESC
+    FROM produtos
+    ORDER BY created_at DESC
   `;
   return result as unknown as Produto[];
 }
@@ -21,7 +21,7 @@ export async function getAllProdutos(): Promise<Produto[]> {
 // 2) CRIAR
 export async function createProduto(produto: CreateProduto): Promise<Produto> {
   const result = await sql`
-    INSERT INTO produto (
+    INSERT INTO produtos (
       nome,
       quantidade,
       preco,
@@ -49,7 +49,7 @@ export async function createProduto(produto: CreateProduto): Promise<Produto> {
 export async function getProdutoById(idUUID: string): Promise<Produto | null> {
   const result = await sql`
     SELECT *
-    FROM produto
+    FROM produtos
     WHERE idUUID = ${idUUID}
   `;
   const rows = result as unknown as Produto[];
@@ -62,13 +62,14 @@ export async function updateProduto(
   data: Partial<CreateProduto>
 ): Promise<Produto> {
   const result = await sql`
-    UPDATE produto
+    UPDATE produtos
     SET
       nome       = COALESCE(${data.nome ?? null}, nome),
       quantidade = COALESCE(${data.quantidade ?? null}, quantidade),
       preco      = COALESCE(${data.preco ?? null}, preco),
       img_url    = COALESCE(${data.img_url ?? null}, img_url),
       descricao  = COALESCE(${data.descricao ?? null}, descricao)
+      updated_at = NOW()
     WHERE idUUID = ${idUUID}
     RETURNING *
   `;
@@ -79,7 +80,7 @@ export async function updateProduto(
 // 5) DELETAR
 export async function deleteProduto(idUUID: string): Promise<void> {
   await sql`
-    DELETE FROM produto
+    DELETE FROM produtos
     WHERE idUUID = ${idUUID}
   `;
 }

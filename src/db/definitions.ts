@@ -42,19 +42,19 @@ export type CriarSubCategoria = {
 // Tipos de dados auxiliares ou derivados de entidades e interações
 
 export type Produto = {
-  idUUID: string;
+  id: string;
   nome: string;
   quantidade: number;
   preco: number;
   img_url?: string | null;
   descricao?: string | null;
   id_categoria: string;
-  criado_em: string;
-  atualizado_em: string;
+  created_at: string;
+  updated_at: string;
   adicionado_por: string;
 };
 
-export interface CreateProduto {
+export type CreateProduto ={
   nome: string;
   quantidade: number;
   preco: number;
