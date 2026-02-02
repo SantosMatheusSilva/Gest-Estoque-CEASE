@@ -3,8 +3,8 @@
 // queries de INSERT, UPDATE, DELETE.
 "use server";
 
-import { sql } from '../db';
-import type { Produto, CreateProduto } from '../db/definitions';
+import { sql } from "../db";
+import type { Produto, CreateProduto } from "../db/definitions";
 
 // ========== PRODUTOS ==========
 
@@ -59,7 +59,7 @@ export async function getProdutoById(idUUID: string): Promise<Produto | null> {
 // 4) ATUALIZAR
 export async function updateProduto(
   idUUID: string,
-  data: Partial<CreateProduto>
+  data: Partial<CreateProduto>,
 ): Promise<Produto> {
   const result = await sql`
     UPDATE produtos

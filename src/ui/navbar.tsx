@@ -5,6 +5,13 @@ import Link from "next/link";
 import { Button } from "@/src/ui/Button";
 import { useState } from "react";
 import { usePathname } from "next/navigation";
+import {
+  SignInButton,
+  SignUpButton,
+  SignedOut,
+  SignedIn,
+  UserButton,
+} from "@clerk/nextjs";
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
@@ -73,10 +80,21 @@ export default function Navbar() {
 
         {/* Right buttons (desktop) */}
         <div className="hidden md:flex items-center gap-3">
-          <Button variant="outline" className={"text-blue-400"}>
-            Login
-          </Button>
-          <Button variant="primary">Sign up</Button>
+          <SignedOut>
+            <SignInButton>
+              <Button variant="outline" className={"text-blue-400"}>
+                Login
+              </Button>
+            </SignInButton>
+
+            <SignUpButton>
+              <Button variant="primary">Sign up</Button>
+            </SignUpButton>
+          </SignedOut>
+
+          <SignedIn>
+            <UserButton />
+          </SignedIn>
         </div>
 
         {/* Mobile menu button */}
@@ -124,10 +142,21 @@ export default function Navbar() {
           </Link>
 
           <div className="pt-2 flex flex-col gap-2">
-            <Button variant="outline" className={"text-blue-400"}>
-              Login
-            </Button>
-            <Button variant="primary">Sign up</Button>
+            <SignedOut>
+              <SignInButton>
+                <Button variant="outline" className={"text-blue-400"}>
+                  Login
+                </Button>
+              </SignInButton>
+
+              <SignUpButton>
+                <Button variant="primary">Sign up</Button>
+              </SignUpButton>
+            </SignedOut>
+
+            <SignedIn>
+              <UserButton />
+            </SignedIn>
           </div>
         </div>
       )}
