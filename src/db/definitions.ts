@@ -18,17 +18,19 @@ export type CategoriaRaiz = Categoria & {
   // tipo de categoria raiz/pai
   parent_id: null;
   subcategorias?: SubCategoria[];
+  total_produtos?: number;
 };
 
 export type SubCategoria = Categoria & {
   // tipo de subcategoria/filha
   parent_id: string;
+  total_produtos?: number;
 };
 
 // Adicionar categoria  e sub categoria
 export type CriarCategoria = {
   nome: string;
-  parent_id?: null;
+  //parent_id?: null;
   adicionado_por: string;
 };
 export type CriarSubCategoria = {

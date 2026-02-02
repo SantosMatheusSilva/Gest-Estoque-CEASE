@@ -3,11 +3,13 @@ import { Surface, SurfaceProps } from "@heroui/react";
 interface FormSurfaceProps extends SurfaceProps {
   className?: string;
   children: React.ReactNode;
+  title?: string;
 }
 
 export function FormSurface({
   className,
   children,
+  title,
   ...props
 }: FormSurfaceProps) {
   return (
@@ -18,7 +20,7 @@ export function FormSurface({
       variant="default"
       {...props}
     >
-      <h2>Login</h2>
+      <h2>{title}</h2>
       {children}
     </Surface>
   );

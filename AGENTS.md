@@ -7,17 +7,19 @@ This file contains guidelines and commands for agentic coding agents working in 
 This is a Next.js 16 stock management application built with:
 - **Framework**: Next.js 16 with App Router
 - **Language**: TypeScript (strict mode)
-- **Database**: PostgreSQL with Neon
-- **UI**: HeroUI (fork of NextUI) + Tailwind CSS
+- **Database**: PostgreSQL with Neon (serverless)
+- **UI**: HeroUI (v3.0.0-beta.5) + Tailwind CSS v4
 - **Styling**: Tailwind CSS with custom configuration
 - **Validation**: Zod schemas
 - **Package Manager**: pnpm (based on pnpm-lock.yaml)
+- **Animations**: Framer Motion v12
+- **Icons**: Gravity UI Icons
 
 ## Development Commands
 
 ### Core Commands
 ```bash
-pnpm dev          # Start development server
+pnpm dev          # Start development server (http://localhost:3000)
 pnpm build        # Build for production
 pnpm start        # Start production server
 pnpm lint         # Run ESLint
@@ -28,6 +30,7 @@ This project currently does not have a test framework configured. When adding te
 - Prefer Jest + React Testing Library for unit/integration tests
 - Use Playwright for E2E tests
 - Add test scripts to package.json as needed
+- Example single test command (when Jest is added): `pnpm test -- --testNamePattern="specific test"`
 
 ## Code Style Guidelines
 
@@ -170,9 +173,67 @@ Key entities:
 
 Always update corresponding TypeScript types in `src/db/definitions.ts` when modifying database schema.
 
+## Component Structure
+
+### Directory Organization
+```
+src/
+├── app/                    # Next.js App Router pages
+│   ├── (marketing)/        # Marketing site pages (grouped route)
+│   │   ├── (home)/        # Home page
+│   │   ├── sobre-nos/     # About us
+│   │   ├── funcionalidades/ # Features
+│   │   ├── contacto/      # Contact
+│   │   └── faq/          # FAQ
+│   ├── aplicacao/          # Application dashboard
+│   │   ├── (dashboard)/   # Main dashboard
+│   │   ├── produtos/      # Product management
+│   │   ├── categorias/    # Category management
+│   │   └── perfil/        # User profile
+│   ├── auth/              # Authentication pages
+│   └── layout.tsx         # Root layout
+├── ui/                    # Reusable UI components
+│   ├── Categorias/       # Category-specific components
+│   ├── Usuario/          # User components
+│   ├── funcionalidades/  # Feature showcase components
+│   ├── Sobrenos/         # About page components
+│   ├── Contacto/         # Contact components
+│   └── faq/             # FAQ components
+├── db/                   # Database layer
+│   ├── definitions.ts    # TypeScript type definitions
+│   ├── index.ts         # Database connection
+│   └── data.ts          # Data queries
+└── lib/                  # Utilities and business logic
+    ├── actions.ts       # Server actions (CRUD operations)
+    ├── utils.ts         # Helper functions
+    └── data.ts          # Data fetching functions
+```
+
 ## Security Considerations
 
 - **SQL Injection**: Use parameterized queries (SQL template literals)
 - **Input Validation**: Validate all user inputs with Zod schemas
 - **Authentication**: Implement proper auth checks in server actions
 - **Environment Variables**: Never commit sensitive data to repository
+
+## Development Workflow
+
+### Before Committing
+1. Run `pnpm lint` to check code quality
+2. Test all functionality manually (no test framework yet)
+3. Verify TypeScript types are correct
+4. Check responsive design on different screen sizes
+
+### File Creation Guidelines
+- When creating new components, follow existing naming patterns
+- Use the UI wrapper pattern for third-party components
+- Export components as named exports, not default exports
+- Include proper TypeScript interfaces for all props
+
+### Code Review Checklist
+- [ ] TypeScript strict mode compliance
+- [ ] Proper import organization following the 3-section pattern
+- [ ] Portuguese language used for user-facing text
+- [ ] Error handling implemented for all async operations
+- [ ] Mobile-first responsive design
+- [ ] Dark mode support with `dark:` prefixes

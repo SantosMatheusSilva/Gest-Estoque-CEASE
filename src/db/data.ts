@@ -5,7 +5,6 @@
 import { sql } from "@/src/db/index";
 
 import { UsuarioDB, CategoriaRaiz } from "./definitions"; // ADD BY ANA
-import { create } from "domain";
 
 // USUARIO ADD BY ANA
 
@@ -80,6 +79,64 @@ export async function fetchCategoriaPorId(id: string) {
   }
 }
 
+export async function fetchCategoriaComSubcategoriaPorId(id: string) {
+  try {
+    // Buscar todas as categorias de uma vez
+    const categoria = await sql<CategoriaRaiz[]>`
+      SELECT
+    c.id_categoria,
+    c.nome,
+    c.parent_id,
+    c.created_at,
+    c.updated_at,
+    c.adicionado_por,
+    (
+      SELECT COUNT(*)
+      FROM produtos p
+      WHERE p.id_categoria = c.id_categoria
+    ) AS total_produtos
+  FROM categorias c
+  WHERE c.id_categoria = ${id}
+     OR c.parent_id = ${id}
+  ORDER BY c.nome
+    `;
+
+    // Criar um mapa para acesso rápido por ID
+    const categoriaMap = new Map();
+
+    // Inicializar todas as categorias com array vazio de subcategorias
+    categoria.forEach((categoria) => {
+      categoriaMap.set(categoria.id_categoria, {
+        ...categoria,
+        created_at: categoria.created_at,
+        updated_at: categoria.updated_at,
+        adicionado_por: categoria.adicionado_por,
+        subcategorias: [],
+      });
+    });
+
+    // Organizar em estrutura hierárquica
+    let categoriaRaiz: CategoriaRaiz = {} as CategoriaRaiz;
+
+    categoriaMap.forEach((categoria) => {
+      if (categoria.parent_id === null) {
+        categoriaRaiz = categoria;
+      } else {
+        const parent = categoriaMap.get(categoria.parent_id);
+        if (parent) {
+          parent.subcategorias.push(categoria);
+        }
+      }
+    });
+
+    console.log("Categorias com subcategorias:", categoriaRaiz);
+    return categoriaRaiz;
+  } catch (error) {
+    console.error("Database Error:", error);
+    throw new Error("Failed to fetch categoria with subcategorias.");
+  }
+}
+
 export async function fetchSubcategorias() {
   // APENAS SUBCATEGORIAS
   try {
@@ -125,8 +182,8 @@ export async function fetchCategoriaComSubcategorias() {
         id_categoria: categoria.id_categoria,
         nome: categoria.nome,
         parent_id: categoria.parent_id,
-        created_at: categoria.created_at,
-        updated_at: categoria.updated_at,
+        created_at: categoria.created_at.toLocaleDateString(),
+        updated_at: categoria.updated_at.toLocaleDateString(),
         adicionado_por: categoria.adicionado_por,
         subcategorias: [],
       });
