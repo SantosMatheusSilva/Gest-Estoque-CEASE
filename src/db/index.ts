@@ -1,5 +1,5 @@
-// conexão com a base de dados e configuração inicial.
-// conection string, para ser exportada e usada nas queries.
+//conexão com a base de dados e configuração inicial.
+//conection string, para ser exportada e usada nas queries.
 import postegres from "postgres";
 
 export const sql = postegres(process.env.DATABASE_URL!);
@@ -12,3 +12,4 @@ export function connectToDatabase() {
     console.error("Erro ao conectar ao banco de dados:", error);
   }
 }
+

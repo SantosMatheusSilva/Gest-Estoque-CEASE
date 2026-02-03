@@ -79,38 +79,97 @@ export async function fetchCategoriaPorId(id: string) {
   }
 }
 
+// export async function fetchCategoriaComSubcategoriaPorId(id: string) {
+//   try {
+//     // Buscar todas as categorias de uma vez
+//     const categoria = await sql<CategoriaRaiz[]>`
+//       SELECT
+//     c.id_categoria,
+//     c.nome,
+//     c.parent_id,
+//     c.created_at,
+//     c.updated_at,
+//     c.adicionado_por,
+//     (
+//       SELECT COUNT(*)
+//       FROM produtos p
+//       WHERE p.id_categoria = c.id_categoria
+//     ) AS total_produtos
+//   FROM categorias c
+//   WHERE c.id_categoria = ${id}
+//      OR c.parent_id = ${id}
+//   ORDER BY c.nome
+//     `;
+
+//     // Criar um mapa para acesso rápido por ID
+//     const categoriaMap = new Map();
+
+//     // Inicializar todas as categorias com array vazio de subcategorias
+//     categoria.forEach((categoria) => {
+//       categoriaMap.set(categoria.id_categoria, {
+//         ...categoria,
+//         created_at: categoria.created_at,
+//         updated_at: categoria.updated_at,
+//         adicionado_por: categoria.adicionado_por,
+//         subcategorias: [],
+//       });
+//     });
+
+//     // Organizar em estrutura hierárquica
+//     let categoriaRaiz: CategoriaRaiz = {} as CategoriaRaiz;
+
+//     categoriaMap.forEach((categoria) => {
+//       if (categoria.parent_id === null) {
+//         categoriaRaiz = categoria;
+//       } else {
+//         const parent = categoriaMap.get(categoria.parent_id);
+//         if (parent) {
+//           parent.subcategorias.push(categoria);
+//         }
+//       }
+//     });
+
+//     console.log("Categorias com subcategorias:", categoriaRaiz);
+//     return categoriaRaiz;
+//   } catch (error) {
+//     console.error("Database Error:", error);
+//     throw new Error("Failed to fetch categoria with subcategorias.");
+//   }
+// }
+
+
+// src/db/data.ts
 export async function fetchCategoriaComSubcategoriaPorId(id: string) {
   try {
-    // Buscar todas as categorias de uma vez
     const categoria = await sql<CategoriaRaiz[]>`
       SELECT
-    c.id_categoria,
-    c.nome,
-    c.parent_id,
-    c.created_at,
-    c.updated_at,
-    c.adicionado_por,
-    (
-      SELECT COUNT(*)
-      FROM produtos p
-      WHERE p.id_categoria = c.id_categoria
-    ) AS total_produtos
-  FROM categorias c
-  WHERE c.id_categoria = ${id}
-     OR c.parent_id = ${id}
-  ORDER BY c.nome
+        c.id_categoria,
+        c.nome,
+        c.parent_id,
+        c.created_at,
+        c.updated_at,
+        c.adicionado_por,
+        (
+          SELECT COUNT(*)
+          FROM produtos p
+          WHERE p.id_categoria = c.id_categoria
+        ) AS total_produtos
+      FROM categorias c
+      WHERE c.id_categoria = ${id}
+         OR c.parent_id = ${id}
+      ORDER BY c.nome
     `;
 
     // Criar um mapa para acesso rápido por ID
-    const categoriaMap = new Map();
+    const categoriaMap = new Map<string, any>();
 
-    // Inicializar todas as categorias com array vazio de subcategorias
-    categoria.forEach((categoria) => {
-      categoriaMap.set(categoria.id_categoria, {
-        ...categoria,
-        created_at: categoria.created_at,
-        updated_at: categoria.updated_at,
-        adicionado_por: categoria.adicionado_por,
+    // ✅ Adicionar tipo ao parâmetro
+    categoria.forEach((cat: CategoriaRaiz) => {
+      categoriaMap.set(cat.id_categoria, {
+        ...cat,
+        created_at: cat.created_at,
+        updated_at: cat.updated_at,
+        adicionado_por: cat.adicionado_por,
         subcategorias: [],
       });
     });
@@ -118,13 +177,14 @@ export async function fetchCategoriaComSubcategoriaPorId(id: string) {
     // Organizar em estrutura hierárquica
     let categoriaRaiz: CategoriaRaiz = {} as CategoriaRaiz;
 
-    categoriaMap.forEach((categoria) => {
-      if (categoria.parent_id === null) {
-        categoriaRaiz = categoria;
+    // ✅ Adicionar tipo ao parâmetro
+    categoriaMap.forEach((cat: any) => {
+      if (cat.parent_id === null) {
+        categoriaRaiz = cat;
       } else {
-        const parent = categoriaMap.get(categoria.parent_id);
+        const parent = categoriaMap.get(cat.parent_id);
         if (parent) {
-          parent.subcategorias.push(categoria);
+          parent.subcategorias.push(cat);
         }
       }
     });
@@ -158,10 +218,67 @@ export async function fetchSubcategorias() {
   }
 }
 
-export async function fetchCategoriaComSubcategorias() {
+// export async function fetchCategoriaComSubcategorias() {
+//   try {
+//     // Buscar todas as categorias de uma vez
+//     const categorias = await sql`
+//       SELECT
+//         id_categoria,
+//         nome,
+//         parent_id,
+//         created_at,
+//         updated_at,
+//         adicionado_por
+//       FROM categorias
+//       ORDER BY nome
+//     `;
+
+//     // Criar um mapa para acesso rápido por ID
+//     const categoriasMap = new Map();
+
+//     // Inicializar todas as categorias com array vazio de subcategorias
+//     categorias.forEach((categoria) => {
+//       categoriasMap.set(categoria.id_categoria, {
+//         id_categoria: categoria.id_categoria,
+//         nome: categoria.nome,
+//         parent_id: categoria.parent_id,
+//         created_at: categoria.created_at.toLocaleDateString(),
+//         updated_at: categoria.updated_at.toLocaleDateString(),
+//         adicionado_por: categoria.adicionado_por,
+//         subcategorias: [],
+//       });
+//     });
+
+//     // Organizar em estrutura hierárquica
+//     const categoriasRaiz: CategoriaRaiz[] = [];
+
+//     categoriasMap.forEach((categoria) => {
+//       if (categoria.parent_id === null) {
+//         // É uma categoria raiz
+//         categoriasRaiz.push(categoria);
+//       } else {
+//         // É uma subcategoria, adicionar apenas o objeto de subcategoria ao parent
+//         const parent = categoriasMap.get(categoria.parent_id);
+//         if (parent) {
+//           parent.subcategorias.push(categoria);
+//         }
+//       }
+//     });
+
+//     console.log("Categorias com subcategorias:", categoriasRaiz);
+//     return categoriasRaiz;
+//   } catch (error) {
+//     console.error("Database Error:", error);
+//     throw new Error("Failed to fetch categoria with subcategorias.");
+//   }
+// }
+
+
+// TROCADO POR:
+
+export async function fetchCategoriaComSubcategorias(id_categoria: string) {
   try {
-    // Buscar todas as categorias de uma vez
-    const categorias = await sql`
+    const categorias = await sql<Categoria[]>`
       SELECT
         id_categoria,
         nome,
@@ -174,17 +291,17 @@ export async function fetchCategoriaComSubcategorias() {
     `;
 
     // Criar um mapa para acesso rápido por ID
-    const categoriasMap = new Map();
+    const categoriasMap = new Map<string, any>();
 
-    // Inicializar todas as categorias com array vazio de subcategorias
-    categorias.forEach((categoria) => {
-      categoriasMap.set(categoria.id_categoria, {
-        id_categoria: categoria.id_categoria,
-        nome: categoria.nome,
-        parent_id: categoria.parent_id,
-        created_at: categoria.created_at.toLocaleDateString(),
-        updated_at: categoria.updated_at.toLocaleDateString(),
-        adicionado_por: categoria.adicionado_por,
+    // ✅ Adicionar tipo ao parâmetro
+    categorias.forEach((cat: Categoria) => {
+      categoriasMap.set(cat.id_categoria, {
+        id_categoria: cat.id_categoria,
+        nome: cat.nome,
+        parent_id: cat.parent_id,
+        created_at: cat.created_at,
+        updated_at: cat.updated_at,
+        adicionado_por: cat.adicionado_por,
         subcategorias: [],
       });
     });
@@ -192,15 +309,14 @@ export async function fetchCategoriaComSubcategorias() {
     // Organizar em estrutura hierárquica
     const categoriasRaiz: CategoriaRaiz[] = [];
 
-    categoriasMap.forEach((categoria) => {
-      if (categoria.parent_id === null) {
-        // É uma categoria raiz
-        categoriasRaiz.push(categoria);
+    // ✅ Adicionar tipo ao parâmetro
+    categoriasMap.forEach((cat: any) => {
+      if (cat.parent_id === null) {
+        categoriasRaiz.push(cat);
       } else {
-        // É uma subcategoria, adicionar apenas o objeto de subcategoria ao parent
-        const parent = categoriasMap.get(categoria.parent_id);
+        const parent = categoriasMap.get(cat.parent_id);
         if (parent) {
-          parent.subcategorias.push(categoria);
+          parent.subcategorias.push(cat);
         }
       }
     });

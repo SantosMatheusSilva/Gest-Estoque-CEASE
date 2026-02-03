@@ -5,29 +5,96 @@ import FormSurface from "@/src/ui/Surface";
 import Form from "next/form";
 import { InputField } from "../InputField";
 
-function CreateCategoryForm() {
+import { createCategoria } from "@/src/lib/actions";
+import { z } from "zod";
+
+import { useActionState } from "react";
+import { createCategoriaAction } from "@/src/lib/actions";
+export function CreateCategoryForm() {
+  const initialState = { message: null, errors: {} };
+  
+  const [state, formAction, isPending] = useActionState(
+    createCategoriaAction,
+    initialState
+  );
+
   return (
-    <FormSurface title="Create Category" variant="secondary">
-      <Form action={""}>
-        <InputField
-          name="nome"
-          label="Nome da Categoria"
-          //placeholder="Digite o nome da categoria"
-          isRequired
-        />
+    <FormSurface title="Criar Categoria" variant="secondary">
+      <form action={formAction}>
+        <div className="space-y-4">
+          <InputField
+            name="nome"
+            label="Nome da Categoria"
+            //placeholder="Digite o nome (ex: Eletrónicos)"
+            isRequired
+            // Correção: de disabled para isDisabled
+            isDisabled={isPending}
+          />
+          
+          {state.errors?.nome && (
+            <p className="text-sm text-red-500 font-medium">
+              {state.errors.nome[0]}
+            </p>
+          )}
+
+          {state.message && !state.errors?.nome && (
+            <p className="text-sm text-red-500">{state.message}</p>
+          )}
+        </div>
+
         <div className="flex gap-2 mt-6">
-          <Button type="submit" variant="primary">
-            Criar Categoria
+          <Button type="submit" variant="primary" isDisabled={isPending}>
+            {isPending ? "A criar..." : "Criar Categoria"}
           </Button>
-          <Button type="button" variant="danger">
+          
+          <Button 
+            type="button" 
+            variant="danger" 
+            // Correção: de disabled para isDisabled
+            isDisabled={isPending}
+          >
             Cancelar
           </Button>
         </div>
-      </Form>
+      </form>
     </FormSurface>
   );
 }
-export { CreateCategoryForm };
+  
+//   const CreateInvoice = FormSchema.omit({ id: true, date: true });
+  
+// export type State = {
+//   errors?: {
+//     customerId?: string[];
+//     amount?: string[];
+//     status?: string[];
+//   };
+//   message?: string | null;
+//   };
+  
+
+//   return (
+//     <FormSurface title="Create Category" variant="secondary">
+//       <Form action={""}>
+//         <InputField
+//           name="nome"
+//           label="Nome da Categoria"
+//           //placeholder="Digite o nome da categoria"
+//           isRequired
+//         />
+//         <div className="flex gap-2 mt-6">
+//           <Button type="submit" variant="primary">
+//             Criar Categoria
+//           </Button>
+//           <Button type="button" variant="danger">
+//             Cancelar
+//           </Button>
+//         </div>
+//       </Form>
+//     </FormSurface>
+//   );
+// }
+// export { CreateCategoryForm };
 
 /* // Zod validation schema
 const categoriaSchema = z.object({
