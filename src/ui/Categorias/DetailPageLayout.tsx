@@ -1,10 +1,11 @@
 import { PageLayout } from "../PageLayout";
 import { IconButton } from "../IconButton";
-import { TrashBin, Plus } from "@gravity-ui/icons";
+import { TrashBin } from "@gravity-ui/icons";
 import BaseSurface from "../Surface";
 import { CategoriaRaiz } from "@/src/db/definitions";
 import { formatDateToLocal } from "@/src/lib/utils";
 import { ListBox, Label, Description } from "@heroui/react";
+import CreateSubcategoryForm from "./CreateSubcategoryForm";
 
 type Props = {
   categoriaInfo: CategoriaRaiz;
@@ -17,7 +18,7 @@ export default function DetailPageLayout({ categoriaInfo }: Props) {
       description="Detalhes da categoria"
       actions={
         <div className="flex gap-2">
-          <IconButton startIcon={<Plus />}>Adicionar Subcategoria</IconButton>
+          <CreateSubcategoryForm />
           <IconButton variant="danger" startIcon={<TrashBin />}>
             Excluir Categoria
           </IconButton>

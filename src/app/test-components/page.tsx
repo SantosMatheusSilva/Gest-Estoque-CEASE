@@ -8,12 +8,11 @@ import { Plus, TrashBin } from "@gravity-ui/icons";
 import { InputField } from "@/src/ui/InputField";
 import { FormSurface } from "@/src/ui/FormSurface";
 import Form from "next/form";
-import {
-  CreateCategoryForm,
-  EditCategoryForm,
-  CreateSubcategoryForm,
-  EditSubcategoryForm,
-} from "@/src/ui/Categorias";
+import { CreateCategoryForm } from "@/src/ui/Categorias/CreateCategoryForm";
+//import { EditCategoryForm } from "@/src/ui/Categorias/EditCategoryForm";
+import CreateSubcategoryForm from "@/src/ui/Categorias/CreateSubcategoryForm";
+//import { EditSubcategoryForm } from "@/src/ui/Categorias/EditSubcategoryForm";
+import { DashboardCards } from "@/src/ui/dashboard";
 
 export default function TestComponentsPage() {
   /*   const breadcrumbs: BreadcrumbItem[] = [
@@ -23,66 +22,66 @@ export default function TestComponentsPage() {
   ];  */
 
   // Mock data for testing forms
-  const [nome, setNome] = useState("");
-  const [subcatNome, setSubcatNome] = useState("");
+  //const [nome, setNome] = useState("");
+  //const [subcatNome, setSubcatNome] = useState("");
 
   // Mock category data
-  const mockCategory = {
+  /*   const mockCategory = {
     id_categoria: "cat-123",
     nome: "Bebidas",
-  };
+  }; */
 
-  const mockSubcategory = {
+  /*   const mockSubcategory = {
     id_categoria: "subcat-456",
     nome: "Refrigerantes",
     parent_id: "cat-123",
-  };
+  }; */
 
-  const mockParentCategories = [
+  /*   const mockParentCategories = [
     { id_categoria: "cat-123", nome: "Bebidas" },
     { id_categoria: "cat-789", nome: "Comidas" },
     { id_categoria: "cat-101", nome: "Laticínios" },
-  ];
+  ]; */
 
-  const mockParentCategory = {
+  /*   const mockParentCategory = {
     id_categoria: "cat-123",
     nome: "Bebidas",
-  };
+  }; */
 
   // Mock submit handlers
-  const handleCreateCategory = async (data: {
+  /*   const handleCreateCategory = async (data: {
     nome: string;
     adicionado_por: string;
   }) => {
     console.log("Create Category:", data);
     alert(`Categoria criada: ${data.nome}`);
-  };
+  }; */
 
-  const handleEditCategory = async (data: {
+  /*   const handleEditCategory = async (data: {
     id_categoria: string;
     nome: string;
   }) => {
     console.log("Edit Category:", data);
     alert(`Categoria editada: ${data.nome}`);
-  };
+  }; */
 
-  const handleCreateSubcategory = async (data: {
+  /*   const handleCreateSubcategory = async (data: {
     nome: string;
     parent_id: string;
     adicionado_por: string;
   }) => {
     console.log("Create Subcategory:", data);
     alert(`Subcategoria criada: ${data.nome} (parent: ${data.parent_id})`);
-  };
+  }; */
 
-  const handleEditSubcategory = async (data: {
+  /*   const handleEditSubcategory = async (data: {
     id_categoria: string;
     nome: string;
     parent_id: string;
   }) => {
     console.log("Edit Subcategory:", data);
     alert(`Subcategoria editada: ${data.nome} (parent: ${data.parent_id})`);
-  };
+  }; */
 
   return (
     <PageLayout
@@ -129,6 +128,12 @@ export default function TestComponentsPage() {
         </div>
       </section>
 
+      {/* Dashboard KPI Cards */}
+      <section className="space-y-4">
+        <h2 className="text-xl font-semibold">Dashboard KPI Cards</h2>
+        <DashboardCards />
+      </section>
+
       {/* Back to Home */}
       <div className="mt-8">
         <Button onClick={() => (window.location.href = "/")}>
@@ -152,34 +157,34 @@ export default function TestComponentsPage() {
           {/* Edit Category Form */}
           <div className="space-y-4">
             <h3 className="text-lg font-medium">Edit Category Form</h3>
-            <EditCategoryForm
+            {/*             <EditCategoryForm
               category={mockCategory}
               onSubmit={handleEditCategory}
               onCancel={() => alert("Edit Category Cancelled")}
-            />
+            /> */}
           </div>
 
           {/* Create Subcategory Form */}
           <div className="space-y-4">
             <h3 className="text-lg font-medium">Create Subcategory Form</h3>
             <CreateSubcategoryForm
-              parentCategory={mockParentCategory}
-              nome={subcatNome}
+            //parentCategory={mockParentCategory}
+            /*               nome={subcatNome}
               onNomeChange={setSubcatNome}
               onSubmit={handleCreateSubcategory}
-              onCancel={() => alert("Create Subcategory Cancelled")}
+              onCancel={() => alert("Create Subcategory Cancelled")} */
             />
           </div>
 
           {/* Edit Subcategory Form */}
           <div className="space-y-4">
             <h3 className="text-lg font-medium">Edit Subcategory Form</h3>
-            <EditSubcategoryForm
+            {/*             <EditSubcategoryForm
               subcategory={mockSubcategory}
               parentCategories={mockParentCategories}
               onSubmit={handleEditSubcategory}
               onCancel={() => alert("Edit Subcategory Cancelled")}
-            />
+            /> */}
           </div>
         </div>
       </section>
@@ -194,29 +199,14 @@ export default function TestComponentsPage() {
             description="Description"
             errorMessage="Error message"
             className="w-64"
-            type=""
-            value=""
-            onChange={() => {}}
           />
         </div>
 
         <div>
           <FormSurface className="p-4 w-80" title="Login" variant="transparent">
             <Form action={""}>
-              <InputField
-                label="Username"
-                className="mb-4"
-                type="text"
-                value=""
-                onChange={() => {}}
-              />
-              <InputField
-                label="Password"
-                className="mb-4"
-                type="password"
-                value=""
-                onChange={() => {}}
-              />
+              <InputField label="Username" className="mb-4" />
+              <InputField label="Password" />
               <Button variant="primary" className="w-full">
                 Submit
               </Button>

@@ -12,7 +12,7 @@ export const IconButton = React.forwardRef<
   IconButtonProps
 >(({ startIcon, endIcon, iconOnly, children, ...props }, ref) => {
   const isIconOnly = iconOnly || !children;
-  
+
   const content = (
     <>
       {startIcon && !isIconOnly && startIcon}
@@ -23,11 +23,7 @@ export const IconButton = React.forwardRef<
   );
 
   return (
-    <EnhancedButton 
-      ref={ref} 
-      {...props} 
-      isIconOnly={isIconOnly}
-    >
+    <EnhancedButton ref={ref} {...props} isIconOnly={isIconOnly}>
       {content}
     </EnhancedButton>
   );

@@ -4,6 +4,9 @@ import { Button } from "@/src/ui/Button";
 import FormSurface from "@/src/ui/Surface";
 import Form from "next/form";
 import { InputField } from "../InputField";
+import { Modal } from "@heroui/react";
+import { IconButton } from "@/src/ui/IconButton";
+import { Plus } from "@gravity-ui/icons";
 
 import { createCategoria } from "@/src/lib/actions";
 import { z } from "zod";
@@ -12,57 +15,36 @@ import { useActionState } from "react";
 import { createCategoriaAction } from "@/src/lib/actions";
 export function CreateCategoryForm() {
   const initialState = { message: null, errors: {} };
-  
+
   const [state, formAction, isPending] = useActionState(
     createCategoriaAction,
-    initialState
+    initialState,
   );
 
   return (
-    <FormSurface title="Criar Categoria" variant="secondary">
-      <form action={formAction}>
-        <div className="space-y-4">
-          <InputField
-            name="nome"
-            label="Nome da Categoria"
-            //placeholder="Digite o nome (ex: Eletrónicos)"
-            isRequired
-            // Correção: de disabled para isDisabled
-            isDisabled={isPending}
-          />
-          
-          {state.errors?.nome && (
-            <p className="text-sm text-red-500 font-medium">
-              {state.errors.nome[0]}
-            </p>
-          )}
-
-          {state.message && !state.errors?.nome && (
-            <p className="text-sm text-red-500">{state.message}</p>
-          )}
-        </div>
-
+    <FormSurface title="Create Category" variant="secondary">
+      <Form action={""}>
+        <InputField
+          name="nome"
+          label="Nome da Categoria"
+          //placeholder="Digite o nome da categoria"
+          isRequired
+        />
         <div className="flex gap-2 mt-6">
-          <Button type="submit" variant="primary" isDisabled={isPending}>
-            {isPending ? "A criar..." : "Criar Categoria"}
+          <Button type="submit" variant="primary">
+            Criar Categoria
           </Button>
-          
-          <Button 
-            type="button" 
-            variant="danger" 
-            // Correção: de disabled para isDisabled
-            isDisabled={isPending}
-          >
+          <Button type="button" variant="danger">
             Cancelar
           </Button>
         </div>
-      </form>
+      </Form>
     </FormSurface>
   );
 }
-  
+
 //   const CreateInvoice = FormSchema.omit({ id: true, date: true });
-  
+
 // export type State = {
 //   errors?: {
 //     customerId?: string[];
@@ -71,7 +53,6 @@ export function CreateCategoryForm() {
 //   };
 //   message?: string | null;
 //   };
-  
 
 //   return (
 //     <FormSurface title="Create Category" variant="secondary">

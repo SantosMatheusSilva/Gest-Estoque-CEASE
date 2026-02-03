@@ -1,11 +1,10 @@
-'use client';
-import { useState, useEffect } from 'react';
-import { PageLayout } from '@/src/ui/PageLayout';
-import { fetchAllProdutos, adicionarProduto, editarProduto, removerProduto } from '@/src/lib/data';
-import { Produto } from '@/src/db/definitions';
+import { fetchCategoriaComSubcategorias } from "@/src/db/data";
+import ProductPageLayout from "@/src/ui/Produtos/ProductsPageLayout";
+import { CategoriaRaiz } from "@/src/db/definitions";
+export default async function ProdutosPage() {
+  const categorias: CategoriaRaiz[] = await fetchCategoriaComSubcategorias();
 
-export default function ProdutosPage() {
-  const [produtos, setProdutos] = useState<Produto[]>([]);
+  /* const [produtos, setProdutos] = useState<Produto[]>([]);
   const [loading, setLoading] = useState(true);
   const [deleting, setDeleting] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
@@ -13,12 +12,12 @@ export default function ProdutosPage() {
   const [editingId, setEditingId] = useState<string | null>(null);
 
   const [formData, setFormData] = useState({
-    nome: '',
+    nome: "",
     quantidade: 0,
     preco: 0,
-    descricao: '',
-    img_url: '',
-    id_categoria: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
+    descricao: "",
+    img_url: "",
+    id_categoria: "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
   });
 
   useEffect(() => {
@@ -31,7 +30,7 @@ export default function ProdutosPage() {
       const data = await fetchAllProdutos();
       setProdutos(data);
     } catch (error) {
-      console.error('Erro ao carregar:', error);
+      console.error("Erro ao carregar:", error);
     } finally {
       setLoading(false);
     }
@@ -40,12 +39,12 @@ export default function ProdutosPage() {
   const handleNovoClick = () => {
     setEditingId(null);
     setFormData({
-      nome: '',
+      nome: "",
       quantidade: 0,
       preco: 0,
-      descricao: '',
-      img_url: '',
-      id_categoria: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
+      descricao: "",
+      img_url: "",
+      id_categoria: "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
     });
     setShowModal(true);
   };
@@ -56,8 +55,8 @@ export default function ProdutosPage() {
       nome: produto.nome,
       quantidade: produto.quantidade,
       preco: parseFloat(produto.preco as any),
-      descricao: produto.descricao || '',
-      img_url: produto.img_url || '',
+      descricao: produto.descricao || "",
+      img_url: produto.img_url || "",
       id_categoria: produto.id_categoria,
     });
     setShowModal(true);
@@ -65,7 +64,7 @@ export default function ProdutosPage() {
 
   const handleSave = async () => {
     if (!formData.nome.trim()) {
-      alert('Nome é obrigatório');
+      alert("Nome é obrigatório");
       return;
     }
 
@@ -76,41 +75,41 @@ export default function ProdutosPage() {
       } else {
         await adicionarProduto({
           ...formData,
-          adicionado_por: '11111111-1111-1111-1111-111111111111',
+          adicionado_por: "11111111-1111-1111-1111-111111111111",
         });
       }
       await carregarProdutos();
       setShowModal(false);
     } catch (error) {
-      console.error('Erro:', error);
-      alert('Erro ao guardar produto');
+      console.error("Erro:", error);
+      alert("Erro ao guardar produto");
     } finally {
       setSaving(false);
     }
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm('Tem a certeza que quer deletar?')) return;
+    if (!confirm("Tem a certeza que quer deletar?")) return;
 
     setDeleting(id);
     try {
       await removerProduto(id);
       await carregarProdutos();
     } catch (error) {
-      console.error('Erro:', error);
-      alert('Erro ao deletar produto');
+      console.error("Erro:", error);
+      alert("Erro ao deletar produto");
     } finally {
       setDeleting(null);
     }
-  };
+  }; */
 
   return (
-    <PageLayout
-      title="Gestão de Produtos"
-      description="Gerencie seu inventário e níveis de stock"
-    >
+    <main>
+      <ProductPageLayout categorias={categorias} />
+      {/* conteudo da pagina */}
+      <div></div>
       {/* HEADER */}
-      <div className="flex justify-between items-center mb-8">
+      {/*       <div className="flex justify-between items-center mb-8">
         <h2 className="text-2xl font-bold text-gray-800">📦 Produtos</h2>
         <button
           onClick={handleNovoClick}
@@ -118,16 +117,18 @@ export default function ProdutosPage() {
         >
           ➕ Novo Produto
         </button>
-      </div>
+      </div> */}
 
       {/* LOADING */}
-      {loading ? (
+      {/* {loading ? (
         <div className="flex justify-center items-center min-h-96">
           <p className="text-gray-500">A carregar produtos...</p>
         </div>
       ) : produtos.length === 0 ? (
         <div className="text-center py-20 bg-white rounded-lg">
-          <p className="text-gray-500 text-xl mb-4">Nenhum produto encontrado</p>
+          <p className="text-gray-500 text-xl mb-4">
+            Nenhum produto encontrado
+          </p>
           <button
             onClick={handleNovoClick}
             className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition"
@@ -136,16 +137,16 @@ export default function ProdutosPage() {
           </button>
         </div>
       ) : (
-        <>
-          {/* GRID */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
+        <> */}
+      {/* GRID */}
+      {/* <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
             {produtos.map((produto) => (
               <div
                 key={produto.id}
                 className="bg-white rounded-lg shadow-md hover:shadow-lg transition overflow-hidden"
-              >
-                {/* IMAGEM */}
-                {produto.img_url ? (
+              > */}
+      {/* IMAGEM */}
+      {/* {produto.img_url ? (
                   <img
                     src={produto.img_url}
                     alt={produto.nome}
@@ -156,16 +157,20 @@ export default function ProdutosPage() {
                     <span className="text-gray-500">Sem imagem</span>
                   </div>
                 )}
-
-                {/* CONTENT */}
-                <div className="p-4">
-                  <h3 className="font-bold text-lg text-slate-900 mb-2 line-clamp-2">{produto.nome}</h3>
+ */}
+      {/* CONTENT */}
+      {/* <div className="p-4">
+                  <h3 className="font-bold text-lg text-slate-900 mb-2 line-clamp-2">
+                    {produto.nome}
+                  </h3>
                   {produto.descricao && (
-                    <p className="text-sm text-gray-600 mb-4 line-clamp-2">{produto.descricao}</p>
-                  )}
+                    <p className="text-sm text-gray-600 mb-4 line-clamp-2">
+                      {produto.descricao}
+                    </p>
+                  )} */}
 
-                  {/* INFO */}
-                  <div className="grid grid-cols-2 gap-4 mb-4 border-t border-gray-200 pt-4">
+      {/* INFO */}
+      {/* <div className="grid grid-cols-2 gap-4 mb-4 border-t border-gray-200 pt-4">
                     <div>
                       <p className="text-xs text-gray-500 mb-1">Preço</p>
                       <p className="text-lg font-bold text-teal-600">
@@ -176,16 +181,18 @@ export default function ProdutosPage() {
                       <p className="text-xs text-gray-500 mb-1">Stock</p>
                       <p
                         className={`text-lg font-bold ${
-                          produto.quantidade > 0 ? 'text-green-600' : 'text-red-600'
+                          produto.quantidade > 0
+                            ? "text-green-600"
+                            : "text-red-600"
                         }`}
                       >
                         {produto.quantidade}
                       </p>
                     </div>
-                  </div>
+                  </div> */}
 
-                  {/* BOTÕES */}
-                  <div className="flex gap-2">
+      {/* BOTÕES */}
+      {/*  <div className="flex gap-2">
                     <button
                       onClick={() => handleEditClick(produto)}
                       className="flex-1 bg-yellow-500 text-white py-2 rounded hover:bg-yellow-600 transition text-sm font-medium"
@@ -197,43 +204,53 @@ export default function ProdutosPage() {
                       disabled={deleting === produto.id}
                       className="flex-1 bg-red-500 text-white py-2 rounded hover:bg-red-600 transition text-sm font-medium disabled:opacity-50"
                     >
-                      {deleting === produto.id ? '...' : 'Deletar'}
+                      {deleting === produto.id ? "..." : "Deletar"}
                     </button>
                   </div>
                 </div>
               </div>
             ))}
-          </div>
+          </div> */}
 
-          {/* TOTAL */}
-          <div className="p-4 bg-white rounded-lg border border-gray-200 text-center">
+      {/* TOTAL */}
+      {/*          <div className="p-4 bg-white rounded-lg border border-gray-200 text-center">
             <p className="text-gray-600">
-              Total: <span className="font-bold text-lg text-teal-600">{produtos.length}</span>
+              Total:{" "}
+              <span className="font-bold text-lg text-teal-600">
+                {produtos.length}
+              </span>
             </p>
           </div>
         </>
       )}
-
+ */}
       {/* MODAL */}
-      {showModal && (
+      {/* {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 max-w-lg w-full mx-4">
             <h2 className="text-2xl font-bold mb-4">
-              {editingId ? '✏️ Editar Produto' : '➕ Novo Produto'}
+              {editingId ? "✏️ Editar Produto" : "➕ Novo Produto"}
             </h2>
 
             <div className="flex flex-col gap-4 mb-6">
               <input
                 placeholder="Nome"
                 value={formData.nome}
-                onChange={(e) => setFormData({ ...formData, nome: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, nome: e.target.value })
+                }
                 className="border border-gray-300 p-3 rounded bg-white text-black"
               />
               <input
                 type="number"
                 placeholder="Quantidade"
                 value={formData.quantidade}
-                onChange={(e) => setFormData({ ...formData, quantidade: parseInt(e.target.value) || 0 })}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    quantidade: parseInt(e.target.value) || 0,
+                  })
+                }
                 className="border border-gray-300 p-3 rounded bg-white text-black"
               />
               <input
@@ -241,19 +258,28 @@ export default function ProdutosPage() {
                 step="0.01"
                 placeholder="Preço (€)"
                 value={formData.preco}
-                onChange={(e) => setFormData({ ...formData, preco: parseFloat(e.target.value) || 0 })}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    preco: parseFloat(e.target.value) || 0,
+                  })
+                }
                 className="border border-gray-300 p-3 rounded bg-white text-black"
               />
               <input
                 placeholder="URL da Imagem"
                 value={formData.img_url}
-                onChange={(e) => setFormData({ ...formData, img_url: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, img_url: e.target.value })
+                }
                 className="border border-gray-300 p-3 rounded bg-white text-black"
               />
               <input
                 placeholder="Descrição"
                 value={formData.descricao}
-                onChange={(e) => setFormData({ ...formData, descricao: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, descricao: e.target.value })
+                }
                 className="border border-gray-300 p-3 rounded bg-white text-black"
               />
             </div>
@@ -270,16 +296,12 @@ export default function ProdutosPage() {
                 disabled={saving}
                 className="flex-1 bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition disabled:opacity-50"
               >
-                {saving ? '...' : editingId ? 'Guardar' : 'Criar'}
+                {saving ? "..." : editingId ? "Guardar" : "Criar"}
               </button>
             </div>
           </div>
         </div>
-      )}
-    </PageLayout>
+      )} */}
+    </main>
   );
 }
-
-
-
-
