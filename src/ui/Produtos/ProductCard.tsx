@@ -1,60 +1,62 @@
+"use client";
+
 import { Card } from "@heroui/react";
 import Image from "next/image";
 import Link from "next/link";
 import { Produto } from "@/src/db/definitions";
-//import { fetchAllProdutos } from "@/src/lib/data"; -> fetch feito na pagina.
 import { ArrowUpRightFromSquare } from "@gravity-ui/icons";
 
 interface ProductCardProps {
   produto: Produto;
+  onEdit?: (produto: Produto) => void;
 }
-async function ProductCard({ produto }: ProductCardProps) {
-  /*   if (Listaprodutos.length === 0) {
-    return (
-      <Card className="w-[200px] gap-2">
-        <Card.Header>
-          <Card.Title>Nenhum produto disponível</Card.Title>
-        </Card.Header>
-        <Card.Description className="flex gap-2">
-          Comece por adicionar Categorias e Subcategorias e a seguir adicionar
-          produtos.
-        </Card.Description>
-        <Card.Footer className="flex gap-2">
-          <Link href="/aplicacao/categorias">
-            Navegar para Categorias <ArrowUpRightFromSquare />
-          </Link>
-        </Card.Footer>
-      </Card>
-    );
-  } */
+
+export default function ProductCard({ 
+  produto, 
+  onEdit 
+}: ProductCardProps) {
   return (
-    <Card className="w-[200px] gap-2">
-      <div className="relative h-[140px] w-full shrink-0 overflow-hidden rounded-2xl sm:h-[120px] sm:w-[120px]">
+    <Card className="w-[200px] gap-2 hover:shadow-lg transition-shadow">
+      <div className="relative h-[140px] w-full shrink-0 overflow-hidden rounded-2xl">
         <Image
-          src={"/placeholder.png"}
-          alt={""}
-          width={200}
-          height={200}
-          className="pointer-events-none absolute inset-0 h-full w-full scale-125 object-cover select-none"
+          src="/placeholder.png"  // Sem imgUrl por agora
+          alt={produto.nome}
+          fill
+          className="object-cover"
         />
       </div>
+      
       <Card.Header>
         <Card.Title>{produto.nome}</Card.Title>
-        <Card.Description className="flex gap-2">
-          {produto.quantidade} em estoque
+        <Card.Description>
+          {produto.quantidade || 0} un.  {/* Usa quantidade como no teu original */}
         </Card.Description>
       </Card.Header>
-      <Card.Footer className="flex gap-2">
-        <Link
-          className="hover:underline flex items-center gap-1"
-          href={`/aplicacao/produtos/${produto.id}/detalhes`}
+      
+      <Card.Footer className="flex gap-2 justify-between items-center">
+        <Link 
+          href={`/aplicacao/produtos/${produto.id}`} 
+          className="hover:underline flex items-center gap-1 text-sm"
         >
           Detalhes <ArrowUpRightFromSquare />
         </Link>
-        {/* <span className="text-xs"></span> */}
+        
+        {onEdit && (
+          <button 
+            onClick={(e) => {
+              e.stopPropagation();
+              onEdit(produto);
+            }}
+            className="p-1 hover:bg-gray-100 rounded-full -m-1"
+            title="Editar produto"
+          >
+            ✏️  {/* Emoji simples */}
+          </button>
+        )}
       </Card.Footer>
     </Card>
   );
 }
 
-export default ProductCard;
+
+

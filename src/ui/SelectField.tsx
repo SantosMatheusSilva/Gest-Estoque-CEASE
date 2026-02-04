@@ -1,67 +1,50 @@
-import { Description, Label, ListBox, Select, FieldError } from "@heroui/react";
-
-interface SelectOption {
-  id: string;
-  label: string;
-}
+import React from "react";
 
 interface SelectFieldProps {
   label: string;
-  name: string; // 🔑 ESSENCIAL para FormData
-  options: SelectOption[];
-
-  description?: string;
-  errorMessage?: string;
-  placeholder?: string;
+  name: string;
   required?: boolean;
-  disabled?: boolean;
-  className?: string;
+  options: { id: string; label: string }[];
+  error?: string;
 }
 
-export function SelectField({
-  label,
-  name,
-  options,
-  description,
-  errorMessage,
-  placeholder = "Selecione uma opção",
-  required,
-  disabled,
-  className,
+export function SelectField({ 
+  label, 
+  name, 
+  required, 
+  options, 
+  error 
 }: SelectFieldProps) {
   return (
-    <Select
-      className={className}
-      name={name} // ✅ aqui
-      isRequired={required}
-      isDisabled={disabled}
-      placeholder={placeholder}
-      isInvalid={!!errorMessage}
-    >
-      <Label>{label}</Label>
-
-      <Select.Trigger>
-        <Select.Value />
-        <Select.Indicator />
-      </Select.Trigger>
-
-      <Select.Popover>
-        <ListBox>
-          {options.map((opt) => (
-            <ListBox.Item
-              key={opt.id}
-              id={opt.id} // 🔑 valor enviado no FormData
-              textValue={opt.label}
-            >
-              {opt.label}
-              <ListBox.ItemIndicator />
-            </ListBox.Item>
-          ))}
-        </ListBox>
-      </Select.Popover>
-
-      {description && <Description>{description}</Description>}
-      {errorMessage && <FieldError>{errorMessage}</FieldError>}
-    </Select>
+    <div className="form-group">
+      <label htmlFor={name} className="form-label">
+        {label}
+      </label>
+      <select 
+        name={name} 
+        id={name} 
+        required={required} 
+        className="form-control"
+        aria-invalid={error ? "true" : "false"}
+        aria-describedby={error ? `${name}-error` : undefined}
+      >
+        <option value="">Selecione...</option>
+        {options.map((opt) => (
+          <option key={opt.id} value={opt.id}>
+            {opt.label}
+          </option>
+        ))}
+      </select>
+      {error && (
+        <p 
+          id={`${name}-error`} 
+          className="mt-1 text-sm text-red-600"
+        >
+          {error}
+        </p>
+      )}
+    </div>
   );
 }
+
+
