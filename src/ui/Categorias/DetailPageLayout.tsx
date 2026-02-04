@@ -84,19 +84,6 @@ export default function DetailPageLayout({ categoriaInfo }: Props) {
               )}
             </ListBox.Section>
           </ListBox>
-          {/*           {categoriaInfo.subcategorias &&
-          categoriaInfo.subcategorias.length > 0 ? (
-            <ul className="list-disc list-inside">
-              {categoriaInfo.subcategorias.map((subcategoria) => (
-                <li key={subcategoria.id_categoria}>
-                  {subcategoria.nome}
-                  <p>{subcategoria.total_produtos}</p>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p className="text-gray-500">Nenhuma subcategoria associada.</p>
-          )} */}
         </div>
       </BaseSurface>
     </PageLayout>

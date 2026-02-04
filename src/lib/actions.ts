@@ -17,8 +17,6 @@ import { z } from "zod";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
-
-
 // ========== PRODUTOS ==========
 
 // 1) LISTAR TODOS
@@ -59,11 +57,11 @@ export async function createProduto(produto: CreateProduto): Promise<Produto> {
 }
 
 // 3) BUSCAR POR ID
-export async function getProdutoById(idUUID: string): Promise<Produto | null> {
+export async function getProdutoById(id: string): Promise<Produto | null> {
   const result = await sql`
     SELECT *
     FROM produtos
-    WHERE id = ${idUUID}
+    WHERE id = ${id}
   `;
   const rows = result as unknown as Produto[];
   return rows[0] ?? null;
@@ -173,8 +171,8 @@ export async function createCategoria(
 
 // 1. Definição do Tipo (Unificado para evitar erros)
 export type CreateCategoriaState = {
-  errors?: { 
-    nome?: string[]; 
+  errors?: {
+    nome?: string[];
     parent_id?: string[]; // Adicionado para suportar subcategorias
   };
   message?: string | null;
@@ -197,7 +195,7 @@ const SubCategoriaSchema = CategoriaSchema.extend({
 // 3. Action para Categoria Raiz
 export async function createCategoriaAction(
   prevState: CreateCategoriaState,
-  formData: FormData
+  formData: FormData,
 ): Promise<CreateCategoriaState> {
   const validatedFields = CategoriaSchema.safeParse({
     nome: formData.get("nome"),
@@ -232,13 +230,14 @@ export async function createCategoriaAction(
     `;
   } catch (error) {
     console.error("Database Error:", error);
-    return { message: "Erro de base de dados: Não foi possível criar a categoria." };
+    return {
+      message: "Erro de base de dados: Não foi possível criar a categoria.",
+    };
   }
 
   revalidatePath("/aplicacao/categorias");
   redirect("/aplicacao/categorias");
 }
-
 
 // 4) CRIAR SUBCATEGORIA
 export async function createSubCategoria(
@@ -253,13 +252,12 @@ export async function createSubCategoria(
   return rows[0];
 }
 
-
 // 4. VERSAO ADPTADA - Action para Subcategoria
 export async function createSubCategoriaAction(
   prevState: CreateCategoriaState, // CORRIGIDO: Era CategoriaState
-  formData: FormData
-): Promise<CreateCategoriaState> // CORRIGIDO: Era CategoriaState
-{
+  formData: FormData,
+): Promise<CreateCategoriaState> {
+  // CORRIGIDO: Era CategoriaState
   const validatedFields = SubCategoriaSchema.safeParse({
     nome: formData.get("nome"),
     parent_id: formData.get("parent_id"),
@@ -283,7 +281,9 @@ export async function createSubCategoriaAction(
 
     if (existing.length > 0) {
       return {
-        errors: { nome: ["Já existe esta subcategoria dentro desta categoria pai."] },
+        errors: {
+          nome: ["Já existe esta subcategoria dentro desta categoria pai."],
+        },
         message: "Erro: Nome duplicado no mesmo nível.",
       };
     }
@@ -300,7 +300,6 @@ export async function createSubCategoriaAction(
   revalidatePath("/aplicacao/categorias");
   redirect("/aplicacao/categorias");
 }
-
 
 // 5) ATUALIZAR CATEGORIA
 export async function updateCategoria(

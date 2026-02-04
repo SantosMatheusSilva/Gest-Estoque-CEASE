@@ -4,8 +4,8 @@ import {
   createProduto,
   updateProduto,
   deleteProduto,
-} from './actions';
-import type { Produto, CreateProduto } from '../db/definitions';
+} from "./actions";
+import type { Produto, CreateProduto } from "../db/definitions";
 
 // Camada “limpa” que o app vai usar
 
@@ -15,8 +15,8 @@ export async function fetchAllProdutos(): Promise<Produto[]> {
 }
 
 // FETCH (um só produto)
-export async function fetchProduto(idUUID: string): Promise<Produto | null> {
-  return await getProdutoById(idUUID);
+export async function fetchProduto(id: string): Promise<Produto | null> {
+  return await getProdutoById(id);
 }
 
 // CREATE
@@ -27,7 +27,7 @@ export async function adicionarProduto(data: CreateProduto): Promise<Produto> {
 // UPDATE
 export async function editarProduto(
   idUUID: string,
-  data: Partial<CreateProduto>
+  data: Partial<CreateProduto>,
 ): Promise<Produto> {
   return await updateProduto(idUUID, data);
 }
