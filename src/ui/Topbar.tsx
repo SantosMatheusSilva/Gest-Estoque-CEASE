@@ -2,30 +2,24 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { Button } from "@heroui/react";
-import { Plus } from "@gravity-ui/icons";
-import { UserDropdown } from "@/src/ui/Usuario/UserDropdown";
-import { UsuarioPublico } from "../db/definitions";
+import { UserButton } from "@clerk/nextjs";
 
 import BaseSurface from "./Surface";
 
 interface TopbarProps {
-  usuario: UsuarioPublico;
+  //id: string;
+  nome?: string | null;
+  sobrenome?: string | null;
 }
 
-export function Topbar({ usuario }: TopbarProps) {
-  const router = useRouter();
+export function Topbar({ nome, sobrenome }: TopbarProps) {
+  //teste
+  //console.log("Topbar usuario:", nome, sobrenome);
 
-  const handleProfileClick = () => {
-    router.push("/aplicacao/perfil");
-  };
-
-  const handleLogoutClick = () => {
-    // TODO: Implement logout logic
-    router.push("/");
-  };
-
+  function capitalize(value?: string | null) {
+    if (!value) return "";
+    return value.charAt(0).toUpperCase() + value.slice(1).toLowerCase();
+  }
   return (
     <BaseSurface
       variant="default"
@@ -61,12 +55,9 @@ export function Topbar({ usuario }: TopbarProps) {
         </div>
 
         {/* User Dropdown */}
-        <div className="flex items-center gap-4">
-          <UserDropdown
-            usuario={usuario}
-            onProfileClick={handleProfileClick}
-            onLogoutClick={handleLogoutClick}
-          />
+        <div className="flex items-center gap-2">
+          <h3 className="font-semibold hidden md:block">{`${capitalize(nome)} ${capitalize(sobrenome)}`}</h3>
+          <UserButton />
         </div>
       </div>
     </BaseSurface>

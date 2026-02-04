@@ -11,9 +11,9 @@ export default async function CategoryCards() {
   console.log("First category:", categoriasComSubcategorias[0]); */
 
   return (
-    <div className="flex flex-wrap gap-4">
+    <div className="flex flex-wrap gap-4 align-center">
       {categoriasComSubcategorias.map((categoria) => (
-        <Card key={categoria.id_categoria} className="mb-4 p-4 w-[400px]">
+        <Card key={categoria.id_categoria} className="mb-4 p-4 w-100">
           <Card.Header>
             <Card.Title className="text-xl font-bold mb-2">
               {categoria.nome}

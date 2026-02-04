@@ -1,16 +1,13 @@
 import { PageLayout } from "../PageLayout";
 import CategoryCards from "./CategoryCard";
-import { IconButton } from "../IconButton";
-import { Plus } from "@gravity-ui/icons";
+import { CreateCategoryForm } from "./CreateCategoryForm";
 
 function CategoryPageLayout() {
   return (
     <PageLayout
       title="Categorias"
       description="Lista de categorias e subcategorias"
-      actions={
-        <IconButton startIcon={<Plus />}>Adicionar Categoria</IconButton>
-      }
+      actions={<CreateCategoryForm />}
     >
       <CategoryCards />
     </PageLayout>

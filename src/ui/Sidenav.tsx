@@ -2,7 +2,6 @@ import Link from "next/link";
 import BaseSurface from "./Surface";
 import Image from "next/image";
 import { House, Box, Copy } from "@gravity-ui/icons";
-import { IconButton } from "./IconButton";
 
 function Sidenav() {
   return (
@@ -25,50 +24,33 @@ function Sidenav() {
       </BaseSurface>
       <BaseSurface
         variant="default"
-        className="flex grow mt-4 flex-row justify-between  rounded-3xl space-x-2 md:flex-col md:space-x-0 md:space-y-2"
+        className="flex grow mt-4 flex-row justify-between rounded-3xl space-x-2 md:flex-col md:space-x-0 md:space-y-2"
       >
         <div className="flex flex-col gap-3 p-4">
-          <Link href="/aplicacao">
-            <IconButton
-              className="w-full"
-              variant="outline"
-              startIcon={<House />}
-            >
-              Home
-            </IconButton>
+          <Link
+            href="/aplicacao"
+            className="w-full flex justify-center items-center gap-2 px-4 py-2 rounded-4xl border border-gray-300 hover:bg-gray-100 transition-colors"
+          >
+            <House className="w-5 h-5" />
+            <span>Home</span>
           </Link>
 
-          <Link href="/aplicacao/produtos">
-            <IconButton
-              className="w-full"
-              variant="outline"
-              startIcon={<Box />}
-            >
-              Produtos
-            </IconButton>
+          <Link
+            href="/aplicacao/produtos"
+            className="w-full flex justify-center items-center gap-2 px-4 py-2 rounded-4xl border border-gray-300 hover:bg-gray-100 transition-colors"
+          >
+            <Box className="w-5 h-5" />
+            <span>Produtos</span>
           </Link>
 
-          <Link href="/aplicacao/categorias">
-            <IconButton
-              className="w-full"
-              variant="outline"
-              startIcon={<Copy />}
-            >
-              Categorias
-            </IconButton>
+          <Link
+            href="/aplicacao/categorias"
+            className="w-full flex justify-center items-center gap-2 px-4 py-2 rounded-4xl border border-gray-300 hover:bg-gray-100 transition-colors"
+          >
+            <Copy className="w-5 h-5" />
+            <span>Categorias</span>
           </Link>
         </div>
-        {/* <form
-          action={async () => {
-            "use server";
-            await signOut({ redirectTo: "/auth/login" });
-          }}
-        >
-          <button className="flex h-[48px] w-full grow items-center justify-center gap-2 rounded-md bg-gray-50 p-3 text-sm font-medium hover:bg-sky-100 hover:text-blue-600 md:flex-none md:justify-start md:p-2 md:px-3">
-            <PowerIcon className="w-6" />
-            <div className="hidden md:block">Sign Out</div>
-          </button>
-        </form> */}
       </BaseSurface>
     </div>
   );

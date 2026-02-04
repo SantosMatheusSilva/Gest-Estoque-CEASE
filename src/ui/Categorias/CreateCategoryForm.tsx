@@ -4,30 +4,90 @@ import { Button } from "@/src/ui/Button";
 import FormSurface from "@/src/ui/Surface";
 import Form from "next/form";
 import { InputField } from "../InputField";
+import { Modal } from "@heroui/react";
+import { IconButton } from "@/src/ui/IconButton";
+import { Plus } from "@gravity-ui/icons";
 
-function CreateCategoryForm() {
+export function CreateCategoryForm() {
+  const initialState = { message: null, errors: {} };
+
   return (
-    <FormSurface title="Create Category" variant="secondary">
-      <Form action={""}>
-        <InputField
-          name="nome"
-          label="Nome da Categoria"
-          //placeholder="Digite o nome da categoria"
-          isRequired
-        />
-        <div className="flex gap-2 mt-6">
-          <Button type="submit" variant="primary">
-            Criar Categoria
-          </Button>
-          <Button type="button" variant="danger">
-            Cancelar
-          </Button>
-        </div>
-      </Form>
-    </FormSurface>
+    <Modal>
+      <IconButton startIcon={<Plus />}>Adicionar Categoria</IconButton>
+      <Modal.Backdrop>
+        <Modal.Container placement="auto">
+          <Modal.Dialog className="sm:max-w-md">
+            <Modal.CloseTrigger />
+            <Modal.Header>
+              <Modal.Heading>Criar Categoria</Modal.Heading>
+              <p className="mt-1.5 text-sm leading-5 text-muted">
+                Preencha o formulário abaixo para criar uma nova categoria.
+              </p>
+            </Modal.Header>
+            <Modal.Body className="p-6">
+              <FormSurface variant="default">
+                <Form action={""}>
+                  <InputField
+                    label="Nome"
+                    description="Digite o nome da categoria"
+                    inputProps={{
+                      id: "nome",
+                      name: "nome",
+                      type: "text",
+                      required: true,
+                    }}
+                  />
+                </Form>
+              </FormSurface>
+            </Modal.Body>
+            <Modal.Footer>
+              <Button slot="close" variant="secondary">
+                Cancelar
+              </Button>
+              <Button slot="close" type="submit">
+                Criar
+              </Button>
+            </Modal.Footer>
+          </Modal.Dialog>
+        </Modal.Container>
+      </Modal.Backdrop>
+    </Modal>
   );
 }
-export { CreateCategoryForm };
+
+//   const CreateInvoice = FormSchema.omit({ id: true, date: true });
+
+// export type State = {
+//   errors?: {
+//     customerId?: string[];
+//     amount?: string[];
+//     status?: string[];
+//   };
+//   message?: string | null;
+//   };
+
+//   return (
+//     <FormSurface title="Create Category" variant="secondary">
+//       <Form action={""}>
+//         <InputField
+//           name="nome"
+//           label="Nome da Categoria"
+//           //placeholder="Digite o nome da categoria"
+//           isRequired
+//         />
+//         <div className="flex gap-2 mt-6">
+//           <Button type="submit" variant="primary">
+//             Criar Categoria
+//           </Button>
+//           <Button type="button" variant="danger">
+//             Cancelar
+//           </Button>
+//         </div>
+//       </Form>
+//     </FormSurface>
+//   );
+// }
+// export { CreateCategoryForm };
 
 /* // Zod validation schema
 const categoriaSchema = z.object({

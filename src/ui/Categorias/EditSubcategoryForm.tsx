@@ -1,4 +1,4 @@
-"use client";
+/* "use client";
 
 import React, { useState, useCallback, useEffect, useRef } from "react";
 import { z } from "zod";
@@ -222,3 +222,4 @@ export function EditSubcategoryForm({
     </FormSurface>
   );
 }
+ */

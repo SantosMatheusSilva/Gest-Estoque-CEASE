@@ -37,7 +37,7 @@ export async function fetchUsuarioPorEmail(
 
 export async function fetchCategorias() {
   try {
-    const data = await sql`
+    const data = await sql<CategoriaRaiz[]>`
       SELECT
         categorias.id_categoria,
         categorias.nome,
@@ -53,7 +53,6 @@ export async function fetchCategorias() {
     throw new Error("Failed to fetch categorias.");
   }
 }
-
 
 export async function fetchCategoriaPorId(id: string) {
   console.log("fetchCategoriaPorId received id:", id);
@@ -137,6 +136,65 @@ export async function fetchCategoriaComSubcategoriaPorId(id: string) {
   }
 }
 
+// src/db/data.ts
+/* export async function fetchCategoriaComSubcategoriaPorId(id: string) {
+  try {
+    const categoria = await sql<CategoriaRaiz[]>`
+      SELECT
+        c.id_categoria,
+        c.nome,
+        c.parent_id,
+        c.created_at,
+        c.updated_at,
+        c.adicionado_por,
+        (
+          SELECT COUNT(*)
+          FROM produtos p
+          WHERE p.id_categoria = c.id_categoria
+        ) AS total_produtos
+      FROM categorias c
+      WHERE c.id_categoria = ${id}
+         OR c.parent_id = ${id}
+      ORDER BY c.nome
+    `;
+
+    // Criar um mapa para acesso rápido por ID
+    const categoriaMap = new Map<string, any>();
+
+    // ✅ Adicionar tipo ao parâmetro
+    categoria.forEach((cat: CategoriaRaiz) => {
+      categoriaMap.set(cat.id_categoria, {
+        ...cat,
+        created_at: cat.created_at,
+        updated_at: cat.updated_at,
+        adicionado_por: cat.adicionado_por,
+        subcategorias: [],
+      });
+    });
+
+    // Organizar em estrutura hierárquica
+    let categoriaRaiz: CategoriaRaiz = {} as CategoriaRaiz;
+
+    // ✅ Adicionar tipo ao parâmetro
+    categoriaMap.forEach((cat: any) => {
+      if (cat.parent_id === null) {
+        categoriaRaiz = cat;
+      } else {
+        const parent = categoriaMap.get(cat.parent_id);
+        if (parent) {
+          parent.subcategorias.push(cat);
+        }
+      }
+    });
+
+    console.log("Categorias com subcategorias:", categoriaRaiz);
+    return categoriaRaiz;
+  } catch (error) {
+    console.error("Database Error:", error);
+    throw new Error("Failed to fetch categoria with subcategorias.");
+  }
+} */
+
 export async function fetchSubcategorias() {
   // APENAS SUBCATEGORIAS
   try {
@@ -162,18 +220,18 @@ export async function fetchCategoriaComSubcategorias() {
   try {
     // Buscar todas as categorias de uma vez
     const categorias = await sql`
-      SELECT
-        id_categoria,
-        nome,
-        parent_id,
-        created_at,
-        updated_at,
-        adicionado_por
-      FROM categorias
-      ORDER BY nome
-    `;
+       SELECT
+         id_categoria,
+         nome,
+         parent_id,
+         created_at,
+         updated_at,
+         adicionado_por
+       FROM categorias
+       ORDER BY nome
+     `;
 
-    // Criar um mapa para acesso rápido por ID
+    //     // Criar um mapa para acesso rápido por ID
     const categoriasMap = new Map();
 
     // Inicializar todas as categorias com array vazio de subcategorias
@@ -213,15 +271,67 @@ export async function fetchCategoriaComSubcategorias() {
   }
 }
 
+// TROCADO POR: ====>> NÃO TROCAR OQ ESTA FUNCIONANDO!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+/* export async function fetchCategoriaComSubcategorias(id_categoria: string) {
+  try {
+    const categorias = await sql<Categoria[]>`
+      SELECT
+        id_categoria,
+        nome,
+        parent_id,
+        created_at,
+        updated_at,
+        adicionado_por
+      FROM categorias
+      ORDER BY nome
+    `;
+
+    // Criar um mapa para acesso rápido por ID
+    const categoriasMap = new Map<string, any>();
+
+    // ✅ Adicionar tipo ao parâmetro
+    categorias.forEach((cat: Categoria) => {
+      categoriasMap.set(cat.id_categoria, {
+        id_categoria: cat.id_categoria,
+        nome: cat.nome,
+        parent_id: cat.parent_id,
+        created_at: cat.created_at,
+        updated_at: cat.updated_at,
+        adicionado_por: cat.adicionado_por,
+        subcategorias: [],
+      });
+    });
+
+    // Organizar em estrutura hierárquica
+    const categoriasRaiz: CategoriaRaiz[] = [];
+
+    // ✅ Adicionar tipo ao parâmetro
+    categoriasMap.forEach((cat: any) => {
+      if (cat.parent_id === null) {
+        categoriasRaiz.push(cat);
+      } else {
+        const parent = categoriasMap.get(cat.parent_id);
+        if (parent) {
+          parent.subcategorias.push(cat);
+        }
+      }
+    });
+
+    console.log("Categorias com subcategorias:", categoriasRaiz);
+    return categoriasRaiz;
+  } catch (error) {
+    console.error("Database Error:", error);
+    throw new Error("Failed to fetch categoria with subcategorias.");
+  }
+} */
 
 // Função para criar categoria raiz
 
 import { CriarCategoria, CriarSubCategoria, Categoria } from "./definitions";
 
 // criar categoria raiz
-export async function criarCategoria(
-  data: CriarCategoria,
-): Promise<Categoria> {
+export async function criarCategoria(data: CriarCategoria): Promise<Categoria> {
   try {
     const [categoria] = await sql<Categoria[]>`
       INSERT INTO categorias (
@@ -248,7 +358,6 @@ export async function criarCategoria(
     throw new Error("Failed to create categoria.");
   }
 }
-
 
 // Função para criar subcategoria
 
@@ -282,7 +391,6 @@ export async function criarSubCategoria(
   }
 }
 
-
 // Função para atualizar categoria ou subcategoria
 
 export async function atualizarCategoria(
@@ -311,13 +419,9 @@ export async function atualizarCategoria(
   }
 }
 
-
 // Função para deletar categoria
 
-
-export async function deletarCategoria(
-  id_categoria: string,
-): Promise<void> {
+export async function deletarCategoria(id_categoria: string): Promise<void> {
   try {
     await sql`
       DELETE FROM categorias
@@ -329,8 +433,7 @@ export async function deletarCategoria(
   }
 }
 
-
-export async function testDbConnection() {
+/* export async function testDbConnection() {
   const result = await sql`SELECT 1 as ok`;
   return result;
-}
+} */

@@ -33,6 +33,7 @@ export type CriarCategoria = {
   //parent_id?: null;
   adicionado_por: string;
 };
+
 export type CriarSubCategoria = {
   nome: string;
   parent_id: string;
