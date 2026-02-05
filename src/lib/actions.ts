@@ -190,11 +190,15 @@ export async function createCategoriaAction(
   const { nome } = validatedFields.data;
   const userId = "id_temporario_usuario";
 
+  // passa parent_is por parametro ou dropdow 
+
   try {
     const existing = await sql`
       SELECT id_categoria FROM categorias 
       WHERE LOWER(nome) = LOWER(${nome}) AND parent_id IS NULL
     `;
+
+    // verificar depois se existe uma equals() 
 
     if (existing.length > 0) {
       return {
@@ -213,6 +217,8 @@ export async function createCategoriaAction(
       message: "Erro de base de dados: Não foi possível criar a categoria.",
     };
   }
+
+  console.log("Categoria Criada com sucesso!")
 
   revalidatePath("/aplicacao/categorias");
   redirect("/aplicacao/categorias");
@@ -257,6 +263,7 @@ export async function createSubCategoriaAction(
       WHERE LOWER(nome) = LOWER(${nome}) AND parent_id = ${parent_id}
     `;
 
+    // EXPLICAÇÃO: 
     if (existing.length > 0) {
       return {
         errors: {
@@ -275,8 +282,9 @@ export async function createSubCategoriaAction(
     return { message: "Erro de base de dados ao criar subcategoria." };
   }
 
-  revalidatePath("/aplicacao/categorias");
-  redirect("/aplicacao/categorias");
+  revalidatePath("/aplicacao/categorias/");
+  revalidatePath(`aplicacao/categorias/${parent_id}/detalhes`);
+  redirect(`aplicacao/categorias/${parent_id}/detalhes`);
 }
 
 // 5) ATUALIZAR CATEGORIA

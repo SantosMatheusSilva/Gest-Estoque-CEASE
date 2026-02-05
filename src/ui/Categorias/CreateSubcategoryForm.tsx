@@ -6,7 +6,16 @@ import { InputField } from "../InputField";
 import { Modal } from "@heroui/react";
 import { IconButton } from "@/src/ui/IconButton";
 import { Plus } from "@gravity-ui/icons";
+import { createSubCategoriaAction, CreateCategoriaState } from "@/src/lib/actions";
+import { useActionState } from "react";
+
+
 export default function CreateSubcategoryForm() {
+  const initialState: CreateCategoriaState = { message: null, errors: {} };
+    const [State, formAction] = useActionState(
+      createSubCategoriaAction,
+      initialState,
+    )
   return (
     <Modal>
       <IconButton startIcon={<Plus />}>Adicionar Subcategoria</IconButton>

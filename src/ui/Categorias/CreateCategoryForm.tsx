@@ -8,8 +8,15 @@ import { Modal } from "@heroui/react";
 import { IconButton } from "@/src/ui/IconButton";
 import { Plus } from "@gravity-ui/icons";
 
+import { createCategoriaAction, CreateCategoriaState } from "@/src/lib/actions";
+import { useActionState } from "react";
+
 export function CreateCategoryForm() {
-  const initialState = { message: null, errors: {} };
+  const initialState: CreateCategoriaState = { message: null, errors: {} };
+  const [State, formAction] = useActionState(
+    createCategoriaAction,
+    initialState,
+  );
 
   return (
     <Modal>
@@ -26,7 +33,7 @@ export function CreateCategoryForm() {
             </Modal.Header>
             <Modal.Body className="p-6">
               <FormSurface variant="default">
-                <Form action={""}>
+                <Form action={formAction}>
                   <InputField
                     label="Nome"
                     description="Digite o nome da categoria"
