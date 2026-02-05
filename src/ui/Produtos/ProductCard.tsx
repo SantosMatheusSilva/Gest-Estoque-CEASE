@@ -1,10 +1,10 @@
 "use client";
-
 import { Card } from "@heroui/react";
 import Image from "next/image";
 import Link from "next/link";
 import { Produto } from "@/src/db/definitions";
 import { ArrowUpRightFromSquare } from "@gravity-ui/icons";
+import DeleteProductButton from "@/src/ui//Produtos/DeleteProductButton";
 
 interface ProductCardProps {
   produto: Produto;
@@ -35,24 +35,33 @@ export default function ProductCard({
       
       <Card.Footer className="flex gap-2 justify-between items-center">
         <Link 
-          href={`/aplicacao/produtos/${produto.id}`} 
+          href={`/aplicacao/produtos/${produto.id}`}
           className="hover:underline flex items-center gap-1 text-sm"
         >
           Detalhes <ArrowUpRightFromSquare />
         </Link>
         
-        {onEdit && (
-          <button 
-            onClick={(e) => {
-              e.stopPropagation();
-              onEdit(produto);
-            }}
-            className="p-1 hover:bg-gray-100 rounded-full -m-1"
-            title="Editar produto"
-          >
-            ✏️  {/* Emoji simples */}
-          </button>
-        )}
+        <div className="flex gap-1 items-center">
+          {/* Botão de Editar */}
+          {onEdit && (
+            <button 
+              onClick={(e) => {
+                e.stopPropagation();
+                onEdit(produto);
+              }}
+              className="p-1 hover:bg-gray-100 rounded-full"
+              title="Editar produto"
+            >
+              ✏️
+            </button>
+          )}
+          
+          {/* Botão de Delete */}
+          <DeleteProductButton 
+            produto={produto} 
+            variant="icon"
+          />
+        </div>
       </Card.Footer>
     </Card>
   );

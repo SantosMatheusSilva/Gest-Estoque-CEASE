@@ -1,5 +1,4 @@
 "use client";
-
 import { useState } from "react";
 import { PageLayout } from "../PageLayout";
 import { CreateProductForm } from "@/src/ui/Produtos/CreateProductForm";
@@ -49,12 +48,16 @@ export default function ProductsPageLayout({
       ) : (
         <div className="flex flex-wrap gap-4">
           {produtos.map((produto) => (
-            <ProductCard key={produto.id} produto={produto} onEdit={openEdit} />
+            <ProductCard 
+              key={produto.id} 
+              produto={produto} 
+              onEdit={openEdit}
+            />
           ))}
         </div>
       )}
 
-      {/* Modal - passa array vazio para subcategorias */}
+      {/* Modal de Edição */}
       {produtoEdit && (
         <EditProductForm
           produto={produtoEdit}

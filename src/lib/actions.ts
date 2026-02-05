@@ -601,20 +601,93 @@ export async function updateProdutoAction(
   redirect("/aplicacao/produtos");
 }
 
-// 6. Action para DELETAR Produto
-export async function deleteProdutoAction(id: string): Promise<void> {
+// ========== DELETE PRODUTO COM VALIDAÇÃO ZOD ==========
+
+// Schema para validar o ID antes de deletar
+const DeleteProdutoSchema = z.object({
+  id: z.string().uuid("ID do produto inválido"),
+});
+
+// Tipo de Estado para o Delete
+export type DeleteProdutoState = {
+  success?: boolean;
+  error?: string;
+  message?: string | null;
+};
+
+// 6. Action para DELETAR Produto (NOVA VERSÃO COM VALIDAÇÃO)
+export async function deleteProdutoAction(
+  prevState: DeleteProdutoState,
+  formData: FormData,
+): Promise<DeleteProdutoState> {
+  
+  // Validar ID com Zod
+  const validatedFields = DeleteProdutoSchema.safeParse({
+    id: formData.get("id"),
+  });
+
+  if (!validatedFields.success) {
+    return {
+      success: false,
+      error: "invalid_id",
+      message: "Erro: ID do produto é inválido.",
+    };
+  }
+
+  const { id } = validatedFields.data;
+
   try {
+    // 1. Verificar se o produto existe antes de deletar
+    const produtoExistente = await sql`
+      SELECT id, nome FROM produtos WHERE id = ${id}
+    `;
+
+    if (produtoExistente.length === 0) {
+      return {
+        success: false,
+        error: "not_found",
+        message: "Produto não encontrado. Pode já ter sido removido.",
+      };
+    }
+
+    // 2. (OPCIONAL) Verificar se há dependências
+    // Descomente se precisar verificar vendas ou outras relações
+    /*
+    const vendasAssociadas = await sql`
+      SELECT COUNT(*) as total FROM vendas WHERE produto_id = ${id}
+    `;
+    
+    if (vendasAssociadas[0].total > 0) {
+      return {
+        success: false,
+        error: "has_dependencies",
+        message: "Não é possível deletar. Este produto tem vendas associadas.",
+      };
+    }
+    */
+
+    // 3. Deletar o produto
     await sql`
       DELETE FROM produtos
       WHERE id = ${id}
     `;
-  } catch (error) {
-    console.error("Database Error:", error);
-    throw new Error("Erro ao deletar produto.");
-  }
 
-  revalidatePath("/aplicacao/produtos");
-  redirect("/aplicacao/produtos");
+    // 4. Sucesso - revalidar cache
+    revalidatePath("/aplicacao/produtos");
+    
+    return {
+      success: true,
+      message: "Produto deletado com sucesso!",
+    };
+    
+  } catch (error) {
+    console.error("Database Error ao deletar produto:", error);
+    return {
+      success: false,
+      error: "database_error",
+      message: "Erro de base de dados: Não foi possível deletar o produto.",
+    };
+  }
 }
 
 
