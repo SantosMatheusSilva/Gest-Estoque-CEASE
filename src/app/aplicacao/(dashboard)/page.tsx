@@ -1,11 +1,9 @@
-import { PageLayout } from "@/src/ui/PageLayout";
+import DashboardPageLayout from "@/src/ui/dashboard/DashLayoutPage";
 
 function page() {
   return (
     <main>
-      <PageLayout title="Dashboard" description="Bem-vindo à aplicação">
-        <p>Conteúdo da aplicação vai aqui.</p>
-      </PageLayout>
+      <DashboardPageLayout />
     </main>
   );
 }
