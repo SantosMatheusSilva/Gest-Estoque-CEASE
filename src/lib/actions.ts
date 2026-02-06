@@ -8,7 +8,7 @@ import type { Produto, CreateProduto } from "../db/definitions";
 
 import type {
   Categoria,
-  CriarCategoria as CriarCategoriaType,
+  CriarCategoria,
   CriarSubCategoria,
 } from "../db/definitions";
 
@@ -134,17 +134,15 @@ export async function getCategoriaById(id: string): Promise<Categoria | null> {
   return rows[0] ?? null;
 }
 
-const criarCategoriaSchema = z.object({
-  nome: z
-    .string()
-    .min(3, "O nome deve ter pelo menos 3 caracteres")
-    .max(50, "O nome deve ter no máximo 50 caracteres")
-    .trim(),
+// const criarCategoriaSchema = z.object({
+//   nome: z
+//     .string()
+//     .min(3, "O nome deve ter pelo menos 3 caracteres")
+//     .max(50, "O nome deve ter no máximo 50 caracteres")
+//     .trim(),
 
-  adicionado_por: z.string().uuid(),
-});
-
-export type CriarCategoria = z.infer<typeof criarCategoriaSchema>;
+//   adicionado_por: z.string().uuid(),
+// });
 
 // ========== CATEGORIAS ==========
 
@@ -190,7 +188,7 @@ export async function createCategoriaAction(
   const { nome } = validatedFields.data;
   const userId = "id_temporario_usuario";
 
-  // passa parent_is por parametro ou dropdow 
+  // passa parent_is por parametro ou dropdow
 
   try {
     const existing = await sql`
@@ -198,7 +196,7 @@ export async function createCategoriaAction(
       WHERE LOWER(nome) = LOWER(${nome}) AND parent_id IS NULL
     `;
 
-    // verificar depois se existe uma equals() 
+    // verificar depois se existe uma equals()
 
     if (existing.length > 0) {
       return {
@@ -218,7 +216,7 @@ export async function createCategoriaAction(
     };
   }
 
-  console.log("Categoria Criada com sucesso!")
+  console.log("Categoria Criada com sucesso!");
 
   revalidatePath("/aplicacao/categorias");
   redirect("/aplicacao/categorias");
@@ -263,7 +261,7 @@ export async function createSubCategoriaAction(
       WHERE LOWER(nome) = LOWER(${nome}) AND parent_id = ${parent_id}
     `;
 
-    // EXPLICAÇÃO: 
+    // EXPLICAÇÃO:
     if (existing.length > 0) {
       return {
         errors: {
@@ -282,9 +280,11 @@ export async function createSubCategoriaAction(
     return { message: "Erro de base de dados ao criar subcategoria." };
   }
 
-  revalidatePath("/aplicacao/categorias/");
-  revalidatePath(`aplicacao/categorias/${parent_id}/detalhes`);
-  redirect(`aplicacao/categorias/${parent_id}/detalhes`);
+  console.log(formData.get("parent_id"));
+
+  revalidatePath("/aplicacao/categorias");
+  revalidatePath(`/aplicacao/categorias/${parent_id}/detalhes`);
+  redirect(`/aplicacao/categorias/${parent_id}/detalhes`);
 }
 
 // 5) ATUALIZAR CATEGORIA
@@ -319,30 +319,25 @@ const CreateProdutoSchema = z.object({
     .min(3, "O nome deve ter pelo menos 3 caracteres")
     .max(100, "O nome deve ter no máximo 100 caracteres")
     .trim(),
-  
-  quantidade: z
-    .string()
-    .transform((val) => {
-      const num = Number(val);
-      if (isNaN(num)) throw new Error("A quantidade deve ser um número");
-      if (!Number.isInteger(num)) throw new Error("A quantidade deve ser um número inteiro");
-      if (num < 0) throw new Error("A quantidade não pode ser negativa");
-      return num;
-    }),
-  
-  preco: z
-    .string()
-    .transform((val) => {
-      const num = Number(val);
-      if (isNaN(num)) throw new Error("O preço deve ser um número");
-      if (num <= 0) throw new Error("O preço deve ser maior que zero");
-      return num;
-    }),
-  
-  id_categoria: z
-    .string()
-    .uuid("Selecione uma categoria válida"),
-  
+
+  quantidade: z.string().transform((val) => {
+    const num = Number(val);
+    if (isNaN(num)) throw new Error("A quantidade deve ser um número");
+    if (!Number.isInteger(num))
+      throw new Error("A quantidade deve ser um número inteiro");
+    if (num < 0) throw new Error("A quantidade não pode ser negativa");
+    return num;
+  }),
+
+  preco: z.string().transform((val) => {
+    const num = Number(val);
+    if (isNaN(num)) throw new Error("O preço deve ser um número");
+    if (num <= 0) throw new Error("O preço deve ser maior que zero");
+    return num;
+  }),
+
+  id_categoria: z.string().uuid("Selecione uma categoria válida"),
+
   descricao: z
     .string()
     .max(500, "A descrição deve ter no máximo 500 caracteres")
@@ -350,7 +345,7 @@ const CreateProdutoSchema = z.object({
     .optional()
     .or(z.literal(""))
     .transform((val) => (val === "" ? undefined : val)),
-  
+
   img_url: z
     .string()
     .url("Digite uma URL válida para a imagem")
@@ -367,19 +362,20 @@ const UpdateProdutoSchema = z.object({
     .max(100, "O nome deve ter no máximo 100 caracteres")
     .trim()
     .optional(),
-  
+
   quantidade: z
     .string()
     .transform((val) => {
       if (!val) return undefined;
       const num = Number(val);
       if (isNaN(num)) throw new Error("A quantidade deve ser um número");
-      if (!Number.isInteger(num)) throw new Error("A quantidade deve ser um número inteiro");
+      if (!Number.isInteger(num))
+        throw new Error("A quantidade deve ser um número inteiro");
       if (num < 0) throw new Error("A quantidade não pode ser negativa");
       return num;
     })
     .optional(),
-  
+
   preco: z
     .string()
     .transform((val) => {
@@ -390,12 +386,9 @@ const UpdateProdutoSchema = z.object({
       return num;
     })
     .optional(),
-  
-  id_categoria: z
-    .string()
-    .uuid("Selecione uma categoria válida")
-    .optional(),
-  
+
+  id_categoria: z.string().uuid("Selecione uma categoria válida").optional(),
+
   descricao: z
     .string()
     .max(500, "A descrição deve ter no máximo 500 caracteres")
@@ -403,7 +396,7 @@ const UpdateProdutoSchema = z.object({
     .optional()
     .or(z.literal(""))
     .transform((val) => (val === "" ? undefined : val)),
-  
+
   img_url: z
     .string()
     .url("Digite uma URL válida para a imagem")
@@ -430,7 +423,6 @@ export async function createProdutoAction(
   prevState: CreateProdutoState,
   formData: FormData,
 ): Promise<CreateProdutoState> {
-  
   // Validar campos com Zod
   const validatedFields = CreateProdutoSchema.safeParse({
     nome: formData.get("nome"),
@@ -449,8 +441,9 @@ export async function createProdutoAction(
     };
   }
 
-  const { nome, quantidade, preco, id_categoria, descricao, img_url } = validatedFields.data;
-  
+  const { nome, quantidade, preco, id_categoria, descricao, img_url } =
+    validatedFields.data;
+
   // ID do usuário (temporário - substituir por Clerk userId)
   const userId = "11111111-1111-1111-1111-111111111111";
 
@@ -464,8 +457,8 @@ export async function createProdutoAction(
 
     if (existing.length > 0) {
       return {
-        errors: { 
-          nome: ["Já existe um produto com este nome nesta categoria."] 
+        errors: {
+          nome: ["Já existe um produto com este nome nesta categoria."],
         },
         message: "Erro: Nome duplicado na categoria.",
       };
@@ -496,7 +489,6 @@ export async function createProdutoAction(
         ${userId}
       )
     `;
-    
   } catch (error) {
     console.error("Database Error:", error);
     return {
@@ -514,7 +506,6 @@ export async function updateProdutoAction(
   prevState: CreateProdutoState,
   formData: FormData,
 ): Promise<CreateProdutoState> {
-  
   // Obter ID do formData
   const id = formData.get("id") as string;
 
@@ -541,7 +532,8 @@ export async function updateProdutoAction(
     };
   }
 
-  const { nome, quantidade, preco, id_categoria, descricao, img_url } = validatedFields.data;
+  const { nome, quantidade, preco, id_categoria, descricao, img_url } =
+    validatedFields.data;
 
   try {
     // Verificar se produto existe
@@ -557,7 +549,8 @@ export async function updateProdutoAction(
 
     // Se o nome foi alterado, verificar duplicação
     if (nome) {
-      const categoriaAtual = id_categoria || (produtoExistente[0] as any).id_categoria;
+      const categoriaAtual =
+        id_categoria || (produtoExistente[0] as any).id_categoria;
       const existing = await sql`
         SELECT id FROM produtos 
         WHERE LOWER(nome) = LOWER(${nome}) 
@@ -567,8 +560,8 @@ export async function updateProdutoAction(
 
       if (existing.length > 0) {
         return {
-          errors: { 
-            nome: ["Já existe outro produto com este nome nesta categoria."] 
+          errors: {
+            nome: ["Já existe outro produto com este nome nesta categoria."],
           },
           message: "Erro: Nome duplicado.",
         };
@@ -596,7 +589,6 @@ export async function updateProdutoAction(
         updated_at = NOW()
       WHERE id = ${id}
     `;
-    
   } catch (error) {
     console.error("Database Error:", error);
     return {
@@ -628,7 +620,6 @@ export async function deleteProdutoAction(
   prevState: DeleteProdutoState,
   formData: FormData,
 ): Promise<DeleteProdutoState> {
-  
   // Validar ID com Zod
   const validatedFields = DeleteProdutoSchema.safeParse({
     id: formData.get("id"),
@@ -682,12 +673,11 @@ export async function deleteProdutoAction(
 
     // 4. Sucesso - revalidar cache
     revalidatePath("/aplicacao/produtos");
-    
+
     return {
       success: true,
       message: "Produto deletado com sucesso!",
     };
-    
   } catch (error) {
     console.error("Database Error ao deletar produto:", error);
     return {
@@ -697,8 +687,3 @@ export async function deleteProdutoAction(
     };
   }
 }
-
-
-
-
-

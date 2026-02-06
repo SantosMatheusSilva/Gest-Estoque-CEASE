@@ -9,8 +9,10 @@ import CreateSubcategoryForm from "./CreateSubcategoryForm";
 
 type Props = {
   categoriaInfo: CategoriaRaiz;
+  parent_id: String;
 };
-export default function DetailPageLayout({ categoriaInfo }: Props) {
+
+export default function DetailPageLayout({ categoriaInfo, parent_id }: Props) {
   console.log(categoriaInfo.created_at);
   return (
     <PageLayout
@@ -18,7 +20,7 @@ export default function DetailPageLayout({ categoriaInfo }: Props) {
       description="Detalhes da categoria"
       actions={
         <div className="flex gap-2">
-          <CreateSubcategoryForm />
+          <CreateSubcategoryForm parent_id={categoriaInfo.id_categoria} />
           <IconButton variant="danger" startIcon={<TrashBin />}>
             Excluir Categoria
           </IconButton>
