@@ -25,7 +25,7 @@ export default function Home() {
 
           <div className="flex flex-wrap gap-4 justify-center mb-12">
             <a
-              href="/dashboard"
+              href="/aplicacao"
               className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-xl font-semibold"
             >
               Aceder ao Dashboard
