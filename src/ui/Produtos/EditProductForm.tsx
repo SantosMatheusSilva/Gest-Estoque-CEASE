@@ -3,11 +3,11 @@
 import { Button } from "@/src/ui/Button";
 import FormSurface from "@/src/ui/Surface";
 import { InputField } from "../InputField";
-import { Modal } from "@heroui/react";
+import { FieldError, Modal } from "@heroui/react";
 import { SelectField } from "../SelectField";
 import { CategoriaRaiz, SubCategoria, Produto } from "@/src/db/definitions";
-import { updateProdutoAction } from "@/src/lib/actions";
-import { useActionState } from "react";
+import { updateProdutoAction, CreateProdutoState } from "@/src/lib/actions";
+import { useActionState, useState } from "react";
 
 interface EditProductFormProps {
   produto: Produto;
@@ -18,11 +18,23 @@ export default function EditProductForm({
   produto,
   categorias,
 }: EditProductFormProps) {
-  const [state, formAction] = useActionState(
-    updateProdutoAction,
-    { errors: {}, message: null }
-  );
+  const initialState: CreateProdutoState = {
+    message: null,
+    errors: {},
+  };
+  const updateProdutoPorId = updateProdutoAction.bind(null, produto.id);
 
+  const [state, formAction] = useActionState(updateProdutoPorId, initialState);
+  const [categoriaSelecionada, setCategoriaSelecionada] = useState("");
+  const [subcategoriasFiltradas, setSubcategoriasFiltradas] = useState<
+    SubCategoria[]
+  >([]);
+  const [subcategoriaSelecionada, setSubcategoriaSelecionada] = useState("");
+
+  //debug:
+  //console.log("categoriaRaiz[]: ", categorias);
+  //console.log("categorias:", categorias);
+  //console.log("Array?", Array.isArray(categorias));
   return (
     <Modal>
       <Modal.Trigger>
@@ -47,24 +59,24 @@ export default function EditProductForm({
                   <InputField
                     label="Nome"
                     description="Digite o nome do produto"
+                    defaultValue={produto.nome}
                     inputProps={{
                       id: "nome",
                       name: "nome",
                       type: "text",
-                      defaultValue: produto.nome,
                       required: true,
                     }}
                     error={state?.errors?.nome?.[0]}
                   />
-                  
+
                   <InputField
                     label="Quantidade"
                     description="Digite a quantidade do produto"
+                    defaultValue={String(produto.quantidade)}
                     inputProps={{
                       id: "quantidade",
                       name: "quantidade",
                       type: "number",
-                      defaultValue: produto.quantidade,
                       required: true,
                       min: 0,
                       step: 1,
@@ -75,11 +87,11 @@ export default function EditProductForm({
                   <InputField
                     label="Preço"
                     description="Digite o preço (de custo) do produto"
+                    defaultValue={String(produto.preco)}
                     inputProps={{
                       id: "preco",
                       name: "preco",
                       type: "number",
-                      defaultValue: produto.preco,
                       required: true,
                       min: 0,
                       step: 0.01,
@@ -90,59 +102,70 @@ export default function EditProductForm({
                   <SelectField
                     label="Categoria"
                     name="id_categoria"
+                    options={categorias.map((c) => ({
+                      id: c.id_categoria,
+                      label: c.nome,
+                    }))}
+                    value={categoriaSelecionada}
                     required
-                    options={categorias.flatMap((c: CategoriaRaiz) => [
-                      {
-                        id: c.id_categoria,
-                        label: c.nome,
-                        selected: c.id_categoria === produto.id_categoria,
-                      },
-                      ...(c.subcategorias ?? []).map((s: SubCategoria) => ({
-                        id: s.id_categoria,
-                        label: `${c.nome} → ${s.nome}`,
-                        selected: s.id_categoria === produto.id_categoria,
-                      })),
-                    ])}
                     error={state?.errors?.id_categoria?.[0]}
+                    onValueChange={(categoriaId) => {
+                      console.log("Categoria selecionada:", categoriaId);
+
+                      setCategoriaSelecionada(categoriaId);
+
+                      const subcats =
+                        categorias.find((c) => c.id_categoria === categoriaId)
+                          ?.subcategorias || [];
+
+                      console.log("Subcategorias encontradas:", subcats);
+                      setSubcategoriasFiltradas(subcats);
+                      setSubcategoriaSelecionada("");
+                    }}
+                  />
+
+                  <SelectField
+                    label="Subcategoria"
+                    name="id_subcategoria"
+                    options={subcategoriasFiltradas.map((s) => ({
+                      id: s.id_categoria,
+                      label: s.nome,
+                    }))}
+                    value={subcategoriaSelecionada}
+                    onValueChange={(subcatId) =>
+                      setSubcategoriaSelecionada(subcatId)
+                    }
+                    required={false}
                   />
 
                   <InputField
                     label="Descrição (opcional)"
                     description="Digite uma descrição ou informação adicional"
+                    defaultValue={produto.descricao || ""}
                     inputProps={{
                       id: "descricao",
                       name: "descricao",
                       type: "text",
-                      defaultValue: produto.descricao || "",
                     }}
                     error={state?.errors?.descricao?.[0]}
                   />
-                  
                   <InputField
                     label="Imagem (opcional)"
                     description="Digite o link da imagem do produto"
+                    defaultValue={produto.img_url || ""}
                     inputProps={{
                       id: "img_url",
                       name: "img_url",
                       type: "url",
-                      defaultValue: produto.img_url || "",
                     }}
                     error={state?.errors?.img_url?.[0]}
                   />
-
-                  {state?.message && (
-                    <div className="rounded-md bg-red-50 p-3 text-sm text-red-800">
-                      {state.message}
-                    </div>
-                  )}
 
                   <div className="mt-4 flex gap-2 justify-end">
                     <Button slot="close" variant="secondary" type="button">
                       Cancelar
                     </Button>
-                    <Button type="submit">
-                      Atualizar
-                    </Button>
+                    <Button type="submit">Atualizar</Button>
                   </div>
                 </form>
               </FormSurface>

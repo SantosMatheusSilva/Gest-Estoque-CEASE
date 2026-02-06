@@ -25,12 +25,13 @@ export async function adicionarProduto(data: CreateProduto): Promise<Produto> {
 }
 
 // UPDATE
-export async function editarProduto(
+/* export async function editarProduto(
   idUUID: string,
-  data: Partial<CreateProduto>,
-): Promise<Produto> {
-  return await updateProduto(idUUID, data);
-}
+  data: CreateProduto,
+  prevState: Produto
+): Produto{
+  return await updateProduto(idUUID, data, prevState);
+} */
 
 // DELETE
 export async function removerProduto(idUUID: string): Promise<void> {

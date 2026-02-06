@@ -6,14 +6,15 @@ import { notFound } from "next/navigation";
 
 type Props = {
   params: {
-    id_Produto: string;
+    id: string;
   };
 };
 
 export default async function ProductDetailsPage({ params }: Props) {
-  const { id_Produto } = params;
+  const { id } = await params;
+  console.log("id: ", id);
 
-  const produto: Produto | null = await fetchProduto(id_Produto);
+  const produto: Produto | null = await fetchProduto(id);
   if (!produto) return notFound();
 
   const categoria: CategoriaRaiz = await fetchCategoriaComSubcategoriaPorId(
@@ -22,7 +23,7 @@ export default async function ProductDetailsPage({ params }: Props) {
 
   return (
     <main>
-      <DetailPageLayout produto={produto} categoria={categoria} />
+      <DetailPageLayout produto={produto} categorias={[categoria]} />
     </main>
   );
 }
