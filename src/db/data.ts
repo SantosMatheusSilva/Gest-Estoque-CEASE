@@ -4,37 +4,45 @@
 
 import { sql } from "@/src/db/index";
 
-import { UsuarioDB, CategoriaRaiz } from "./definitions"; // ADD BY ANA
+import {
+  UsuarioType,
+  CategoriaRaiz,
+  BusinessType,
+  MovimentoEstoqueType,
+  ProdutoType,
+} from "./definitions";
 
-// USUARIO ADD BY ANA
+// >>>>>>>>>> FETCH USUARIO <<<<<<<<<<
 
-// buscar usuário por email
-export async function fetchUsuarioPorEmail(
-  email: string,
-): Promise<UsuarioDB | null> {
+export async function fetchUsuarioDB(clerk_user_id: string) {
   try {
-    const [user] = await sql<UsuarioDB[]>`
-      SELECT
-        id,
-        nome,
-        sobrenome,
-        email,
-        senha_hash,
-        adm,
-        img_url,
-        criado_em
-      FROM usuarios
-      WHERE email = ${email}
-      LIMIT 1;
+    const usuário = await sql<UsuarioType[]>`
+      SELECT * FROM usuarios
+      WHERE clerk_user_id = ${clerk_user_id}
     `;
-
-    return user ?? null;
+    return usuário[0];
   } catch (error) {
     console.error("Database Error:", error);
     throw new Error("Failed to fetch usuario.");
   }
 }
 
+// >>>>>>>>>> FETCH BUSINESS <<<<<<<<<<<
+
+export async function fetchBusinessDB(user_business_id: string) {
+  try {
+    const business = await sql<BusinessType[]>`
+      SELECT * FROM business
+      WHERE id = ${user_business_id}
+    `;
+    return business[0];
+  } catch (error) {
+    console.error("Database Error:", error);
+    throw new Error("Failed to fetch business.");
+  }
+}
+
+// >>>>>>>>>> FETCH CATEGORIAS e SUBCATEGORIAS <<<<<<<<<<<
 export async function fetchCategorias() {
   try {
     const data = await sql<CategoriaRaiz[]>`
@@ -136,65 +144,6 @@ export async function fetchCategoriaComSubcategoriaPorId(id: string) {
   }
 }
 
-// src/db/data.ts
-/* export async function fetchCategoriaComSubcategoriaPorId(id: string) {
-  try {
-    const categoria = await sql<CategoriaRaiz[]>`
-      SELECT
-        c.id_categoria,
-        c.nome,
-        c.parent_id,
-        c.created_at,
-        c.updated_at,
-        c.adicionado_por,
-        (
-          SELECT COUNT(*)
-          FROM produtos p
-          WHERE p.id_categoria = c.id_categoria
-        ) AS total_produtos
-      FROM categorias c
-      WHERE c.id_categoria = ${id}
-         OR c.parent_id = ${id}
-      ORDER BY c.nome
-    `;
-
-    // Criar um mapa para acesso rápido por ID
-    const categoriaMap = new Map<string, any>();
-
-    // ✅ Adicionar tipo ao parâmetro
-    categoria.forEach((cat: CategoriaRaiz) => {
-      categoriaMap.set(cat.id_categoria, {
-        ...cat,
-        created_at: cat.created_at,
-        updated_at: cat.updated_at,
-        adicionado_por: cat.adicionado_por,
-        subcategorias: [],
-      });
-    });
-
-    // Organizar em estrutura hierárquica
-    let categoriaRaiz: CategoriaRaiz = {} as CategoriaRaiz;
-
-    // ✅ Adicionar tipo ao parâmetro
-    categoriaMap.forEach((cat: any) => {
-      if (cat.parent_id === null) {
-        categoriaRaiz = cat;
-      } else {
-        const parent = categoriaMap.get(cat.parent_id);
-        if (parent) {
-          parent.subcategorias.push(cat);
-        }
-      }
-    });
-
-    console.log("Categorias com subcategorias:", categoriaRaiz);
-    return categoriaRaiz;
-  } catch (error) {
-    console.error("Database Error:", error);
-    throw new Error("Failed to fetch categoria with subcategorias.");
-  }
-} */
-
 export async function fetchSubcategorias() {
   // APENAS SUBCATEGORIAS
   try {
@@ -271,62 +220,106 @@ export async function fetchCategoriaComSubcategorias() {
   }
 }
 
-// TROCADO POR: ====>> NÃO TROCAR OQ ESTA FUNCIONANDO!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-/* export async function fetchCategoriaComSubcategorias(id_categoria: string) {
+// >>>>>>>>>> MOvimentos de Estoque >>><<<<<<<<<<<
+export async function fetchMovimentosEstoque(business_id: string) {
   try {
-    const categorias = await sql<Categoria[]>`
-      SELECT
-        id_categoria,
-        nome,
-        parent_id,
-        created_at,
-        updated_at,
-        adicionado_por
-      FROM categorias
-      ORDER BY nome
-    `;
-
-    // Criar um mapa para acesso rápido por ID
-    const categoriasMap = new Map<string, any>();
-
-    // ✅ Adicionar tipo ao parâmetro
-    categorias.forEach((cat: Categoria) => {
-      categoriasMap.set(cat.id_categoria, {
-        id_categoria: cat.id_categoria,
-        nome: cat.nome,
-        parent_id: cat.parent_id,
-        created_at: cat.created_at,
-        updated_at: cat.updated_at,
-        adicionado_por: cat.adicionado_por,
-        subcategorias: [],
-      });
-    });
-
-    // Organizar em estrutura hierárquica
-    const categoriasRaiz: CategoriaRaiz[] = [];
-
-    // ✅ Adicionar tipo ao parâmetro
-    categoriasMap.forEach((cat: any) => {
-      if (cat.parent_id === null) {
-        categoriasRaiz.push(cat);
-      } else {
-        const parent = categoriasMap.get(cat.parent_id);
-        if (parent) {
-          parent.subcategorias.push(cat);
-        }
-      }
-    });
-
-    console.log("Categorias com subcategorias:", categoriasRaiz);
-    return categoriasRaiz;
+    const movimentos = await sql<MovimentoEstoqueType[]>`
+       SELECT * FROM movimentos_estoque
+       WHERE business_id = ${business_id}
+       ORDER BY created_at DESC
+     `;
+    return movimentos[0];
   } catch (error) {
     console.error("Database Error:", error);
-    throw new Error("Failed to fetch categoria with subcategorias.");
+    throw new Error("Failed to fetch movimentos de estoque.");
   }
-} */
+}
 
-// Função para criar categoria raiz
+export async function fetchMovimentoPorId(
+  movimento_id: string,
+  business_id: string,
+) {
+  try {
+    const movimento = await sql`
+    SELECT * FROM movimentos_estoque
+    WHERE business_id = ${business_id}
+    AND id = ${movimento_id}
+    `;
+
+    return movimento[0];
+  } catch (error) {
+    console.error("Database Error:", error);
+    throw new Error("Failed to fetch movimentos de estoque.");
+  }
+}
+
+export async function fetchMovimentosEstoquePorProduto(
+  business_id: string,
+  produto_id: string,
+) {
+  try {
+    const movimentosProduto = await sql<MovimentoEstoqueType[]>`
+       SELECT * FROM movimentos_estoque
+       WHERE business_id = ${business_id}
+       AND produto_id = ${produto_id}
+       ORDER BY created_at DESC
+     `;
+    return movimentosProduto[0];
+  } catch (error) {
+    console.error("Database Error:", error);
+    throw new Error("Failed to fetch movimentos do produto.");
+  }
+}
+
+// >>>>>>>>>> Movimentos de Estoque >>><<<<<<<<<<<
+export async function fetchProdutos(business_id: string) {
+  try {
+    const produtos = await sql<ProdutoType[]>`
+       SELECT * FROM produtos
+       WHERE business_id = ${business_id}
+     `;
+    return produtos[0];
+  } catch (error) {
+    console.error("Database Error:", error);
+    throw new Error("Failed to fetch produtos.");
+  }
+}
+
+export async function fetchProdutoPorId(
+  produto_id: string,
+  business_id: string,
+) {
+  try {
+    const produto = await sql`
+    SELECT * FROM produtos
+    WHERE business_id = ${business_id}
+    AND id = ${produto_id}
+    `;
+    return produto[0];
+  } catch (error) {
+    console.error("Database Error:", error);
+    throw new Error("Failed to fetch produto.");
+  }
+}
+
+export async function fetchProdutosPorCategoria(
+  id_categoria: string,
+  business_id: string,
+) {
+  try {
+    const produtos = await sql<ProdutoType[]>`
+       SELECT * FROM produtos
+       WHERE id_categoria = ${id_categoria}
+       AND business_id = ${business_id}
+     `;
+    return produtos[0];
+  } catch (error) {
+    console.error("Database Error:", error);
+    throw new Error("Failed to fetch produtos da categoria.");
+  }
+}
+
+// Função para criar categoria raiz - > remover para actios/ categorias
 
 import { CriarCategoria, CriarSubCategoria, Categoria } from "./definitions";
 
