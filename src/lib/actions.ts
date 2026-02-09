@@ -191,7 +191,7 @@ export async function createCategoriaAction(
   const { nome } = validatedFields.data;
   const userId = "id_temporario_usuario";
 
-  // passa parent_is por parametro ou dropdow 
+  // passa parent_is por parametro ou dropdow
 
   try {
     const existing = await sql`
@@ -199,7 +199,7 @@ export async function createCategoriaAction(
       WHERE LOWER(nome) = LOWER(${nome}) AND parent_id IS NULL
     `;
 
-    // verificar depois se existe uma equals() 
+    // verificar depois se existe uma equals()
 
     if (existing.length > 0) {
       return {
@@ -219,7 +219,7 @@ export async function createCategoriaAction(
     };
   }
 
-  console.log("Categoria Criada com sucesso!")
+  console.log("Categoria Criada com sucesso!");
 
   revalidatePath("/aplicacao/categorias");
   redirect("/aplicacao/categorias");
@@ -264,7 +264,7 @@ export async function createSubCategoriaAction(
       WHERE LOWER(nome) = LOWER(${nome}) AND parent_id = ${parent_id}
     `;
 
-    // EXPLICAÇÃO: 
+    // EXPLICAÇÃO:
     if (existing.length > 0) {
       return {
         errors: {
