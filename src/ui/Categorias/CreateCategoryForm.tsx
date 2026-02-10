@@ -33,7 +33,7 @@ export function CreateCategoryForm() {
             </Modal.Header>
             <Modal.Body className="p-6">
               <FormSurface variant="default">
-                <Form action={formAction}>
+                <Form action={formAction} id="create-category">
                   <InputField
                     label="Nome"
                     description="Digite o nome da categoria"
@@ -51,7 +51,7 @@ export function CreateCategoryForm() {
               <Button slot="close" variant="secondary">
                 Cancelar
               </Button>
-              <Button slot="close" type="submit">
+              <Button slot="close" type="submit" form="create-category">
                 Criar
               </Button>
             </Modal.Footer>

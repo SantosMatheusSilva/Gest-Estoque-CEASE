@@ -155,3 +155,86 @@ export type CreateMovimentoEstoqueType = {
   observacao?: string;
   user_id: string;
 };
+
+//>>>>>>>> MAIS Type Movimentos_Estoque <<<<<<<<<<<
+
+// ADICIONADO POR ANA:
+
+// Movimento enriquecido com dados do produto (útil para tabelas e listagens)
+export type MovimentoComProdutoType = MovimentoEstoqueType & {
+  produto: Pick<
+    ProdutoType,
+    "id" | "nome" | "unidade" | "sku" | "quantidade_estoque"
+  >;
+};
+
+// Movimento enriquecido com dados do usuário (útil para auditoria)
+export type MovimentoComUsuarioType = MovimentoEstoqueType & {
+  usuario: Pick<UsuarioType, "id" | "clerk_user_id" | "role">;
+};
+
+// Movimento totalmente expandido (produto + usuário)
+export type MovimentoDetalhadoType = MovimentoEstoqueType & {
+  produto: Pick<
+    ProdutoType,
+    "id" | "nome" | "unidade" | "sku" | "quantidade_estoque"
+  >;
+  usuario: Pick<UsuarioType, "id" | "clerk_user_id" | "role">;
+};
+
+// Filtros disponíveis para queries de movimentos
+export type FiltrosMovimentoType = {
+  business_id: string;
+  produto_id?: string;
+  tipo?: "entrada" | "saida" | "ajuste";
+  motivo?: "compra" | "venda" | "perda" | "consumo" | "correcao";
+  user_id?: string;
+  data_inicio?: string; // ISO 8601
+  data_fim?: string; // ISO 8601
+  page?: number; // para paginação
+  limit?: number; // itens por página
+};
+
+// Resumo agregado de movimentos por produto (útil para dashboards)
+export type ResumoEstoqueProdutoType = {
+  produto_id: string;
+  nome_produto: string;
+  quantidade_estoque_atual: number;
+  estoque_minimo: number;
+  abaixo_minimo: boolean; // quantidade_estoque_atual < estoque_minimo
+  total_entradas: number; // soma das quantidades com tipo = 'entrada'
+  total_saidas: number; // soma das quantidades com tipo = 'saida' | 'quebra' | 'consumo_interno'
+  ultimo_movimento: string | null; // created_at do último movimento
+};
+
+// Alerta de estoque mínimo
+export type AlertaEstoqueType = {
+  produto_id: string;
+  nome_produto: string;
+  sku?: string;
+  quantidade_estoque: number;
+  estoque_minimo: number;
+  unidade: string;
+  diferenca: number; // estoque_minimo - quantidade_estoque (sempre positivo neste contexto)
+};
+
+// Resposta paginada genérica para listagens de movimentos
+export type PaginacaoMovimentosType = {
+  data: MovimentoComProdutoType[];
+  total: number;
+  page: number;
+  limit: number;
+  total_pages: number;
+};
+
+// JUSTIFICATIVA DOS TIPOS ADICIONADOS:
+
+// MovimentoComProdutoType — join com produto, para a tabela da pageMovimentosEstoque
+// MovimentoComUsuarioType — join com utilizador, para logs de auditoria
+// MovimentoDetalhadoType — versão completa (produto + utilizador), para páginas de detalhe
+// FiltrosMovimentoType — parâmetros de filtragem para as queries (por tipo, motivo, datas, paginação)
+// ResumoEstoqueProdutoType — agregado por produto, para o dashboard
+// AlertaEstoqueType — produtos abaixo do estoque mínimo, para alertas no dashboard
+// PaginacaoMovimentosType — wrapper de resposta paginada para a listagem
+
+//>>>>>>>> FIM TIPOS ESTOQUE <<<<<<<<<<<
