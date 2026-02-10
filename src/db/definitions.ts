@@ -1,8 +1,4 @@
-// "entidades" e tipos de dados do banco de dados
-
-// Type User
-
-// Type Categoria
+//>>>>>>>>>> Type Categoria <<<<<<<<<<<
 
 export type Categoria = {
   // tipo de dado - como esta na db
@@ -12,6 +8,7 @@ export type Categoria = {
   created_at: Date;
   updated_at: Date;
   adicionado_por: string;
+  business_id?: string;
 };
 
 export type CategoriaRaiz = Categoria & {
@@ -40,9 +37,7 @@ export type CriarSubCategoria = {
   adicionado_por: string;
 };
 
-// Type Produto
-
-// Tipos de dados auxiliares ou derivados de entidades e interações
+//>>>>>>>>>> Type Produto <<<<<<<<<<
 
 export type Produto = {
   id: string;
@@ -57,7 +52,7 @@ export type Produto = {
   adicionado_por: string;
 };
 
-export type CreateProduto ={
+export type CreateProduto = {
   nome: string;
   quantidade: number;
   preco: number;
@@ -65,40 +60,98 @@ export type CreateProduto ={
   descricao?: string | null;
   id_categoria: string;
   adicionado_por: string;
-}
-
-// =====================
-// USUÁRIO (Banco)
-// =====================
-export type UsuarioDB = {
-  id: string;
-  img_url?: string;
-  nome: string;
-  sobrenome: string;
-  email: string;
-  senha_hash: string;
-  adm: boolean;
-  criado_em: Date;
 };
 
-// =====================
-// INPUT (Action)
-// =====================
-export type CriarUsuarioInput = {
-  nome: string;
-  sobrenome: string;
-  email: string;
-  senha: string;
-};
-
-// =====================
-// OUTPUT (Seguro)
-// =====================
-export type UsuarioPublico = {
+export type ProdutoType = {
   id: string;
   nome: string;
-  sobrenome: string;
-  email: string;
-  adm: boolean;
+  quantidade_estoque: number;
+  preco_venda: number;
   img_url?: string;
+  descricao?: string;
+  id_categoria: string;
+  created_at: string;
+  updated_at: string;
+  adicionado_por: string; // user_id
+  sku?: string;
+  ativo: boolean;
+  preco_custo?: number;
+  estoque_minimo: number;
+  is_final: boolean;
+  unidade: string;
+  business_id: string;
+};
+
+export type CreateProdutoType = {
+  nome: string;
+  quantidade_estoque: number;
+  preco_venda: number;
+  img_url?: string;
+  descricao?: string;
+  id_categoria: string;
+  adicionado_por: string; // user_id
+  sku?: string;
+  ativo?: boolean;
+  preco_custo?: number;
+  estoque_minimo?: number;
+  is_final?: boolean;
+  unidade?: string;
+  business_id: string;
+};
+
+// >>>>>>>>>> Type Usuario <<<<<<<<<<
+export type UsuarioType = {
+  id: string;
+  clerk_user_id: string; // id do Clerk
+  business_id: string;
+  role: "staff" | "owner" | "adm" | "manager";
+  created_at: string;
+};
+
+export type CreateUsuarioType = {
+  clerk_user_id: string;
+  business_id: string;
+  role?: "staff" | "owner" | "adm" | "manager"; // default: 'staff'
+};
+
+//>>>>>>>>>> Type Usuario - clerk <<<<<<<<<<
+
+//>>>>>>>> Type Business <<<<<<<<<<<
+
+// Dados que vem do DB
+export type BusinessType = {
+  id: string; // UUID
+  nome: string;
+  plano: string;
+  created_at: string; // TIMESTAMPTZ
+};
+
+// Dados que envia para criar
+export type CreateBusinessType = {
+  nome: string;
+  plano?: string; // default: 'free'
+};
+
+//>>>>>>>> Type Movimentos_Estoque <<<<<<<<<<<
+
+export type MovimentoEstoqueType = {
+  id: string;
+  produto_id: string;
+  business_id: string;
+  quantidade: number;
+  tipo: "entrada" | "saida" | "ajuste";
+  motivo?: "compra" | "venda" | "perda" | "consumo" | "correcao";
+  observacao?: string;
+  user_id: string;
+  created_at: string;
+};
+
+export type CreateMovimentoEstoqueType = {
+  produto_id: string;
+  business_id: string;
+  quantidade: number;
+  tipo: "entrada" | "saida" | "ajuste";
+  motivo?: "compra" | "venda" | "perda" | "consumo" | "correcao";
+  observacao?: string;
+  user_id: string;
 };
