@@ -1,22 +1,20 @@
 import React from "react";
 import { KpiCard } from "./KpiCard";
-import { Copy } from "@gravity-ui/icons";
+import { CircleDollar } from "@gravity-ui/icons";
 
-export function InventoryValueCard() {
-  // Mock data - replace with actual data fetching
-  const inventoryValue = 45890;
-  const trendValue = "+12.3%";
+interface InventoryValueCardProps {
+  value: number;
+}
 
+export function InventoryValueCard({ value }: InventoryValueCardProps) {
   return (
     <KpiCard
-      title="Valor Total do Inventário"
-      value={`€${inventoryValue.toLocaleString("pt-PT")}`}
-      icon={<Copy />}
+      title="Valor em Stock"
+      value={`€${value.toLocaleString('pt-PT', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
+      icon={<CircleDollar className="w-6 h-6" />}
       variant="success"
-      trend={{
-        value: trendValue,
-        direction: "up"
-      }}
     />
   );
 }
+
+

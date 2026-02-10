@@ -16,11 +16,22 @@ import {
 
 export async function fetchUsuarioDB(clerk_user_id: string) {
   try {
-    const usuário = await sql<UsuarioType[]>`
-      SELECT * FROM usuarios
-      WHERE clerk_user_id = ${clerk_user_id}
+    const resultado = await sql`
+      SELECT 
+        u.id,
+        u.clerk_user_id,
+        u.created_at,
+        u.updated_at,
+        u.email,
+        bm.business_id,
+        bm.role
+      FROM usuarios u
+      LEFT JOIN business_memberships bm ON u.id = bm.user_id
+      WHERE u.clerk_user_id = ${clerk_user_id}
+      LIMIT 1
     `;
-    return usuário[0];
+    
+    return resultado[0];
   } catch (error) {
     console.error("Database Error:", error);
     throw new Error("Failed to fetch usuario.");
@@ -430,3 +441,120 @@ export async function deletarCategoria(id_categoria: string): Promise<void> {
   const result = await sql`SELECT 1 as ok`;
   return result;
 } */
+
+
+// >>>>>>>>>> DASHBOARD KPIs <<<<<<<<<<<
+
+export async function fetchDashboardKPIs(business_id: string) {
+  try {
+    // Total de itens em stock
+    const totalStockResult = await sql`
+      SELECT COALESCE(SUM(quantidade_estoque), 0)::INTEGER as total
+      FROM produtos
+      WHERE business_id = ${business_id} AND ativo = true
+    `;
+    console.log("📊 totalStockResult:", totalStockResult); // DEBUG
+    const totalStock = totalStockResult?.[0]?.total ?? 0;
+
+    // Produtos com stock baixo (abaixo do mínimo)
+    const lowStockResult = await sql`
+      SELECT COUNT(*)::INTEGER as count
+      FROM produtos
+      WHERE business_id = ${business_id} 
+        AND ativo = true 
+        AND quantidade_estoque < estoque_minimo
+    `;
+    console.log("📊 lowStockResult:", lowStockResult); // DEBUG
+    const lowStockCount = lowStockResult?.[0]?.count ?? 0;
+
+    // Movimentos de hoje (entradas vs saídas)
+    const todayMovementsResult = await sql`
+      SELECT 
+        tipo, 
+        COALESCE(SUM(quantidade), 0)::INTEGER as total
+      FROM movimentos_estoque
+      WHERE business_id = ${business_id}
+        AND DATE(created_at) = CURRENT_DATE
+      GROUP BY tipo
+    `;
+    console.log("📊 todayMovementsResult:", todayMovementsResult); // DEBUG
+
+    // Valor total do inventário
+    const inventoryValueResult = await sql`
+      SELECT COALESCE(SUM(quantidade_estoque * preco_venda), 0)::DECIMAL as valor_total
+      FROM produtos
+      WHERE business_id = ${business_id} AND ativo = true
+    `;
+    console.log("📊 inventoryValueResult:", inventoryValueResult); // DEBUG
+    const inventoryValue = Number(inventoryValueResult?.[0]?.valor_total ?? 0);
+
+    // Processar movimentos de hoje
+    const movements = { entradas: 0, saidas: 0, ajustes: 0 };
+    
+    if (todayMovementsResult && todayMovementsResult.length > 0) {
+      todayMovementsResult.forEach((mov: any) => {
+        if (mov.tipo === 'entrada') movements.entradas = mov.total || 0;
+        if (mov.tipo === 'saida') movements.saidas = mov.total || 0;
+        if (mov.tipo === 'ajuste') movements.ajustes = Math.abs(mov.total || 0);
+      });
+    }
+
+    console.log("✅ KPIs finais:", { totalStock, lowStockCount, movements, inventoryValue }); // DEBUG
+
+    return {
+      totalStock,
+      lowStockCount,
+      todayMovements: movements,
+      inventoryValue,
+    };
+  } catch (error) {
+    console.error("❌ Database Error (fetchDashboardKPIs):", error);
+    
+    // Retornar valores padrão em caso de erro
+    return {
+      totalStock: 0,
+      lowStockCount: 0,
+      todayMovements: { entradas: 0, saidas: 0, ajustes: 0 },
+      inventoryValue: 0,
+    };
+  }
+}
+
+// Produtos para tabela do dashboard (top 15, prioridade stock baixo)
+export async function fetchDashboardProducts(business_id: string): Promise<ProdutoType[]> {
+  try {
+    const produtosResult = await sql`
+      SELECT 
+        id, 
+        nome, 
+        quantidade_estoque, 
+        estoque_minimo, 
+        preco_venda, 
+        unidade, 
+        ativo
+      FROM produtos
+      WHERE business_id = ${business_id} AND ativo = true
+      ORDER BY 
+        CASE WHEN quantidade_estoque < estoque_minimo THEN 0 ELSE 1 END,
+        quantidade_estoque ASC
+      LIMIT 15
+    `;
+    
+    console.log("📦 produtosResult:", produtosResult);
+    
+    // Cast explícito para o tipo correto
+    const produtos = produtosResult as unknown as ProdutoType[];
+    return produtos ?? [];
+    
+  } catch (error) {
+    console.error("❌ Database Error (fetchDashboardProducts):", error);
+    return [];
+  }
+}
+
+
+
+
+
+
+

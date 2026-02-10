@@ -1,21 +1,18 @@
 import React from "react";
 import { KpiCard } from "./KpiCard";
-import { TrashBin } from "@gravity-ui/icons";
+import { TriangleExclamation } from "@gravity-ui/icons";
 
-export function OutOfStockCard() {
-  // Mock data - replace with actual data fetching
-  const outOfStockItems = 8;
+interface OutOfStockCardProps {
+  count?: number;
+}
 
+export function OutOfStockCard({ count = 0 }: OutOfStockCardProps) {
   return (
     <KpiCard
-      title="Itens Sem Stock"
-      value={`${outOfStockItems} itens`}
-      icon={<TrashBin />}
+      title="Produtos Sem Stock"
+      value={`${count} itens`}
+      icon={<TriangleExclamation className="w-6 h-6" />}
       variant="danger"
-      trend={{
-        value: "+2 desde ontem",
-        direction: "up"
-      }}
     />
   );
 }
