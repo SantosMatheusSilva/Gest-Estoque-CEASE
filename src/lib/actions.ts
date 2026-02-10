@@ -8,7 +8,7 @@ import type { Produto, CreateProduto } from "../db/definitions";
 
 import type {
   Categoria,
-  CriarCategoria as CriarCategoriaType,
+  CriarCategoria,
   CriarSubCategoria,
 } from "../db/definitions";
 
@@ -135,17 +135,15 @@ export async function getCategoriaById(id: string): Promise<Categoria | null> {
   return rows[0] ?? null;
 }
 
-const criarCategoriaSchema = z.object({
-  nome: z
-    .string()
-    .min(3, "O nome deve ter pelo menos 3 caracteres")
-    .max(50, "O nome deve ter no máximo 50 caracteres")
-    .trim(),
+// const criarCategoriaSchema = z.object({
+//   nome: z
+//     .string()
+//     .min(3, "O nome deve ter pelo menos 3 caracteres")
+//     .max(50, "O nome deve ter no máximo 50 caracteres")
+//     .trim(),
 
-  adicionado_por: z.string().uuid(),
-});
-
-export type CriarCategoria = z.infer<typeof criarCategoriaSchema>;
+//   adicionado_por: z.string().uuid(),
+// });
 
 // ========== CATEGORIAS ==========
 
@@ -283,9 +281,11 @@ export async function createSubCategoriaAction(
     return { message: "Erro de base de dados ao criar subcategoria." };
   }
 
-  revalidatePath("/aplicacao/categorias/");
-  revalidatePath(`aplicacao/categorias/${parent_id}/detalhes`);
-  redirect(`aplicacao/categorias/${parent_id}/detalhes`);
+  console.log(formData.get("parent_id"));
+
+  revalidatePath("/aplicacao/categorias");
+  revalidatePath(`/aplicacao/categorias/${parent_id}/detalhes`);
+  redirect(`/aplicacao/categorias/${parent_id}/detalhes`);
 }
 
 // 5) ATUALIZAR CATEGORIA
@@ -507,7 +507,8 @@ export async function updateProdutoAction(
   id: string,
   prevState: CreateProdutoState,
   formData: FormData,
-) {
+): Promise<CreateProdutoState> {
+  
   // Obter ID do formData
   /*   const id = formData.get("id") as string;
 
@@ -551,9 +552,7 @@ export async function updateProdutoAction(
 
     // Se o nome foi alterado, verificar duplicação
     if (nome) {
-      const categoriaAtual =
-        id_categoria ||
-        (produtoExistente[0] as { id_categoria: string }).id_categoria;
+      const categoriaAtual = id_categoria || (produtoExistente[0] as any).id_categoria;
       const existing = await sql`
         SELECT id FROM produtos 
         WHERE LOWER(nome) = LOWER(${nome}) 

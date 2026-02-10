@@ -8,68 +8,91 @@ _Smart Inventory Management for Growing Businesses_
 # Estrutura geral (Next.js App Router)
 
 src
-├─app/
-├─ (marketing)/  
- ├─ (home)/  
- └─ page.tsx  
- ├─ contacto/
-└─ page.tsx
-├─ faq/
-└─ page.tsx
-├─ funcionalidades/
-└─ page.tsx
-├─ sobrenos/
-└─ page.tsx
-├─ layout/
+├─ app/
+│  ├─ (marketing)/  Route Groups (Grupos de Rotas)
+│  │  ├─ (home)/  Route Groups (Grupos de Rotas)
+│  │  │  └─ page.tsx  
+│  │  ├─ contacto/
+│  │  │  └─ page.tsx
+│  │  ├─ faq/
+│  │  │  └─ page.tsx
+│  │  ├─ funcionalidades/
+│  │  │  └─ page.tsx
+│  │  └─ sobrenos/
+│  │     └─ page.tsx
+│  │
+│  ├─ layout/
+│  │
+│  ├─ aplicacao/
+│  │  └─ (dashboard)/
+│  │     └─ page.tsx
+│  │
+│  └─ categorias/
+│     └─ [id]/
+│        └─ detalhes/
+│           └─ page.tsx
+│
+├─ db/ - neon sql
+│  ├─ data.ts → queries (SELECT)
+│  ├─ definition.ts → tipos
+│  └─ index.ts → conexão
+│
+├─ lib/
+│  ├─ actions.ts
+│  ├─ data.ts
+│  └─ utils.ts
+│
+├─ ui/
+│  ├─ Categorias/
+│  │  ├─ CategoryCard.tsx
+│  │  ├─ CategoryPageLayout.tsx
+│  │  ├─ CreateCategoryForm.tsx
+│  │  ├─ CreateSubcategoryForm.tsx
+│  │  ├─ DetailPageLayout.tsx
+│  │  ├─ EditCategoryForm.tsx
+│  │  └─ EditSubcategoryForm.tsx
+│  │
+│  ├─ Contacto/
+│  │  └─ ContactoForm.tsx    
+│  │
+│  ├─ Faq/
+│  │  └─ FaqAccordion.tsx
+│  │
+│  ├─ Funcionalidades/
+│  │  ├─ FeaturesCard.tsx
+│  │  ├─ FeaturesGrid.tsx
+│  │  └─ FeaturesIntro.tsx
+│  │
+│  ├─ Produtos/
+│  │  ├─ CreateProductForm.tsx
+│  │  ├─ DeleteProductButton.tsx
+│  │  ├─ EditProductForm.tsx
+│  │  ├─ ProductCard.tsx
+│  │  ├─ ProductDetailPageLayout.tsx
+│  │  └─ ProductPageLayout.tsx
+│  │
+│  ├─ SobreNos/
+│  │  ├─ Imagem.tsx
+│  │  ├─ Texto.tsx
+│  │  └─ Titulo.tsx
+│  │
+│  ├─ Usuario/
+│  │  ├─ Title.tsx
+│  │  ├─ UserDropdown.tsx
+│  │  └─ UsuarioForm.tsx
+│  │
+│  ├─Button.tsx
+│  ├─ Footer.tsx
+│  ├─ FormSurface.tsx
+│  ├─ IconButton.tsx
+│  ├─ InputField.tsx
+│  ├─ Navbar.tsx
+│  ├─ PageLayout.tsx
+│  ├─ SelectField.tsx
+│  ├─ Sidenav.tsx
+│  ├─ Surface.tsx
+│  └─ Topbar.tsx
 
-aplicacao/
-    └─(dashboard)
-        └─ page.tsx
-
-categorias/
-└─[id]
-        └─ detalhes
-        └─ page.tsx
-db/ - neon sql
-├─ data.ts → queries (SELECT)
-├─ definition.ts → tipos
-└─ index.ts → conexão
-lib/
-├─ actions.ts
-├─ data.ts
-└─ utils.ts
-ui/
-├─ Categorias/
-    └─ CategoryCard.tsx
-    ├─ CategoryPageLayout.tsx
-    ├─ CreateCategoryForm.tsx
-    ├─ CreateSubcategoryForm.tsx
-    ├─ DetailPageLayout.tsx
-    ├─ EditCategoryForm.tsx
-    └─ EditSubcategoryForm.tsx
-├─ Faq/
-│ └─ FaqAccordion.tsx
-
-├─ Funcionalidades/
-├─ FeaturesCard.tsx
-├─ FeaturesGrid.tsx
-└─ FeaturesIntro.tsx
-├─ Contacto/
-│ └─ ContactoForm.tsx
-├─ Faq/
-│ └─ FaqAccordion.tsx
-├─ Funcionalidades/
-├─ FeaturesCard.tsx
-├─ FeaturesGrid.tsx
-└─ FeaturesIntro.tsx
-├─ SobreNos/
-│ └─ Imagem.tsx
-└─ Texto.tsx
-└─ Titulo.tsx
-├─ Botao.tsx
-├─ Footer.tsx
-├─ Navbar.tsx
-└─ SectionWrapper.tsx
 
 🏠 HOME (/) -> FEITO!
 Objetivo
@@ -231,3 +254,43 @@ ContactForm
 ```
 
 ```
+
+Próximos Passos:
+
+Home - corrigir o BUTTON - está redirecionando para páginas inexistentes
+Cards - dashboard
+CloudFire
+
+Funcionalidades:
+
+Plano Premim e Gratuito
+
+db: tabela planos
+    tabela movimentos (formMovimentosEstoque / pageMovimentosEstoque)
+    tabela business (id_bussiness, nome_business, id_adm, id_usario)
+
+
+    Admin:
+
+✅ Gerenciar usuários (CRUD)
+✅ Gerenciar produtos (CRUD)
+✅ Registrar entrada/saída de estoque
+✅ Visualizar perfis e ações de todos os usuários
+
+User:
+
+✅ Gerenciar produtos (CRUD) - pode deletar produtos de qualquer um
+✅ Registrar entrada/saída de estoque
+✅ Visualizar todos os produtos
+
+Criar Fluxo de Login
+
+dashboard por usuário
+adm adiciona convite
+business db
+
+Ideia de Negócio
+
+
+
+

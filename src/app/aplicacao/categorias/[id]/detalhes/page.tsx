@@ -1,5 +1,6 @@
 import DetailPageLayout from "@/src/ui/Categorias/DetailPageLayout";
 import { fetchCategoriaComSubcategoriaPorId } from "@/src/db/data";
+import  CreateSubcategoryForm  from "@/src/ui/Categorias/CreateSubcategoryForm";
 
 type PageProps = {
   params: {
@@ -12,7 +13,8 @@ export default async function page({ params }: PageProps) {
 
   return (
     <main>
-      <DetailPageLayout categoriaInfo={categoriaInfo} />
+      <DetailPageLayout categoriaInfo={categoriaInfo } parent_id={categoriaInfo.id_categoria } />
+      {/* <CreateSubcategoryForm /> */}
     </main>
   );
 }

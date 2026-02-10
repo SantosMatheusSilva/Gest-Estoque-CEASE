@@ -17,7 +17,7 @@ export function CreateCategoryForm() {
     createCategoriaAction,
     initialState,
   );
-
+  console.log("teste");
   return (
     <Modal>
       <IconButton startIcon={<Plus />}>Adicionar Categoria</IconButton>

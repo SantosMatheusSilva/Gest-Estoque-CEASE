@@ -6,16 +6,25 @@ import { InputField } from "../InputField";
 import { Modal } from "@heroui/react";
 import { IconButton } from "@/src/ui/IconButton";
 import { Plus } from "@gravity-ui/icons";
-import { createSubCategoriaAction, CreateCategoriaState } from "@/src/lib/actions";
+import {
+  createSubCategoriaAction,
+  CreateCategoriaState,
+} from "@/src/lib/actions";
 import { useActionState } from "react";
 
+// passando a props da page.tsx para o forms
+type Props = {
+  parent_id: string;
+};
 
-export default function CreateSubcategoryForm() {
+export default function CreateSubcategoryForm({ parent_id }: Props) {
   const initialState: CreateCategoriaState = { message: null, errors: {} };
-    const [State, formAction] = useActionState(
-      createSubCategoriaAction,
-      initialState,
-    )
+
+  const [state, formAction] = useActionState(
+    createSubCategoriaAction,
+    initialState,
+  );
+
   return (
     <Modal>
       <IconButton startIcon={<Plus />}>Adicionar Subcategoria</IconButton>
@@ -32,7 +41,11 @@ export default function CreateSubcategoryForm() {
             </Modal.Header>
             <Modal.Body className="p-6">
               <FormSurface variant="default">
-                <Form action={""}>
+                <Form action={formAction} id="create-subcategory">
+                  {" "}
+                  {/* ALTERADO PARA PEGAR O parent_id subcategoria */}
+                  {/* CAMPO HIDEN */}
+                  <input type="hidden" name="parent_id" value={parent_id} />
                   <InputField
                     label="Nome"
                     description="Digite o nome da subcategoria"
@@ -43,15 +56,17 @@ export default function CreateSubcategoryForm() {
                       required: true,
                     }}
                   />
+                  <Button slot="close" type="submit" form="create-subcategory">
+                    {" "}
+                    {/* ANA = ADD form="create-subcategory para botao funcionar fora do modal*/}
+                    Criar
+                  </Button>
                 </Form>
               </FormSurface>
             </Modal.Body>
             <Modal.Footer>
               <Button slot="close" variant="secondary">
                 Cancelar
-              </Button>
-              <Button slot="close" type="submit">
-                Criar
               </Button>
             </Modal.Footer>
           </Modal.Dialog>
