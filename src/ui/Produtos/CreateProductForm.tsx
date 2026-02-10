@@ -9,18 +9,26 @@ import { Plus } from "@gravity-ui/icons";
 import { SelectField } from "../SelectField";
 import { CategoriaRaiz, SubCategoria } from "@/src/db/definitions";
 import { createProdutoAction } from "@/src/lib/actions";
-import { useActionState } from "react"; // Next.js 15+
+import { useActionState, useState } from "react"; // Next.js 15+
+
 // Se Next.js 14: import { useFormState } from "react-dom";
 
 interface CreateProductFormProps {
   categorias: CategoriaRaiz[];
+  //subcategorias: SubCategoria[];
 }
 
 function CreateProductForm({ categorias }: CreateProductFormProps) {
-  const [state, formAction] = useActionState(
-    createProdutoAction,
-    { errors: {}, message: null }
-  );
+  const [state, formAction] = useActionState(createProdutoAction, {
+    errors: {},
+    message: null,
+  });
+
+  const [categoriaSelecionada, setCategoriaSelecionada] = useState("");
+  const [subcategoriasFiltradas, setSubcategoriasFiltradas] = useState<
+    SubCategoria[]
+  >([]);
+  const [subcategoriaSelecionada, setSubcategoriaSelecionada] = useState("");
 
   return (
     <Modal>
@@ -49,7 +57,7 @@ function CreateProductForm({ categorias }: CreateProductFormProps) {
                     }}
                     error={state?.errors?.nome?.[0]}
                   />
-                  
+
                   <InputField
                     label="Quantidade"
                     description="Digite a quantidade do produto"
@@ -77,22 +85,43 @@ function CreateProductForm({ categorias }: CreateProductFormProps) {
                     }}
                     error={state?.errors?.preco?.[0]}
                   />
-
                   <SelectField
                     label="Categoria"
                     name="id_categoria"
+                    options={categorias.map((c) => ({
+                      id: c.id_categoria,
+                      label: c.nome,
+                    }))}
+                    value={categoriaSelecionada}
                     required
-                    options={categorias.flatMap((c: CategoriaRaiz) => [
-                      {
-                        id: c.id_categoria,
-                        label: c.nome,
-                      },
-                      ...(c.subcategorias ?? []).map((s: SubCategoria) => ({
-                        id: s.id_categoria,
-                        label: `${c.nome} → ${s.nome}`,
-                      })),
-                    ])}
                     error={state?.errors?.id_categoria?.[0]}
+                    onValueChange={(categoriaId) => {
+                      console.log("Categoria selecionada:", categoriaId);
+
+                      setCategoriaSelecionada(categoriaId);
+
+                      const subcats =
+                        categorias.find((c) => c.id_categoria === categoriaId)
+                          ?.subcategorias || [];
+
+                      console.log("Subcategorias encontradas:", subcats);
+                      setSubcategoriasFiltradas(subcats);
+                      setSubcategoriaSelecionada("");
+                    }}
+                  />
+
+                  <SelectField
+                    label="Subcategoria"
+                    name="id_subcategoria"
+                    options={subcategoriasFiltradas.map((s) => ({
+                      id: s.id_categoria,
+                      label: s.nome,
+                    }))}
+                    value={subcategoriaSelecionada}
+                    onValueChange={(subcatId) =>
+                      setSubcategoriaSelecionada(subcatId)
+                    }
+                    required={false}
                   />
 
                   <InputField
@@ -105,7 +134,7 @@ function CreateProductForm({ categorias }: CreateProductFormProps) {
                     }}
                     error={state?.errors?.descricao?.[0]}
                   />
-                  
+
                   <InputField
                     label="Imagem (opcional)"
                     description="Digite o link da imagem do produto"
@@ -127,9 +156,7 @@ function CreateProductForm({ categorias }: CreateProductFormProps) {
                     <Button slot="close" variant="secondary" type="button">
                       Cancelar
                     </Button>
-                    <Button type="submit">
-                      Criar
-                    </Button>
+                    <Button type="submit">Criar</Button>
                   </div>
                 </form>
               </FormSurface>
@@ -142,7 +169,3 @@ function CreateProductForm({ categorias }: CreateProductFormProps) {
 }
 
 export { CreateProductForm };
-
-
-
-

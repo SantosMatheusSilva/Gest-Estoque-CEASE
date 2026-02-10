@@ -70,6 +70,7 @@ export async function getProdutoById(id: string): Promise<Produto | null> {
 // 4) ATUALIZAR
 export async function updateProduto(
   idUUID: string,
+  prevState: Produto,
   data: Partial<CreateProduto>,
 ): Promise<Produto> {
   const result = await sql`
@@ -503,17 +504,19 @@ export async function createProdutoAction(
 
 // 5. Action para EDITAR Produto
 export async function updateProdutoAction(
+  id: string,
   prevState: CreateProdutoState,
   formData: FormData,
 ): Promise<CreateProdutoState> {
+  
   // Obter ID do formData
-  const id = formData.get("id") as string;
+  /*   const id = formData.get("id") as string;
 
   if (!id) {
     return {
       message: "ID do produto não fornecido.",
     };
-  }
+  } */
 
   // Validar campos com Zod (partial)
   const validatedFields = UpdateProdutoSchema.safeParse({
@@ -549,8 +552,7 @@ export async function updateProdutoAction(
 
     // Se o nome foi alterado, verificar duplicação
     if (nome) {
-      const categoriaAtual =
-        id_categoria || (produtoExistente[0] as any).id_categoria;
+      const categoriaAtual = id_categoria || (produtoExistente[0] as any).id_categoria;
       const existing = await sql`
         SELECT id FROM produtos 
         WHERE LOWER(nome) = LOWER(${nome}) 

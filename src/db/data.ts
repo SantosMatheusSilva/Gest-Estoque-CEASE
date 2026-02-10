@@ -128,7 +128,7 @@ export async function fetchCategoriaComSubcategoriaPorId(id: string) {
       }
     });
 
-    console.log("Categorias com subcategorias:", categoriaRaiz);
+    //console.log("Categorias com subcategorias:", categoriaRaiz);
     return categoriaRaiz;
   } catch (error) {
     console.error("Database Error:", error);

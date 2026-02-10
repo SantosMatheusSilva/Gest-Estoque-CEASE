@@ -4,20 +4,21 @@ import { TrashBin } from "@gravity-ui/icons";
 import BaseSurface from "../Surface";
 import { Produto, CategoriaRaiz } from "@/src/db/definitions";
 import { formatDateToLocal } from "@/src/lib/utils";
-import { ListBox, Label, Description } from "@heroui/react";
+import { ListBox } from "@heroui/react";
+import EditProductForm from "./EditProductForm";
 
 type Props = {
   produto: Produto;
-  categoria: CategoriaRaiz;
+  categorias: CategoriaRaiz[];
 };
-export default function DetailPageLayout({ produto, categoria }: Props) {
-  console.log(produto.created_at);
+export default function DetailPageLayout({ produto, categorias }: Props) {
   return (
     <PageLayout
       title={`${produto.nome}`}
       description="Detalhes do produto"
       actions={
         <div className="flex gap-2">
+          <EditProductForm produto={produto} categorias={categorias} />
           <IconButton variant="danger" startIcon={<TrashBin />}>
             Excluir Produto
           </IconButton>

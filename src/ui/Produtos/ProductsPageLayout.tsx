@@ -12,23 +12,10 @@ interface ProductsPageLayoutProps {
   produtos: Produto[];
 }
 
-export default function ProductsPageLayout({ 
-  categorias, 
-  produtos 
+export default function ProductsPageLayout({
+  categorias,
+  produtos,
 }: ProductsPageLayoutProps) {
-  const [editModal, setEditModal] = useState(false);
-  const [produtoEdit, setProdutoEdit] = useState<Produto | null>(null);
-
-  const openEdit = (produto: Produto) => {
-    setProdutoEdit(produto);
-    setEditModal(true);
-  };
-
-  const closeEdit = () => {
-    setEditModal(false);
-    setProdutoEdit(null);
-  };
-
   return (
     <PageLayout
       title="Produtos"
@@ -48,24 +35,10 @@ export default function ProductsPageLayout({
       ) : (
         <div className="flex flex-wrap gap-4">
           {produtos.map((produto) => (
-            <ProductCard 
-              key={produto.id} 
-              produto={produto} 
-              onEdit={openEdit}
-            />
+            <ProductCard key={produto.id} produto={produto} />
           ))}
         </div>
-      )}
-
-      {/* Modal de Edição */}
-      {produtoEdit && (
-        <EditProductForm
-          produto={produtoEdit}
-          categorias={categorias}
-        />
       )}
     </PageLayout>
   );
 }
-
-

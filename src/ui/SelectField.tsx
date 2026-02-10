@@ -1,50 +1,73 @@
+import {
+  Label,
+  Select,
+  ListBox,
+  FieldError,
+  TextField,
+  TextFieldProps,
+} from "@heroui/react";
 import React from "react";
 
-interface SelectFieldProps {
+interface Option {
+  id: string;
   label: string;
-  name: string;
-  required?: boolean;
-  options: { id: string; label: string }[];
-  error?: string;
 }
 
-export function SelectField({ 
-  label, 
-  name, 
-  required, 
-  options, 
-  error 
+interface SelectFieldProps extends Omit<TextFieldProps, "children"> {
+  label: string;
+  description?: string;
+  error?: string;
+  options: Option[];
+  name: string;
+  defaultValue?: string;
+  required?: boolean;
+  onValueChange?: (value: string) => void;
+}
+
+export function SelectField({
+  label,
+  description,
+  error,
+  options,
+  name,
+  defaultValue,
+  required = false,
+  onValueChange,
+  ...textFieldProps
 }: SelectFieldProps) {
   return (
-    <div className="form-group">
-      <label htmlFor={name} className="form-label">
-        {label}
-      </label>
-      <select 
-        name={name} 
-        id={name} 
-        required={required} 
-        className="form-control"
-        aria-invalid={error ? "true" : "false"}
-        aria-describedby={error ? `${name}-error` : undefined}
+    <TextField {...textFieldProps}>
+      <Label>{label}</Label>
+      {description && <p className="text-sm text-gray-500">{description}</p>}
+
+      <Select
+        name={name}
+        defaultValue={defaultValue}
+        isRequired={required}
+        aria-invalid={!!error}
+        className="w-full"
+        onChange={(selectedValue) => {
+          onValueChange?.(String(selectedValue));
+        }}
       >
-        <option value="">Selecione...</option>
-        {options.map((opt) => (
-          <option key={opt.id} value={opt.id}>
-            {opt.label}
-          </option>
-        ))}
-      </select>
-      {error && (
-        <p 
-          id={`${name}-error`} 
-          className="mt-1 text-sm text-red-600"
-        >
-          {error}
-        </p>
-      )}
-    </div>
+        <Select.Trigger>
+          <Select.Value />
+          <Select.Indicator />
+        </Select.Trigger>
+
+        <Select.Popover>
+          <ListBox>
+            {options.map((opt) => (
+              <ListBox.Item key={opt.id} id={opt.id} textValue={opt.label}>
+                {opt.label}
+                <ListBox.ItemIndicator />
+              </ListBox.Item>
+            ))}
+          </ListBox>
+        </Select.Popover>
+      </Select>
+
+      {error && <FieldError>{error}</FieldError>}
+    </TextField>
   );
 }
-
-
