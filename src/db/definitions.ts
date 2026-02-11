@@ -128,7 +128,7 @@ export type BusinessType = {
 
 // Dados que envia para criar
 export type CreateBusinessType = {
-  nome: string;
+  nome: "free" | "standard" | "pro";
   plano?: string; // default: 'free'
 };
 
