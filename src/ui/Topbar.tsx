@@ -5,6 +5,7 @@ import Link from "next/link";
 import { UserButton } from "@clerk/nextjs";
 
 import BaseSurface from "./Surface";
+import { OrganizationSwitcher } from "@clerk/nextjs";
 
 interface TopbarProps {
   //id: string;
@@ -26,10 +27,11 @@ export function Topbar({ nome, sobrenome }: TopbarProps) {
       className="max-w-full rounded-3xl backdrop-blur mx-2 my-4"
     >
       <div className="flex h-16 items-center justify-between px-4 md:px-6">
+        <OrganizationSwitcher />
         {/* Left Side: Mobile Menu Button (visible on mobile) + Logo */}
         <div className="flex items-center gap-3">
           {/* Mobile Menu Button */}
-
+          {/* ONDE ENCAIXAER O MENU DE ORGANIZAÇÃO <OrganizationSwitcher /> NO FORMATO MOBILE ?? */}
           {/* Logo and App Name */}
           <Link
             href="/aplicacao"
