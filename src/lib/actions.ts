@@ -10,6 +10,7 @@ import type {
   Categoria,
   CriarCategoria,
   CriarSubCategoria,
+  UsuarioType,
 } from "../db/definitions";
 
 import { z } from "zod";
@@ -508,7 +509,6 @@ export async function updateProdutoAction(
   prevState: CreateProdutoState,
   formData: FormData,
 ): Promise<CreateProdutoState> {
-  
   // Obter ID do formData
   /*   const id = formData.get("id") as string;
 
@@ -552,7 +552,8 @@ export async function updateProdutoAction(
 
     // Se o nome foi alterado, verificar duplicação
     if (nome) {
-      const categoriaAtual = id_categoria || (produtoExistente[0] as any).id_categoria;
+      const categoriaAtual =
+        id_categoria || (produtoExistente[0] as Produto).id_categoria;
       const existing = await sql`
         SELECT id FROM produtos 
         WHERE LOWER(nome) = LOWER(${nome}) 
@@ -688,4 +689,156 @@ export async function deleteProdutoAction(
       message: "Erro de base de dados: Não foi possível deletar o produto.",
     };
   }
+}
+
+
+// ADCIONADO A ACTIO PARA ESTOQUE
+// ========== MOVIMENTOS DE ESTOQUE ==========
+
+
+// 1. Schema de Validação
+const CreateMovimentoEstoqueSchema = z.object({
+  produto_id: z.string().uuid("Selecione um produto válido"),
+
+  business_id: z.string().uuid("Business ID inválido"),
+
+  quantidade: z.string().transform((val) => {
+    const num = Number(val);
+    if (isNaN(num)) throw new Error("A quantidade deve ser um número");
+    if (!Number.isInteger(num))
+      throw new Error("A quantidade deve ser um número inteiro");
+    if (num <= 0) throw new Error("A quantidade deve ser maior que zero");
+    return num;
+  }),
+
+  tipo: z.enum(["entrada", "saida", "ajuste"], {
+    message: "Tipo de movimento inválido.",
+  }),
+
+  motivo: z
+    .enum(["compra", "venda", "perda", "consumo", "correcao"])
+    .optional()
+    .or(z.literal(""))
+    .transform((val) => (val === "" ? undefined : val)),
+
+  observacao: z
+    .string()
+    .max(500, "A observação deve ter no máximo 500 caracteres")
+    .trim()
+    .optional()
+    .or(z.literal(""))
+    .transform((val) => (val === "" ? undefined : val)),
+});
+
+// 2. Tipo de Estado para o Form
+export type CreateMovimentoEstoqueState = {
+  errors?: {
+    produto_id?: string[];
+    business_id?: string[];
+    quantidade?: string[];
+    tipo?: string[];
+    motivo?: string[];
+    observacao?: string[];
+  };
+  message?: string | null;
+};
+
+// 3. Action para CRIAR Movimento de Estoque
+export async function createMovimentoEstoqueAction(
+  userId: string,
+  prevState: CreateMovimentoEstoqueState,
+  formData: FormData,
+): Promise<CreateMovimentoEstoqueState> {
+  // 1. Validar campos com Zod
+  const validatedFields = CreateMovimentoEstoqueSchema.safeParse({
+    produto_id: formData.get("produto_id"),
+    business_id: formData.get("business_id"),
+    quantidade: formData.get("quantidade"),
+    tipo: formData.get("tipo"),
+    motivo: formData.get("motivo"),
+    observacao: formData.get("observacao"),
+  });
+
+  if (!validatedFields.success) {
+    return {
+      errors: validatedFields.error.flatten().fieldErrors,
+      message: "Campos inválidos. Falha ao registar movimento.",
+    };
+  }
+
+  const { produto_id, business_id, quantidade, tipo, motivo, observacao } =
+    validatedFields.data;
+
+  try {
+    // 2. Verificar se o produto existe e pertence ao business
+    const produto = await sql`
+      SELECT id, quantidade_estoque, estoque_minimo
+      FROM produtos
+      WHERE id = ${produto_id}
+        AND business_id = ${business_id}
+    `;
+
+    if (produto.length === 0) {
+      return {
+        errors: { produto_id: ["Produto não encontrado neste business."] },
+        message: "Erro: Produto inválido.",
+      };
+    }
+
+    const estoqueAtual = Number((produto[0] as any).quantidade_estoque);
+
+    // 3. Para saídas, verificar se há stock suficiente
+    if (tipo === "saida" && estoqueAtual < quantidade) {
+      return {
+        errors: {
+          quantidade: [`Stock insuficiente. Disponível: ${estoqueAtual}.`],
+        },
+        message: "Erro: Stock insuficiente para esta saída.",
+      };
+    }
+
+    // 4. Registar o movimento
+    await sql`
+      INSERT INTO movimentos (
+        produto_id,
+        business_id,
+        quantidade,
+        tipo,
+        motivo,
+        observacao,
+        user_id
+      )
+      VALUES (
+        ${produto_id},
+        ${business_id},
+        ${quantidade},
+        ${tipo},
+        ${motivo ?? null},
+        ${observacao ?? null},
+        ${userId}
+      )
+    `;
+
+    // 5. Atualizar o stock do produto consoante o tipo
+    await sql`
+      UPDATE produtos
+      SET
+        quantidade_estoque = CASE
+          WHEN ${tipo} = 'entrada' THEN quantidade_estoque + ${quantidade}
+          WHEN ${tipo} = 'saida'   THEN quantidade_estoque - ${quantidade}
+          WHEN ${tipo} = 'ajuste'  THEN ${quantidade}
+        END,
+        updated_at = NOW()
+      WHERE id = ${produto_id}
+    `;
+  } catch (error) {
+    console.error("Database Error:", error);
+    return {
+      message: "Erro de base de dados: Não foi possível registar o movimento.",
+    };
+  }
+
+  revalidatePath("/aplicacao/produtos");
+  revalidatePath("/aplicacao/movimentos");
+  redirect("/aplicacao/movimentos");
 }

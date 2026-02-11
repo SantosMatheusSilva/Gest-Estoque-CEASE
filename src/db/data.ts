@@ -53,6 +53,25 @@ export async function fetchBusinessDB(user_business_id: string) {
   }
 }
 
+// >>>>>>>>>> FETCH BUSINESS_MEMBERSHIP <<<<<<<<<<<
+export async function fetchUserBusinessMembership(
+  user: UsuarioType,
+  businessId: string,
+) {
+  try {
+    const business_membership = await sql`
+    SELECT *
+    FROM business_memberships
+    WHERE user_id = ${user.id}
+      AND business_id = ${businessId}
+  `;
+    return business_membership[0];
+  } catch (error) {
+    console.error("Database Error:", error);
+    throw new Error("Erro ao buscar membership do usuario ao business.");
+  }
+}
+
 // >>>>>>>>>> FETCH CATEGORIAS e SUBCATEGORIAS <<<<<<<<<<<
 export async function fetchCategorias() {
   try {
