@@ -1,6 +1,32 @@
 import { sql } from "@/src/db/index";
 import { fetchUsuarioDB, fetchUserBusinessMembership } from "@/src/db/data";
-import { createBusinessMembership } from "../actions";
+//import { createBusinessMembership } from "../actions";
+import { UsuarioType } from "@/src/db/definitions";
+
+export async function createUsermembershipForBusiness(
+  userId: string,
+  clerkOrgId: string,
+) {
+  try {
+    const membership = await sql`
+    INSERT INTO business_memberships (
+      user_id,
+      business_id,
+      role
+    )
+    VALUES (
+      ${userId},
+      ${clerkOrgId},
+      'admin'
+    )
+    RETURNING *
+  `;
+    return membership[0];
+  } catch (error) {
+    console.error("Database Error:", error);
+    return { message: "Erro de base de dados ao criar membership ao business" };
+  }
+}
 export async function syncMembershipForOrg({
   businessId,
   clerkOrgId,
@@ -57,7 +83,10 @@ export async function syncMembershipForOrg({
     RETURNING *
   `; */
 
-  const criarMembership = await createBusinessMembership(user, businessId);
+  const criarMembership = await createUsermembershipForBusiness(
+    user.id,
+    clerkOrgId,
+  );
 
   if (criarMembership) return criarMembership;
 

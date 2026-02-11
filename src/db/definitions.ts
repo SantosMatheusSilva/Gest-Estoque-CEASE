@@ -124,12 +124,16 @@ export type BusinessType = {
   nome: string;
   plano: string;
   created_at: string; // TIMESTAMPTZ
+  created_by_user_id: string;
+  clerk_org_id: string;
 };
 
 // Dados que envia para criar
 export type CreateBusinessType = {
-  nome: "free" | "standard" | "pro";
-  plano?: string; // default: 'free'
+  nome: string;
+  plano: "free" | "standard" | "pro"; // default: 'free'
+  clerk_org_id: string;
+  created_by_user_id: string;
 };
 
 //>>>>>>>> Type Movimentos_Estoque <<<<<<<<<<<

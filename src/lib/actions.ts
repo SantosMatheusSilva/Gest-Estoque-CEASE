@@ -553,7 +553,7 @@ export async function updateProdutoAction(
     // Se o nome foi alterado, verificar duplicação
     if (nome) {
       const categoriaAtual =
-        id_categoria || (produtoExistente[0] as any).id_categoria;
+        id_categoria || (produtoExistente[0] as Produto).id_categoria;
       const existing = await sql`
         SELECT id FROM produtos 
         WHERE LOWER(nome) = LOWER(${nome}) 
