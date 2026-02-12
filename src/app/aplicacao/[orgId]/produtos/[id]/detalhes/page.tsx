@@ -5,9 +5,9 @@ import { fetchCategoriaComSubcategoriaPorId } from "@/src/db/data";
 import { notFound } from "next/navigation";
 
 type Props = {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 };
 
 export default async function ProductDetailsPage({ params }: Props) {

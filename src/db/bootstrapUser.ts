@@ -4,7 +4,7 @@ import type { UsuarioType } from "./definitions";
 
 type BootstrapUserInput = {
   clerkUserId: string;
-  email?: string; // opcional, se quiseres atualizar
+  email: string;
 };
 
 type BootstrapUserOutput = {
@@ -28,7 +28,7 @@ export async function bootstrapUser(
 
     // 2️⃣ Criar novo usuário se não existir
     const [novoUsuario] = await sql<UsuarioType[]>`
-      INSERT INTO users (
+      INSERT INTO usuarios (
         clerk_user_id,
         email,
         created_at

@@ -30,7 +30,7 @@ export async function fetchUsuarioDB(clerk_user_id: string) {
       WHERE u.clerk_user_id = ${clerk_user_id}
       LIMIT 1
     `;
-    
+
     return resultado[0];
   } catch (error) {
     console.error("Database Error:", error);
@@ -195,7 +195,7 @@ export async function fetchSubcategorias() {
   }
 }
 
-export async function fetchCategoriaComSubcategorias() {
+export async function fetchCategoriaComSubcategorias(orgId: string) {
   try {
     // Buscar todas as categorias de uma vez
     const categorias = await sql`
@@ -207,6 +207,7 @@ export async function fetchCategoriaComSubcategorias() {
          updated_at,
          adicionado_por
        FROM categorias
+       WHERE clerk_org_id = ${orgId}
        ORDER BY nome
      `;
 
@@ -461,7 +462,6 @@ export async function deletarCategoria(id_categoria: string): Promise<void> {
   return result;
 } */
 
-
 // >>>>>>>>>> DASHBOARD KPIs <<<<<<<<<<<
 
 export async function fetchDashboardKPIs(business_id: string) {
@@ -509,16 +509,21 @@ export async function fetchDashboardKPIs(business_id: string) {
 
     // Processar movimentos de hoje
     const movements = { entradas: 0, saidas: 0, ajustes: 0 };
-    
+
     if (todayMovementsResult && todayMovementsResult.length > 0) {
       todayMovementsResult.forEach((mov: any) => {
-        if (mov.tipo === 'entrada') movements.entradas = mov.total || 0;
-        if (mov.tipo === 'saida') movements.saidas = mov.total || 0;
-        if (mov.tipo === 'ajuste') movements.ajustes = Math.abs(mov.total || 0);
+        if (mov.tipo === "entrada") movements.entradas = mov.total || 0;
+        if (mov.tipo === "saida") movements.saidas = mov.total || 0;
+        if (mov.tipo === "ajuste") movements.ajustes = Math.abs(mov.total || 0);
       });
     }
 
-    console.log("✅ KPIs finais:", { totalStock, lowStockCount, movements, inventoryValue }); // DEBUG
+    console.log("✅ KPIs finais:", {
+      totalStock,
+      lowStockCount,
+      movements,
+      inventoryValue,
+    }); // DEBUG
 
     return {
       totalStock,
@@ -528,7 +533,7 @@ export async function fetchDashboardKPIs(business_id: string) {
     };
   } catch (error) {
     console.error("❌ Database Error (fetchDashboardKPIs):", error);
-    
+
     // Retornar valores padrão em caso de erro
     return {
       totalStock: 0,
@@ -540,7 +545,9 @@ export async function fetchDashboardKPIs(business_id: string) {
 }
 
 // Produtos para tabela do dashboard (top 15, prioridade stock baixo)
-export async function fetchDashboardProducts(business_id: string): Promise<ProdutoType[]> {
+export async function fetchDashboardProducts(
+  business_id: string,
+): Promise<ProdutoType[]> {
   try {
     const produtosResult = await sql`
       SELECT 
@@ -558,22 +565,14 @@ export async function fetchDashboardProducts(business_id: string): Promise<Produ
         quantidade_estoque ASC
       LIMIT 15
     `;
-    
+
     console.log("📦 produtosResult:", produtosResult);
-    
+
     // Cast explícito para o tipo correto
     const produtos = produtosResult as unknown as ProdutoType[];
     return produtos ?? [];
-    
   } catch (error) {
     console.error("❌ Database Error (fetchDashboardProducts):", error);
     return [];
   }
 }
-
-
-
-
-
-
-

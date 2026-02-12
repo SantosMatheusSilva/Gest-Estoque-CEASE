@@ -1,3 +1,5 @@
+import { auth } from "@clerk/nextjs/server";
+
 //Funções auxiliares e utilitárias usadas em várias partes do aplicativo
 
 export const formatCurrency = (amount: number) => {
@@ -53,3 +55,9 @@ export const generatePagination = (currentPage: number, totalPages: number) => {
     totalPages,
   ];
 };
+
+// função para retornar o caminho da org ao qual o utilizador pertence - client
+export async function useOrgPath() {
+  const { orgId } = await auth();
+  return (path: string = "") => `/aplicacao/${orgId}${path ? `/${path}` : ""}`;
+}
