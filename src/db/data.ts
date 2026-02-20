@@ -16,17 +16,14 @@ import {
 
 export async function fetchUsuarioDB(clerk_user_id: string) {
   try {
-    const resultado = await sql`
+    const resultado = await sql<UsuarioType[]>`
       SELECT 
         u.id,
         u.clerk_user_id,
         u.created_at,
         u.updated_at,
         u.email,
-        bm.business_id,
-        bm.role
       FROM usuarios u
-      LEFT JOIN business_memberships bm ON u.id = bm.user_id
       WHERE u.clerk_user_id = ${clerk_user_id}
       LIMIT 1
     `;
@@ -303,11 +300,11 @@ export async function fetchMovimentosEstoquePorProduto(
 }
 
 // >>>>>>>>>> Movimentos de Estoque >>><<<<<<<<<<<
-export async function fetchProdutos(business_id: string) {
+export async function fetchProdutos(clerkOrgId: string) {
   try {
     const produtos = await sql<ProdutoType[]>`
        SELECT * FROM produtos
-       WHERE business_id = ${business_id}
+       WHERE clerk_org_id = ${clerkOrgId}
      `;
     return produtos[0];
   } catch (error) {
@@ -457,10 +454,7 @@ export async function deletarCategoria(id_categoria: string): Promise<void> {
   }
 }
 
-/* export async function testDbConnection() {
-  const result = await sql`SELECT 1 as ok`;
-  return result;
-} */
+// >>>>>>>>>> PRODUTOS <<<<<<<<<<<
 
 // >>>>>>>>>> DASHBOARD KPIs <<<<<<<<<<<
 
@@ -566,7 +560,7 @@ export async function fetchDashboardProducts(
       LIMIT 15
     `;
 
-    console.log("📦 produtosResult:", produtosResult);
+    //console.log("📦 produtosResult:", produtosResult);
 
     // Cast explícito para o tipo correto
     const produtos = produtosResult as unknown as ProdutoType[];

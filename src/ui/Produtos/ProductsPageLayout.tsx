@@ -4,7 +4,7 @@ import { PageLayout } from "../PageLayout";
 import { CreateProductForm } from "@/src/ui/Produtos/CreateProductForm";
 import ProductCard from "./ProductCard";
 import EditProductForm from "./EditProductForm";
-import { CategoriaRaiz, Produto } from "@/src/db/definitions";
+import { CategoriaRaiz, Produto, ProdutoType } from "@/src/db/definitions";
 import BaseSurface from "../Surface";
 
 interface ProductsPageLayoutProps {

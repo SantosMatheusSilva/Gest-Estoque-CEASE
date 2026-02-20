@@ -1,5 +1,4 @@
 import ContactForm from "@/src/ui/Contacto/ContactForm";
-import UsuarioForm from "@/src/ui/Usuario/UsuarioForm";
 
 export default function ContactosPage() {
   return (
@@ -22,14 +21,6 @@ export default function ContactosPage() {
           </h2>
           <ContactForm />
         </div>
-
-        {/* Criar utilizador */}
-        {/*         <div className="rounded-lg border bg-white p-8 shadow-sm">
-          <h2 className="mb-6 text-2xl font-semibold">
-            Criar utilizador
-          </h2>
-          <UsuarioForm />
-        </div> */}
       </div>
     </main>
   );

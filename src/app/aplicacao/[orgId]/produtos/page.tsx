@@ -1,4 +1,4 @@
-import { fetchCategoriaComSubcategorias } from "@/src/db/data";
+import { fetchCategoriaComSubcategorias, fetchProdutos } from "@/src/db/data";
 import ProductPageLayout from "@/src/ui/Produtos/ProductsPageLayout";
 import { CategoriaRaiz, Produto } from "@/src/db/definitions";
 import { fetchAllProdutos } from "@/src/lib/data";

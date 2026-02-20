@@ -1,4 +1,4 @@
-import Tiitle from "./Usuario/Tiitle";
+import Tiitle from "./Tiitle";
 
 type PageLayoutProps = {
   title?: React.ReactNode;

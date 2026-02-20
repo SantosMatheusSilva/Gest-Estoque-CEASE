@@ -1,6 +1,5 @@
 "use client";
 
-import React, { useState } from "react";
 import { PageLayout } from "@/src/ui/PageLayout";
 import { Button } from "@/src/ui/Button";
 import { IconButton } from "@/src/ui/IconButton";
@@ -10,7 +9,6 @@ import { FormSurface } from "@/src/ui/FormSurface";
 import Form from "next/form";
 import { CreateCategoryForm } from "@/src/ui/Categorias/CreateCategoryForm";
 //import { EditCategoryForm } from "@/src/ui/Categorias/EditCategoryForm";
-import CreateSubcategoryForm from "@/src/ui/Categorias/CreateSubcategoryForm";
 //import { EditSubcategoryForm } from "@/src/ui/Categorias/EditSubcategoryForm";
 import { DashboardCards } from "@/src/ui/dashboard";
 
@@ -167,13 +165,8 @@ export default function TestComponentsPage() {
           {/* Create Subcategory Form */}
           <div className="space-y-4">
             <h3 className="text-lg font-medium">Create Subcategory Form</h3>
-            <CreateSubcategoryForm
-            //parentCategory={mockParentCategory}
-            /*               nome={subcatNome}
-              onNomeChange={setSubcatNome}
-              onSubmit={handleCreateSubcategory}
-              onCancel={() => alert("Create Subcategory Cancelled")} */
-            />
+            {/*             <CreateSubcategoryForm/>
+             */}{" "}
           </div>
 
           {/* Edit Subcategory Form */}
@@ -197,7 +190,7 @@ export default function TestComponentsPage() {
           <InputField
             label="Label"
             description="Description"
-            errorMessage="Error message"
+            //errorMessage="Error message"
             className="w-64"
           />
         </div>
