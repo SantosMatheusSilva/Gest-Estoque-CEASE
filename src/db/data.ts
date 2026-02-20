@@ -22,7 +22,7 @@ export async function fetchUsuarioDB(clerk_user_id: string) {
         u.clerk_user_id,
         u.created_at,
         u.updated_at,
-        u.email,
+        u.email
       FROM usuarios u
       WHERE u.clerk_user_id = ${clerk_user_id}
       LIMIT 1
@@ -458,13 +458,13 @@ export async function deletarCategoria(id_categoria: string): Promise<void> {
 
 // >>>>>>>>>> DASHBOARD KPIs <<<<<<<<<<<
 
-export async function fetchDashboardKPIs(business_id: string) {
+export async function fetchDashboardKPIs(org_id: string) {
   try {
     // Total de itens em stock
     const totalStockResult = await sql`
       SELECT COALESCE(SUM(quantidade_estoque), 0)::INTEGER as total
       FROM produtos
-      WHERE business_id = ${business_id} AND ativo = true
+      WHERE clerk_org_id = ${org_id} AND ativo = true
     `;
     console.log("📊 totalStockResult:", totalStockResult); // DEBUG
     const totalStock = totalStockResult?.[0]?.total ?? 0;
@@ -473,7 +473,7 @@ export async function fetchDashboardKPIs(business_id: string) {
     const lowStockResult = await sql`
       SELECT COUNT(*)::INTEGER as count
       FROM produtos
-      WHERE business_id = ${business_id} 
+      WHERE clerk_org_id = ${org_id} 
         AND ativo = true 
         AND quantidade_estoque < estoque_minimo
     `;
@@ -486,7 +486,7 @@ export async function fetchDashboardKPIs(business_id: string) {
         tipo, 
         COALESCE(SUM(quantidade), 0)::INTEGER as total
       FROM movimentos_estoque
-      WHERE business_id = ${business_id}
+      WHERE clerk_org_id = ${org_id}
         AND DATE(created_at) = CURRENT_DATE
       GROUP BY tipo
     `;
@@ -496,7 +496,7 @@ export async function fetchDashboardKPIs(business_id: string) {
     const inventoryValueResult = await sql`
       SELECT COALESCE(SUM(quantidade_estoque * preco_venda), 0)::DECIMAL as valor_total
       FROM produtos
-      WHERE business_id = ${business_id} AND ativo = true
+      WHERE clerk_org_id = ${org_id} AND ativo = true
     `;
     console.log("📊 inventoryValueResult:", inventoryValueResult); // DEBUG
     const inventoryValue = Number(inventoryValueResult?.[0]?.valor_total ?? 0);
@@ -540,7 +540,7 @@ export async function fetchDashboardKPIs(business_id: string) {
 
 // Produtos para tabela do dashboard (top 15, prioridade stock baixo)
 export async function fetchDashboardProducts(
-  business_id: string,
+  org_id: string,
 ): Promise<ProdutoType[]> {
   try {
     const produtosResult = await sql`
@@ -553,7 +553,7 @@ export async function fetchDashboardProducts(
         unidade, 
         ativo
       FROM produtos
-      WHERE business_id = ${business_id} AND ativo = true
+      WHERE clerk_org_id = ${org_id} AND ativo = true
       ORDER BY 
         CASE WHEN quantidade_estoque < estoque_minimo THEN 0 ELSE 1 END,
         quantidade_estoque ASC

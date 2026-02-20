@@ -103,15 +103,18 @@ export type CreateProdutoType = {
 export type UsuarioType = {
   id: string;
   clerk_user_id: string; // id do Clerk
-  business_id: string;
-  role: "staff" | "owner" | "adm" | "manager";
+  //business_id: string;
+  //role: "staff" | "owner" | "adm" | "manager";
   created_at: string;
+  updated_at: string;
+  email: string;
 };
 
 export type CreateUsuarioType = {
   clerk_user_id: string;
   business_id: string;
-  role?: "staff" | "owner" | "adm" | "manager"; // default: 'staff'
+  //role?: "staff" | "owner" | "adm" | "manager"; // default: 'staff'
+  email: string;
 };
 
 //>>>>>>>>>> Type Usuario - clerk <<<<<<<<<<
@@ -148,6 +151,7 @@ export type MovimentoEstoqueType = {
   observacao?: string;
   user_id: string;
   created_at: string;
+  clerk_org_id: string;
 };
 
 export type CreateMovimentoEstoqueType = {
@@ -158,6 +162,7 @@ export type CreateMovimentoEstoqueType = {
   motivo?: "compra" | "venda" | "perda" | "consumo" | "correcao";
   observacao?: string;
   user_id: string;
+  clerk_org_id: string;
 };
 
 //>>>>>>>> MAIS Type Movimentos_Estoque <<<<<<<<<<<
@@ -174,7 +179,7 @@ export type MovimentoComProdutoType = MovimentoEstoqueType & {
 
 // Movimento enriquecido com dados do usuário (útil para auditoria)
 export type MovimentoComUsuarioType = MovimentoEstoqueType & {
-  usuario: Pick<UsuarioType, "id" | "clerk_user_id" | "role">;
+  usuario: Pick<UsuarioType, "id" | "clerk_user_id">;
 };
 
 // Movimento totalmente expandido (produto + usuário)
@@ -183,7 +188,7 @@ export type MovimentoDetalhadoType = MovimentoEstoqueType & {
     ProdutoType,
     "id" | "nome" | "unidade" | "sku" | "quantidade_estoque"
   >;
-  usuario: Pick<UsuarioType, "id" | "clerk_user_id" | "role">;
+  usuario: Pick<UsuarioType, "id" | "clerk_user_id">;
 };
 
 // Filtros disponíveis para queries de movimentos

@@ -1,27 +1,30 @@
 import DashboardPageLayout from "@/src/ui/dashboard/DashLayoutPage";
 import { fetchDashboardKPIs, fetchDashboardProducts } from "@/src/db/data";
-import { currentUser } from "@clerk/nextjs/server";
+import { ProdutoType } from "@/src/db/definitions";
+import { currentUser, auth } from "@clerk/nextjs/server";
 import { fetchUsuarioDB } from "@/src/db/data";
 
 async function Page() {
   const user = await currentUser();
-  
+  const { orgId: org_id } = await auth();
+  console.log("user -->", user);
+  console.log("orgId -->", org_id);
   if (!user) {
     return <div className="p-8">Não autorizado</div>;
   }
 
   const usuario = await fetchUsuarioDB(user.id);
-  
+
   if (!usuario) {
     return <div className="p-8">Utilizador não encontrado</div>;
   }
 
   // DEBUG - Ver business_id
-  console.log("=".repeat(50));
-  console.log("🔑 Clerk User ID:", user.id);
-  console.log("👤 Usuario:", usuario);
-  console.log("🏢 Business ID:", usuario.business_id);
-  console.log("=".repeat(50));
+  //console.log("=".repeat(50));
+  //console.log("🔑 Clerk User ID:", user.id);
+  //console.log("👤 Usuario:", usuario);
+  //console.log("🏢 Business ID:", usuario.business_id);
+  //console.log("=".repeat(50));
 
   let kpis = {
     totalStock: 0,
@@ -29,12 +32,12 @@ async function Page() {
     todayMovements: { entradas: 0, saidas: 0, ajustes: 0 },
     inventoryValue: 0,
   };
-  let produtos: any[] = [];
+  let produtos: ProdutoType[] = [];
 
-  if (usuario.business_id) {
-    kpis = await fetchDashboardKPIs(usuario.business_id);
-    produtos = await fetchDashboardProducts(usuario.business_id);
-    
+  if (org_id) {
+    kpis = await fetchDashboardKPIs(org_id);
+    produtos = await fetchDashboardProducts(org_id);
+
     // DEBUG - Ver resultados
     console.log("📊 KPIs:", kpis);
     console.log("📦 Produtos:", produtos.length, "itens");
@@ -46,10 +49,10 @@ async function Page() {
 
   return (
     <main>
-      <DashboardPageLayout 
+      <DashboardPageLayout
         data={{
           kpis,
-          produtos
+          produtos,
         }}
       />
     </main>
@@ -57,5 +60,3 @@ async function Page() {
 }
 
 export default Page;
-
-
