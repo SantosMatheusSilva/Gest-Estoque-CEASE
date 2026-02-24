@@ -316,7 +316,8 @@ const CreateProdutoSchema = z.object({
     return num;
   }),
 
-  preco_custo: z.string().transform((val) => {
+  preco_custo: z.string().optional().transform((val) => {
+    if (!val) return undefined;
     const num = Number(val);
     if (isNaN(num)) throw new Error("O preço de custo deve ser um número");
     if (num <= 0) throw new Error("O preço de custo deve ser maior que zero");
@@ -332,7 +333,6 @@ const CreateProdutoSchema = z.object({
 
   id_categoria: z.string().uuid("Selecione uma categoria válida"),
 
-  // ← NOVOS: identificadores do Clerk validados pelo Zod
   clerk_org_id: z.string().min(1, "Organização inválida."),
   clerk_user_id: z.string().min(1, "Utilizador inválido."),
 
@@ -350,7 +350,46 @@ const CreateProdutoSchema = z.object({
     .optional()
     .or(z.literal(""))
     .transform((val) => (val === "" ? undefined : val)),
+
+  // ✅ NOVOS CAMPOS
+  sku: z
+    .string()
+    .max(100, "O SKU deve ter no máximo 100 caracteres")
+    .trim()
+    .optional()
+    .or(z.literal(""))
+    .transform((val) => (val === "" ? undefined : val)),
+
+  estoque_minimo: z.string().optional().transform((val) => {
+    if (!val || val === "") return undefined;
+    const num = Number(val);
+    if (isNaN(num)) throw new Error("O estoque mínimo deve ser um número");
+    if (num < 0) throw new Error("O estoque mínimo não pode ser negativo");
+    return num;
+  }),
+
+  unidade: z
+    .string()
+    .max(20, "A unidade deve ter no máximo 20 caracteres")
+    .trim()
+    .optional()
+    .or(z.literal(""))
+    .transform((val) => (val === "" ? undefined : val)),
+
+  is_final: z
+  .string()
+  .nullable()   // ✅ aceita null
+  .optional()
+  .transform((val) => val === "true"),
+
+ativo: z
+  .string()
+  .nullable()   // ✅ aceita null
+  .optional()
+  .transform((val) => val !== "false"),
+
 });
+
 
 // 2. Schema para Editar Produto (partial do anterior)
 const UpdateProdutoSchema = z.object({
@@ -411,13 +450,20 @@ export type CreateProdutoState = {
     preco_custo?: string[];
     preco_venda?: string[];
     id_categoria?: string[];
-    clerk_org_id?: string[];   // ← NOVO
-    clerk_user_id?: string[];  // ← NOVO
+    clerk_org_id?: string[];
+    clerk_user_id?: string[];
     descricao?: string[];
     img_url?: string[];
+    // ✅ NOVOS CAMPOS
+    sku?: string[];
+    estoque_minimo?: string[];
+    unidade?: string[];
+    is_final?: string[];
+    ativo?: string[];
   };
   message?: string | null;
 };
+
 
 // 4. Action para CRIAR Produto
 export async function createProdutoAction(
@@ -425,7 +471,6 @@ export async function createProdutoAction(
   formData: FormData,
 ): Promise<CreateProdutoState> {
 
-  // Buscar IDs da sessão do Clerk
   const { orgId, userId: clerkUserId } = await auth();
 
   const validatedFields = CreateProdutoSchema.safeParse({
@@ -434,10 +479,16 @@ export async function createProdutoAction(
     preco_custo: formData.get("preco"),
     preco_venda: formData.get("preco_venda"),
     id_categoria: formData.get("produto_categoria_id"),
-    clerk_org_id: orgId ?? "",        // ← NOVO: vem da sessão
-    clerk_user_id: clerkUserId ?? "", // ← NOVO: vem da sessão
+    clerk_org_id: orgId ?? "",
+    clerk_user_id: clerkUserId ?? "",
     descricao: formData.get("descricao"),
     img_url: formData.get("img_url"),
+    // ✅ NOVOS CAMPOS
+    sku: formData.get("sku"),
+    estoque_minimo: formData.get("estoque_minimo"),
+    unidade: formData.get("unidade"),
+    is_final: formData.get("is_final"),
+    ativo: formData.get("ativo"),
   });
 
   if (!validatedFields.success) {
@@ -458,9 +509,13 @@ export async function createProdutoAction(
     clerk_user_id,
     descricao,
     img_url,
+    sku,
+    estoque_minimo,
+    unidade,
+    is_final,
+    ativo,
   } = validatedFields.data;
 
-  // Buscar o ID do utilizador na nossa DB pelo clerk_user_id
   const dbUser = await fetchUsuarioDB(clerk_user_id);
   if (!dbUser) {
     return { message: "Utilizador não encontrado na base de dados." };
@@ -478,19 +533,29 @@ export async function createProdutoAction(
         id_categoria,
         business_id,
         clerk_org_id,
-        adicionado_por
+        adicionado_por,
+        sku,
+        estoque_minimo,
+        unidade,
+        is_final,
+        ativo
       )
       VALUES (
         ${nome},
         ${quantidade_estoque},
-        ${preco_custo},
+        ${preco_custo ?? null},
         ${preco_venda},
         ${img_url ?? null},
         ${descricao ?? null},
         ${id_categoria},
-        ${null},           -- business_id sempre null por agora
-        ${clerk_org_id},   -- vem direto da sessão Clerk
-        ${dbUser.id}       -- ID da nossa DB, não do Clerk
+        ${null},
+        ${clerk_org_id},
+        ${dbUser.id},
+        ${sku ?? null},
+        ${estoque_minimo ?? null},
+        ${unidade ?? null},
+        ${is_final ?? false},
+        ${ativo ?? true}
       )
     `;
   } catch (error) {
@@ -503,6 +568,7 @@ export async function createProdutoAction(
   revalidatePath("/aplicacao/produtos");
   redirect("/aplicacao/produtos");
 }
+
 
 // 5. Action para EDITAR Produto
 export async function updateProdutoAction(

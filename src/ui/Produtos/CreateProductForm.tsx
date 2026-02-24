@@ -146,6 +146,39 @@ function CreateProductForm({ categorias }: CreateProductFormProps) {
                   />
 
                   <InputField
+                    label="SKU (opcional)"
+                    description="Código único do produto (ex: PROD-001)"
+                    inputProps={{ id: "sku", name: "sku", type: "text" }}
+                    error={state?.errors?.sku?.[0]}
+                  />
+
+                  <InputField
+                    label="Estoque Mínimo (opcional)"
+                    description="Quantidade mínima antes de alertar"
+                    inputProps={{ id: "estoque_minimo", name: "estoque_minimo", type: "number", min: 0, step: 1 }}
+                    error={state?.errors?.estoque_minimo?.[0]}
+                  />
+
+                  <InputField
+                    label="Unidade (opcional)"
+                    description="Ex: un, kg, L, m"
+                    inputProps={{ id: "unidade", name: "unidade", type: "text" }}
+                    error={state?.errors?.unidade?.[0]}
+                  />
+
+                  {/* is_final — produto acabado ou intermédio */}
+                  <div className="mb-4 flex items-center gap-2">
+                    <input type="checkbox" id="is_final" name="is_final" value="true" />
+                    <label htmlFor="is_final" className="text-sm font-medium">
+                      Produto Final (não é matéria-prima)
+                    </label>
+                  </div>
+
+                  {/* ativo — true por defeito, hidden */}
+                  <input type="hidden" name="ativo" value="true" />
+
+
+                  <InputField
                     label="Descrição (opcional)"
                     description="Digite uma descrição ou informação adicional"
                     inputProps={{ id: "descricao", name: "descricao", type: "text" }}
