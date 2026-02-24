@@ -29,11 +29,11 @@ export function Topbar({ nome, sobrenome }: TopbarProps) {
       <div className="flex h-16 items-center justify-between px-4 md:px-6">
         <OrganizationSwitcher />
         {/* Left Side: Mobile Menu Button (visible on mobile) + Logo */}
-        <div className="flex items-center gap-3">
-          {/* Mobile Menu Button */}
-          {/* ONDE ENCAIXAER O MENU DE ORGANIZAÇÃO <OrganizationSwitcher /> NO FORMATO MOBILE ?? */}
-          {/* Logo and App Name */}
-          <Link
+        {/* <div className="flex items-center gap-3"> */}
+        {/* Mobile Menu Button */}
+        {/* ONDE ENCAIXAER O MENU DE ORGANIZAÇÃO <OrganizationSwitcher /> NO FORMATO MOBILE ?? */}
+        {/* Logo and App Name */}
+        {/*          <Link
             href="/aplicacao"
             className="flex sm:hidden items-center gap-3 transition-opacity hover:opacity-80"
           >
@@ -54,12 +54,12 @@ export function Topbar({ nome, sobrenome }: TopbarProps) {
               </span>
             </div>
           </Link>
-        </div>
+        </div> */}
 
         {/* User Dropdown */}
-        <div className="flex items-center gap-2">
-          <h3 className="font-semibold hidden md:block">{`${capitalize(nome)} ${capitalize(sobrenome)}`}</h3>
+        <div className="hidden md:flex items-center gap-2">
           <UserButton />
+          <h3 className="font-semibold hidden md:block">{`${capitalize(nome)} ${capitalize(sobrenome)}`}</h3>
         </div>
       </div>
     </BaseSurface>

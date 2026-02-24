@@ -69,6 +69,12 @@ export default function Navbar() {
             Faq
           </Link>
           <Link
+            href="/planos"
+            className={isActive("/faq") ? "font-semibold text-blue-500" : ""}
+          >
+            Planos
+          </Link>
+          <Link
             href="/contacto"
             className={
               isActive("/contacto") ? "font-semibold text-blue-500" : ""

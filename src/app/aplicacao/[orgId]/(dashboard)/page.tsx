@@ -7,8 +7,8 @@ import { fetchUsuarioDB } from "@/src/db/data";
 async function Page() {
   const user = await currentUser();
   const { orgId: org_id } = await auth();
-  console.log("user -->", user);
-  console.log("orgId -->", org_id);
+  //console.log("user -->", user);
+  //console.log("orgId -->", org_id);
   if (!user) {
     return <div className="p-8">Não autorizado</div>;
   }
@@ -38,13 +38,9 @@ async function Page() {
     kpis = await fetchDashboardKPIs(org_id);
     produtos = await fetchDashboardProducts(org_id);
 
-    // DEBUG - Ver resultados
-    console.log("📊 KPIs:", kpis);
-    console.log("📦 Produtos:", produtos.length, "itens");
-    if (produtos.length > 0) {
+    /*     if (produtos.length > 0) {
       console.log("📦 Primeiro produto:", produtos[0]);
-    }
-    console.log("=".repeat(50));
+    } */
   }
 
   return (

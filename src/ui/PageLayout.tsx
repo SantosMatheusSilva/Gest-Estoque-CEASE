@@ -13,9 +13,12 @@ export function PageLayout({
   description,
   actions,
   children,
+  className,
 }: PageLayoutProps) {
   return (
-    <div className="flex h-full flex-col py-2 gap-4 w-full mx-auto">
+    <div
+      className={`flex h-full flex-col py-2 gap-4 w-full mx-auto ${className ?? ""}`}
+    >
       <div className="flex justify-between items-center sm:flex-row flex-col gap-4">
         <div className="flex flex-col gap-2">
           <Tiitle>{title}</Tiitle>
