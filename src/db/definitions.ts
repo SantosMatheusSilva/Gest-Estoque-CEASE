@@ -96,7 +96,8 @@ export type CreateProdutoType = {
   estoque_minimo?: number;
   is_final?: boolean;
   unidade?: string;
-  business_id: string;
+  business_id?: string;
+  clerk_org_id: string;
 };
 
 // >>>>>>>>>> Type Usuario <<<<<<<<<<

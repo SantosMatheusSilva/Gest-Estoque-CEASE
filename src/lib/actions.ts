@@ -5,6 +5,7 @@
 
 import { sql } from "../db";
 import type { Produto, CreateProduto } from "../db/definitions";
+import { auth } from "@clerk/nextjs/server"; // ← NOVO
 
 import type {
   Categoria,
@@ -13,10 +14,11 @@ import type {
   UsuarioType,
 } from "../db/definitions";
 
-import { z } from "zod";
+import { string, z } from "zod";
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { fetchUsuarioDB } from "../db/data";
 
 // ========== PRODUTOS ==========
 
@@ -136,23 +138,13 @@ export async function getCategoriaById(id: string): Promise<Categoria | null> {
   return rows[0] ?? null;
 }
 
-// const criarCategoriaSchema = z.object({
-//   nome: z
-//     .string()
-//     .min(3, "O nome deve ter pelo menos 3 caracteres")
-//     .max(50, "O nome deve ter no máximo 50 caracteres")
-//     .trim(),
-
-//   adicionado_por: z.string().uuid(),
-// });
-
 // ========== CATEGORIAS ==========
 
 // 1. Definição do Tipo (Unificado para evitar erros)
 export type CreateCategoriaState = {
   errors?: {
     nome?: string[];
-    parent_id?: string[]; // Adicionado para suportar subcategorias
+    parent_id?: string[];
   };
   message?: string | null;
 };
@@ -166,7 +158,6 @@ const CategoriaSchema = z.object({
     .trim(),
 });
 
-// Criamos o SubCategoriaSchema baseado no anterior, mas com parent_id
 const SubCategoriaSchema = CategoriaSchema.extend({
   parent_id: z.string().uuid("ID da categoria pai inválido."),
 });
@@ -190,15 +181,11 @@ export async function createCategoriaAction(
   const { nome } = validatedFields.data;
   const userId = "id_temporario_usuario";
 
-  // passa parent_is por parametro ou dropdow
-
   try {
     const existing = await sql`
       SELECT id_categoria FROM categorias 
       WHERE LOWER(nome) = LOWER(${nome}) AND parent_id IS NULL
     `;
-
-    // verificar depois se existe uma equals()
 
     if (existing.length > 0) {
       return {
@@ -263,7 +250,6 @@ export async function createSubCategoriaAction(
       WHERE LOWER(nome) = LOWER(${nome}) AND parent_id = ${parent_id}
     `;
 
-    // EXPLICAÇÃO:
     if (existing.length > 0) {
       return {
         errors: {
@@ -322,23 +308,33 @@ const CreateProdutoSchema = z.object({
     .max(100, "O nome deve ter no máximo 100 caracteres")
     .trim(),
 
-  quantidade: z.string().transform((val) => {
+  quantidade_estoque: z.string().transform((val) => {
     const num = Number(val);
     if (isNaN(num)) throw new Error("A quantidade deve ser um número");
-    if (!Number.isInteger(num))
-      throw new Error("A quantidade deve ser um número inteiro");
+    if (!Number.isInteger(num)) throw new Error("A quantidade deve ser um número inteiro");
     if (num < 0) throw new Error("A quantidade não pode ser negativa");
     return num;
   }),
 
-  preco: z.string().transform((val) => {
+  preco_custo: z.string().transform((val) => {
     const num = Number(val);
-    if (isNaN(num)) throw new Error("O preço deve ser um número");
-    if (num <= 0) throw new Error("O preço deve ser maior que zero");
+    if (isNaN(num)) throw new Error("O preço de custo deve ser um número");
+    if (num <= 0) throw new Error("O preço de custo deve ser maior que zero");
+    return num;
+  }),
+
+  preco_venda: z.string().transform((val) => {
+    const num = Number(val);
+    if (isNaN(num)) throw new Error("O preço de venda deve ser um número");
+    if (num <= 0) throw new Error("O preço de venda deve ser maior que zero");
     return num;
   }),
 
   id_categoria: z.string().uuid("Selecione uma categoria válida"),
+
+  // ← NOVOS: identificadores do Clerk validados pelo Zod
+  clerk_org_id: z.string().min(1, "Organização inválida."),
+  clerk_user_id: z.string().min(1, "Utilizador inválido."),
 
   descricao: z
     .string()
@@ -411,9 +407,12 @@ const UpdateProdutoSchema = z.object({
 export type CreateProdutoState = {
   errors?: {
     nome?: string[];
-    quantidade?: string[];
-    preco?: string[];
+    quantidade_estoque?: string[];
+    preco_custo?: string[];
+    preco_venda?: string[];
     id_categoria?: string[];
+    clerk_org_id?: string[];   // ← NOVO
+    clerk_user_id?: string[];  // ← NOVO
     descricao?: string[];
     img_url?: string[];
   };
@@ -425,70 +424,73 @@ export async function createProdutoAction(
   prevState: CreateProdutoState,
   formData: FormData,
 ): Promise<CreateProdutoState> {
-  // Validar campos com Zod
+
+  // Buscar IDs da sessão do Clerk
+  const { orgId, userId: clerkUserId } = await auth();
+
   const validatedFields = CreateProdutoSchema.safeParse({
     nome: formData.get("nome"),
-    quantidade: formData.get("quantidade"),
-    preco: formData.get("preco"),
-    id_categoria: formData.get("id_categoria"),
+    quantidade_estoque: formData.get("quantidade"),
+    preco_custo: formData.get("preco"),
+    preco_venda: formData.get("preco_venda"),
+    id_categoria: formData.get("produto_categoria_id"),
+    clerk_org_id: orgId ?? "",        // ← NOVO: vem da sessão
+    clerk_user_id: clerkUserId ?? "", // ← NOVO: vem da sessão
     descricao: formData.get("descricao"),
     img_url: formData.get("img_url"),
   });
 
-  // Se validação falhar, retornar erros
   if (!validatedFields.success) {
+    console.log("❌ Erros de validação:", validatedFields.error.flatten().fieldErrors);
     return {
       errors: validatedFields.error.flatten().fieldErrors,
       message: "Campos inválidos. Falha ao criar produto.",
     };
   }
 
-  const { nome, quantidade, preco, id_categoria, descricao, img_url } =
-    validatedFields.data;
+  const {
+    nome,
+    quantidade_estoque,
+    preco_custo,
+    preco_venda,
+    id_categoria,
+    clerk_org_id,
+    clerk_user_id,
+    descricao,
+    img_url,
+  } = validatedFields.data;
 
-  // ID do usuário (temporário - substituir por Clerk userId)
-  const userId = "11111111-1111-1111-1111-111111111111";
+  // Buscar o ID do utilizador na nossa DB pelo clerk_user_id
+  const dbUser = await fetchUsuarioDB(clerk_user_id);
+  if (!dbUser) {
+    return { message: "Utilizador não encontrado na base de dados." };
+  }
 
   try {
-    // Verificar se já existe produto com mesmo nome na mesma categoria
-    const existing = await sql`
-      SELECT id FROM produtos 
-      WHERE LOWER(nome) = LOWER(${nome}) 
-        AND id_categoria = ${id_categoria}
-    `;
-
-    if (existing.length > 0) {
-      return {
-        errors: {
-          nome: ["Já existe um produto com este nome nesta categoria."],
-        },
-        message: "Erro: Nome duplicado na categoria.",
-      };
-    }
-
-    // Preparar valores para inserção
-    const imgUrlValue = img_url ?? null;
-    const descricaoValue = descricao ?? null;
-
-    // Inserir produto na BD
     await sql`
       INSERT INTO produtos (
         nome,
-        quantidade,
-        preco,
+        quantidade_estoque,
+        preco_custo,
+        preco_venda,
         img_url,
         descricao,
         id_categoria,
+        business_id,
+        clerk_org_id,
         adicionado_por
       )
       VALUES (
         ${nome},
-        ${quantidade},
-        ${preco},
-        ${imgUrlValue},
-        ${descricaoValue},
+        ${quantidade_estoque},
+        ${preco_custo},
+        ${preco_venda},
+        ${img_url ?? null},
+        ${descricao ?? null},
         ${id_categoria},
-        ${userId}
+        ${null},           -- business_id sempre null por agora
+        ${clerk_org_id},   -- vem direto da sessão Clerk
+        ${dbUser.id}       -- ID da nossa DB, não do Clerk
       )
     `;
   } catch (error) {
@@ -498,7 +500,6 @@ export async function createProdutoAction(
     };
   }
 
-  // Revalidar e redirecionar
   revalidatePath("/aplicacao/produtos");
   redirect("/aplicacao/produtos");
 }
@@ -509,16 +510,6 @@ export async function updateProdutoAction(
   prevState: CreateProdutoState,
   formData: FormData,
 ): Promise<CreateProdutoState> {
-  // Obter ID do formData
-  /*   const id = formData.get("id") as string;
-
-  if (!id) {
-    return {
-      message: "ID do produto não fornecido.",
-    };
-  } */
-
-  // Validar campos com Zod (partial)
   const validatedFields = UpdateProdutoSchema.safeParse({
     nome: formData.get("nome"),
     quantidade: formData.get("quantidade"),
@@ -539,7 +530,6 @@ export async function updateProdutoAction(
     validatedFields.data;
 
   try {
-    // Verificar se produto existe
     const produtoExistente = await sql`
       SELECT id, id_categoria FROM produtos WHERE id = ${id}
     `;
@@ -550,7 +540,6 @@ export async function updateProdutoAction(
       };
     }
 
-    // Se o nome foi alterado, verificar duplicação
     if (nome) {
       const categoriaAtual =
         id_categoria || (produtoExistente[0] as Produto).id_categoria;
@@ -571,7 +560,6 @@ export async function updateProdutoAction(
       }
     }
 
-    // Preparar valores para update
     const nomeValue = nome ?? null;
     const quantidadeValue = quantidade ?? null;
     const precoValue = preco ?? null;
@@ -579,7 +567,6 @@ export async function updateProdutoAction(
     const descricaoValue = descricao ?? null;
     const idCategoriaValue = id_categoria ?? null;
 
-    // Atualizar produto (apenas campos fornecidos)
     await sql`
       UPDATE produtos
       SET
@@ -606,24 +593,21 @@ export async function updateProdutoAction(
 
 // ========== DELETE PRODUTO COM VALIDAÇÃO ZOD ==========
 
-// Schema para validar o ID antes de deletar
 const DeleteProdutoSchema = z.object({
   id: z.string().uuid("ID do produto inválido"),
 });
 
-// Tipo de Estado para o Delete
 export type DeleteProdutoState = {
   success?: boolean;
   error?: string;
   message?: string | null;
 };
 
-// 6. Action para DELETAR Produto (NOVA VERSÃO COM VALIDAÇÃO)
+// 6. Action para DELETAR Produto
 export async function deleteProdutoAction(
   prevState: DeleteProdutoState,
   formData: FormData,
 ): Promise<DeleteProdutoState> {
-  // Validar ID com Zod
   const validatedFields = DeleteProdutoSchema.safeParse({
     id: formData.get("id"),
   });
@@ -639,7 +623,6 @@ export async function deleteProdutoAction(
   const { id } = validatedFields.data;
 
   try {
-    // 1. Verificar se o produto existe antes de deletar
     const produtoExistente = await sql`
       SELECT id, nome FROM produtos WHERE id = ${id}
     `;
@@ -652,29 +635,11 @@ export async function deleteProdutoAction(
       };
     }
 
-    // 2. (OPCIONAL) Verificar se há dependências
-    // Descomente se precisar verificar vendas ou outras relações
-    /*
-    const vendasAssociadas = await sql`
-      SELECT COUNT(*) as total FROM vendas WHERE produto_id = ${id}
-    `;
-    
-    if (vendasAssociadas[0].total > 0) {
-      return {
-        success: false,
-        error: "has_dependencies",
-        message: "Não é possível deletar. Este produto tem vendas associadas.",
-      };
-    }
-    */
-
-    // 3. Deletar o produto
     await sql`
       DELETE FROM produtos
       WHERE id = ${id}
     `;
 
-    // 4. Sucesso - revalidar cache
     revalidatePath("/aplicacao/produtos");
 
     return {
@@ -691,10 +656,8 @@ export async function deleteProdutoAction(
   }
 }
 
-
 // ADCIONADO A ACTIO PARA ESTOQUE
 // ========== MOVIMENTOS DE ESTOQUE ==========
-
 
 // 1. Schema de Validação
 const CreateMovimentoEstoqueSchema = z.object({
@@ -749,7 +712,6 @@ export async function createMovimentoEstoqueAction(
   prevState: CreateMovimentoEstoqueState,
   formData: FormData,
 ): Promise<CreateMovimentoEstoqueState> {
-  // 1. Validar campos com Zod
   const validatedFields = CreateMovimentoEstoqueSchema.safeParse({
     produto_id: formData.get("produto_id"),
     business_id: formData.get("business_id"),
@@ -770,7 +732,6 @@ export async function createMovimentoEstoqueAction(
     validatedFields.data;
 
   try {
-    // 2. Verificar se o produto existe e pertence ao business
     const produto = await sql`
       SELECT id, quantidade_estoque, estoque_minimo
       FROM produtos
@@ -787,7 +748,6 @@ export async function createMovimentoEstoqueAction(
 
     const estoqueAtual = Number((produto[0] as any).quantidade_estoque);
 
-    // 3. Para saídas, verificar se há stock suficiente
     if (tipo === "saida" && estoqueAtual < quantidade) {
       return {
         errors: {
@@ -797,9 +757,8 @@ export async function createMovimentoEstoqueAction(
       };
     }
 
-    // 4. Registar o movimento
     await sql`
-      INSERT INTO movimentos (
+      INSERT INTO movimentos_estoque (
         produto_id,
         business_id,
         quantidade,
@@ -819,7 +778,6 @@ export async function createMovimentoEstoqueAction(
       )
     `;
 
-    // 5. Atualizar o stock do produto consoante o tipo
     await sql`
       UPDATE produtos
       SET
@@ -842,3 +800,7 @@ export async function createMovimentoEstoqueAction(
   revalidatePath("/aplicacao/movimentos");
   redirect("/aplicacao/movimentos");
 }
+
+
+
+

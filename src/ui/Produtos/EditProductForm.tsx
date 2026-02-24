@@ -81,7 +81,7 @@ export default function EditProductForm({
                       min: 0,
                       step: 1,
                     }}
-                    error={state?.errors?.quantidade?.[0]}
+                    error={state?.errors?.quantidade_estoque?.[0]}
                   />
 
                   <InputField
@@ -96,7 +96,7 @@ export default function EditProductForm({
                       min: 0,
                       step: 0.01,
                     }}
-                    error={state?.errors?.preco?.[0]}
+                    error={state?.errors?.preco_custo?.[0]}
                   />
 
                   <SelectField

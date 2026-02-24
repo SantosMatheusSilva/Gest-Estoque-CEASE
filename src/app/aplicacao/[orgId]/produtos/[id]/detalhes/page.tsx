@@ -17,13 +17,18 @@ export default async function ProductDetailsPage({ params }: Props) {
   const produto: Produto | null = await fetchProduto(id);
   if (!produto) return notFound();
 
-  const categoria: CategoriaRaiz = await fetchCategoriaComSubcategoriaPorId(
-    produto.id_categoria,
-  );
+  // ✅ Proteção contra id_categoria null (produtos antigos)
+  const categoria = produto.id_categoria
+    ? await fetchCategoriaComSubcategoriaPorId(produto.id_categoria)
+    : null;
 
   return (
     <main>
-      <DetailPageLayout produto={produto} categorias={[categoria]} />
+      <DetailPageLayout
+        produto={produto}
+        categorias={categoria ? [categoria] : []}
+      />
     </main>
   );
 }
+
