@@ -23,10 +23,11 @@ import { fetchUsuarioDB } from "../db/data";
 // ========== PRODUTOS ==========
 
 // 1) LISTAR TODOS
-export async function getAllProdutos(): Promise<Produto[]> {
+export async function getAllProdutos(clerk_org_id: string): Promise<Produto[]> {
   const result = await sql`
     SELECT *
     FROM produtos
+    WHERE clerk_org_id = ${clerk_org_id}
     ORDER BY created_at DESC
   `;
   return result as unknown as Produto[];
@@ -113,7 +114,6 @@ export async function criarUsuario(formData: FormData) {
   console.log("Usuário:", email);
   console.log("Senha:", senha);
 }
-
 
 // ========== PRODUTOS - ACTIONS COM VALIDAÇÃO ZOD ==========
 

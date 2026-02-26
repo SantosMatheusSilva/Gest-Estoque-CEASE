@@ -7,7 +7,7 @@ import { auth } from "@clerk/nextjs/server";
 
 export default async function ProdutosPage() {
   const { orgId } = (await auth()) as { orgId: string };
-  const produtos: Produto[] = await fetchAllProdutos();
+  const produtos: Produto[] = await fetchAllProdutos(orgId);
   if (!produtos) notFound();
   const categorias: CategoriaRaiz[] =
     await fetchCategoriaComSubcategorias(orgId);

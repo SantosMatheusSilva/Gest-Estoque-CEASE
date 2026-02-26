@@ -204,6 +204,7 @@ export async function fetchCategoriaComSubcategorias(orgId: string) {
          updated_at,
          adicionado_por
        FROM categorias
+       WHERE clerk_org_id = ${orgId}
        
        ORDER BY nome
      `;

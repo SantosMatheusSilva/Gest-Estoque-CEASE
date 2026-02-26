@@ -9,6 +9,7 @@ export type Categoria = {
   updated_at: Date;
   adicionado_por: string;
   business_id?: string;
+  clerk_org_id: string;
 };
 
 export type CategoriaRaiz = Categoria & {

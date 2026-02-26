@@ -261,6 +261,8 @@ function CreateProductForm({ categorias }: CreateProductFormProps) {
                     )}
                     {imagePreview && !isUploading && (
                       <Image
+                        width={100}
+                        height={100}
                         src={imagePreview}
                         alt="Preview"
                         className="mt-2 h-24 w-24 rounded-md object-cover border"
