@@ -9,7 +9,10 @@ import { Modal } from "@heroui/react";
 import { IconButton } from "@/src/ui/IconButton";
 import { Plus } from "@gravity-ui/icons";
 
-import { createCategoriaAction, CreateCategoriaState } from "@/src/lib/categoriaActions";
+import {
+  createCategoriaAction,
+  CreateCategoriaState,
+} from "@/src/lib/categoriaActions";
 import { useActionState, useEffect } from "react";
 
 export function CreateCategoryForm() {

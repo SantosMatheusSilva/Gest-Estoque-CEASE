@@ -11,6 +11,7 @@ import { CategoriaRaiz, SubCategoria } from "@/src/db/definitions";
 import { createProdutoAction } from "@/src/lib/actions";
 import { useActionState, useState } from "react";
 import { supabase } from "@/src/lib/supabase";
+import Image from "next/image";
 
 interface CreateProductFormProps {
   categorias: CategoriaRaiz[];
@@ -23,7 +24,9 @@ function CreateProductForm({ categorias }: CreateProductFormProps) {
   });
 
   const [categoriaSelecionada, setCategoriaSelecionada] = useState("");
-  const [subcategoriasFiltradas, setSubcategoriasFiltradas] = useState<SubCategoria[]>([]);
+  const [subcategoriasFiltradas, setSubcategoriasFiltradas] = useState<
+    SubCategoria[]
+  >([]);
   const [subcategoriaSelecionada, setSubcategoriaSelecionada] = useState("");
 
   const [imagePreview, setImagePreview] = useState<string | null>(null);
@@ -71,30 +74,56 @@ function CreateProductForm({ categorias }: CreateProductFormProps) {
             </Modal.Header>
             <Modal.Body className="p-6">
               <FormSurface variant="default">
-                <form action={async (formData) => {
-                  console.log("📦 produto_categoria_id:", formData.get("produto_categoria_id"));
-                  console.log("📦 categoriaSelecionada state:", categoriaSelecionada);
-                  await formAction(formData);
-                }}>
-
+                <form
+                  action={async (formData) => {
+                    console.log(
+                      "📦 produto_categoria_id:",
+                      formData.get("produto_categoria_id"),
+                    );
+                    console.log(
+                      "📦 categoriaSelecionada state:",
+                      categoriaSelecionada,
+                    );
+                    await formAction(formData);
+                  }}
+                >
                   <InputField
                     label="Nome"
                     description="Digite o nome do produto"
-                    inputProps={{ id: "nome", name: "nome", type: "text", required: true }}
+                    inputProps={{
+                      id: "nome",
+                      name: "nome",
+                      type: "text",
+                      required: true,
+                    }}
                     error={state?.errors?.nome?.[0]}
                   />
 
                   <InputField
                     label="Quantidade"
                     description="Digite a quantidade do produto"
-                    inputProps={{ id: "quantidade", name: "quantidade", type: "number", required: true, min: 0, step: 1 }}
+                    inputProps={{
+                      id: "quantidade",
+                      name: "quantidade",
+                      type: "number",
+                      required: true,
+                      min: 0,
+                      step: 1,
+                    }}
                     error={state?.errors?.quantidade_estoque?.[0]}
                   />
 
                   <InputField
                     label="Preço"
                     description="Digite o preço (de custo) do produto"
-                    inputProps={{ id: "preco", name: "preco", type: "number", required: true, min: 0, step: 0.01 }}
+                    inputProps={{
+                      id: "preco",
+                      name: "preco",
+                      type: "number",
+                      required: true,
+                      min: 0,
+                      step: 0.01,
+                    }}
                     error={state?.errors?.preco_custo?.[0]}
                   />
 
@@ -115,7 +144,10 @@ function CreateProductForm({ categorias }: CreateProductFormProps) {
                   <SelectField
                     label="Categoria"
                     name="id_categoria"
-                    options={categorias.map((c) => ({ id: c.id_categoria, label: c.nome }))}
+                    options={categorias.map((c) => ({
+                      id: c.id_categoria,
+                      label: c.nome,
+                    }))}
                     value={categoriaSelecionada}
                     required
                     error={state?.errors?.id_categoria?.[0]}
@@ -124,7 +156,9 @@ function CreateProductForm({ categorias }: CreateProductFormProps) {
                       // ✅ Guarda contra null — não apaga o estado
                       if (categoriaId) {
                         setCategoriaSelecionada(categoriaId);
-                        const subcats = categorias.find((c) => c.id_categoria === categoriaId)?.subcategorias || [];
+                        const subcats =
+                          categorias.find((c) => c.id_categoria === categoriaId)
+                            ?.subcategorias || [];
                         setSubcategoriasFiltradas(subcats);
                         setSubcategoriaSelecionada("");
                       }
@@ -132,12 +166,19 @@ function CreateProductForm({ categorias }: CreateProductFormProps) {
                   />
 
                   {/* nome único para evitar conflito com o SelectField */}
-                  <input type="hidden" name="produto_categoria_id" value={categoriaSelecionada} />
+                  <input
+                    type="hidden"
+                    name="produto_categoria_id"
+                    value={categoriaSelecionada}
+                  />
 
                   <SelectField
                     label="Subcategoria"
                     name="id_subcategoria"
-                    options={subcategoriasFiltradas.map((s) => ({ id: s.id_categoria, label: s.nome }))}
+                    options={subcategoriasFiltradas.map((s) => ({
+                      id: s.id_categoria,
+                      label: s.nome,
+                    }))}
                     value={subcategoriaSelecionada}
                     onValueChange={(subcatId) => {
                       if (subcatId) setSubcategoriaSelecionada(subcatId);
@@ -155,20 +196,35 @@ function CreateProductForm({ categorias }: CreateProductFormProps) {
                   <InputField
                     label="Estoque Mínimo (opcional)"
                     description="Quantidade mínima antes de alertar"
-                    inputProps={{ id: "estoque_minimo", name: "estoque_minimo", type: "number", min: 0, step: 1 }}
+                    inputProps={{
+                      id: "estoque_minimo",
+                      name: "estoque_minimo",
+                      type: "number",
+                      min: 0,
+                      step: 1,
+                    }}
                     error={state?.errors?.estoque_minimo?.[0]}
                   />
 
                   <InputField
                     label="Unidade (opcional)"
                     description="Ex: un, kg, L, m"
-                    inputProps={{ id: "unidade", name: "unidade", type: "text" }}
+                    inputProps={{
+                      id: "unidade",
+                      name: "unidade",
+                      type: "text",
+                    }}
                     error={state?.errors?.unidade?.[0]}
                   />
 
                   {/* is_final — produto acabado ou intermédio */}
                   <div className="mb-4 flex items-center gap-2">
-                    <input type="checkbox" id="is_final" name="is_final" value="true" />
+                    <input
+                      type="checkbox"
+                      id="is_final"
+                      name="is_final"
+                      value="true"
+                    />
                     <label htmlFor="is_final" className="text-sm font-medium">
                       Produto Final (não é matéria-prima)
                     </label>
@@ -177,11 +233,14 @@ function CreateProductForm({ categorias }: CreateProductFormProps) {
                   {/* ativo — true por defeito, hidden */}
                   <input type="hidden" name="ativo" value="true" />
 
-
                   <InputField
                     label="Descrição (opcional)"
                     description="Digite uma descrição ou informação adicional"
-                    inputProps={{ id: "descricao", name: "descricao", type: "text" }}
+                    inputProps={{
+                      id: "descricao",
+                      name: "descricao",
+                      type: "text",
+                    }}
                     error={state?.errors?.descricao?.[0]}
                   />
 
@@ -196,10 +255,12 @@ function CreateProductForm({ categorias }: CreateProductFormProps) {
                       className="block w-full text-sm text-muted file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-primary file:text-white hover:file:cursor-pointer"
                     />
                     {isUploading && (
-                      <p className="text-xs text-muted mt-1">A fazer upload...</p>
+                      <p className="text-xs text-muted mt-1">
+                        A fazer upload...
+                      </p>
                     )}
                     {imagePreview && !isUploading && (
-                      <img
+                      <Image
                         src={imagePreview}
                         alt="Preview"
                         className="mt-2 h-24 w-24 rounded-md object-cover border"
@@ -233,6 +294,3 @@ function CreateProductForm({ categorias }: CreateProductFormProps) {
 }
 
 export { CreateProductForm };
-
-
-
