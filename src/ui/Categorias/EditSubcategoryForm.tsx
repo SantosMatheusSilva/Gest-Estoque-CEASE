@@ -53,7 +53,13 @@ export function EditSubcategoryForm({
   const handleNomeChange = useCallback(
     (value: string) => {
       setFormData((prev) => ({ ...prev, nome: value }));
-      if (errors.nome) setErrors((prev) => ({ ...prev, nome: undefined }));
+      if (errors.nome) {
+        setErrors((prev) => {
+          const newErrors = { ...prev };
+          delete newErrors.nome;
+          return newErrors;
+        });
+      }
     },
     [errors.nome],
   );
@@ -61,8 +67,13 @@ export function EditSubcategoryForm({
   const handleParentChange = useCallback(
     (value: string) => {
       setFormData((prev) => ({ ...prev, parent_id: value }));
-      if (errors.parent_id)
-        setErrors((prev) => ({ ...prev, parent_id: undefined }));
+      if (errors.parent_id) {
+        setErrors((prev) => {
+          const newErrors = { ...prev };
+          delete newErrors.parent_id;
+          return newErrors;
+        });
+      }
     },
     [errors.parent_id],
   );
