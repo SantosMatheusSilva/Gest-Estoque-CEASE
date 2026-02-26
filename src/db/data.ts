@@ -304,6 +304,37 @@ export async function fetchMovimentosEstoquePorProduto(
   }
 }
 
+export async function fetchMovimentosComProduto(orgId: string) {
+  try {
+    const movimentos = await sql`
+      SELECT 
+        m.id,
+        m.produto_id,
+        m.quantidade,
+        m.tipo,
+        m.motivo,
+        m.observacao,
+        m.user_id,
+        m.created_at,
+        p.nome AS produto_nome,
+        p.unidade AS produto_unidade,
+        u.clerk_user_id AS autor_clerk_user_id
+      FROM movimentos_estoque m
+      INNER JOIN produtos p 
+        ON p.id = m.produto_id
+      INNER JOIN usuarios u
+        ON u.id = m.user_id
+      WHERE m.clerk_org_id = ${orgId}
+      ORDER BY m.created_at DESC
+    `;
+
+    return movimentos;
+  } catch (error) {
+    console.error("Database Error:", error);
+    throw new Error("Failed to fetch movimentos com produto.");
+  }
+}
+
 // >>>>>>>>>> Movimentos de Estoque >>><<<<<<<<<<<
 export async function fetchProdutos(clerkOrgId: string) {
   try {

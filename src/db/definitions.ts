@@ -146,10 +146,10 @@ export type CreateBusinessType = {
 export type MovimentoEstoqueType = {
   id: string;
   produto_id: string;
-  business_id: string;
+  //business_id: string;
   quantidade: number;
   tipo: "entrada" | "saida" | "ajuste";
-  motivo?: "compra" | "venda" | "perda" | "consumo" | "correcao";
+  motivo: "compra" | "venda" | "perda" | "consumo" | "correcao";
   observacao?: string;
   user_id: string;
   created_at: string;
@@ -158,10 +158,10 @@ export type MovimentoEstoqueType = {
 
 export type CreateMovimentoEstoqueType = {
   produto_id: string;
-  business_id: string;
+  //business_id?: string;
   quantidade: number;
   tipo: "entrada" | "saida" | "ajuste";
-  motivo?: "compra" | "venda" | "perda" | "consumo" | "correcao";
+  motivo: "compra" | "venda" | "perda" | "consumo" | "correcao";
   observacao?: string;
   user_id: string;
   clerk_org_id: string;

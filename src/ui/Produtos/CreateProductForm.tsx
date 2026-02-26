@@ -76,14 +76,6 @@ function CreateProductForm({ categorias }: CreateProductFormProps) {
               <FormSurface variant="default">
                 <form
                   action={async (formData) => {
-                    console.log(
-                      "📦 produto_categoria_id:",
-                      formData.get("produto_categoria_id"),
-                    );
-                    console.log(
-                      "📦 categoriaSelecionada state:",
-                      categoriaSelecionada,
-                    );
                     await formAction(formData);
                   }}
                 >
