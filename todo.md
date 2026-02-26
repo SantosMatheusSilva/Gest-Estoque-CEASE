@@ -71,6 +71,8 @@ src
 │  │  ├─ CategoryPageLayout.tsx
 │  │  ├─ CreateCategoryForm.tsx
 │  │  ├─ CreateSubcategoryForm.tsx
+│  │  ├─ DeleteCategoriaButton..tsx
+│  │  ├─ DeleteSubcategoriaButton.tsx
 │  │  ├─ DetailPageLayout.tsx
 │  │  ├─ EditCategoryForm.tsx
 │  │  └─ EditSubcategoryForm.tsx

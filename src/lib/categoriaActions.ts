@@ -4,39 +4,12 @@ import { sql } from "../db";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
-import type { Categoria, CriarSubCategoria } from "../db/definitions";
+import type { Categoria } from "../db/definitions";
 
-import { auth } from "@clerk/nextjs/server";
+// ❌ SEM NENHUM IMPORT DE CLERK NO TOPO
 
-// ========== CATEGORIAS ==========
+// ========== SCHEMAS & TYPES ==========
 
-// 1) LISTAR TODAS AS CATEGORIAS RAIZ
-export async function getAllCategorias(): Promise<Categoria[]> {
-  const result = await sql`
-    SELECT *
-    FROM categorias
-    WHERE parent_id IS NULL
-    ORDER BY created_at DESC
-  `;
-
-  console.log("DEBUG: Categorias vindas da DB:", result);
-  return result as unknown as Categoria[];
-}
-
-// 2) BUSCAR CATEGORIA POR ID
-export async function getCategoriaById(id: string): Promise<Categoria | null> {
-  const result = await sql`
-    SELECT *
-    FROM categorias
-    WHERE id_categoria = ${id}
-  `;
-  const rows = result as unknown as Categoria[];
-  return rows[0] ?? null;
-}
-
-// ========== Shcemas ==========
-
-// 1. Definição do Tipo (Unificado para evitar erros)
 export type CreateCategoriaState = {
   errors?: {
     nome?: string[];
@@ -45,7 +18,13 @@ export type CreateCategoriaState = {
   message?: string | null;
 };
 
-// 2. Schemas de Validação
+export type DeleteState = {
+  message?: string | null;
+  errors?: {
+    id?: string[];
+  };
+};
+
 const CategoriaSchema = z.object({
   nome: z
     .string()
@@ -58,24 +37,36 @@ const SubCategoriaSchema = CategoriaSchema.extend({
   parent_id: z.string().uuid("ID da categoria pai inválido."),
 });
 
-// Schema Delete Categoria
 const DeleteSchema = z.object({
   id: z.string().uuid({ message: "ID de categoria inválido." }),
 });
 
-export type DeleteState = {
-  message?: string | null;
-  errors?: {
-    id?: string[];
-  };
-};
+// ========== QUERIES ==========
 
-// 3. Action para Categoria Raiz
+export async function getAllCategorias(): Promise<Categoria[]> {
+  const result = await sql`
+    SELECT * FROM categorias
+    WHERE parent_id IS NULL
+    ORDER BY created_at DESC
+  `;
+  return result as unknown as Categoria[];
+}
+
+export async function getCategoriaById(id: string): Promise<Categoria | null> {
+  const result = await sql`
+    SELECT * FROM categorias
+    WHERE id_categoria = ${id as string}
+  `;
+  const rows = result as unknown as Categoria[];
+  return rows[0] ?? null;
+}
+
+// ========== ACTIONS ==========
+
 export async function createCategoriaAction(
   prevState: CreateCategoriaState,
   formData: FormData,
 ): Promise<CreateCategoriaState> {
-  // ID Clerk
   const { auth } = await import("@clerk/nextjs/server");
   const { orgId, userId: clerkUserId } = await auth();
 
@@ -91,52 +82,31 @@ export async function createCategoriaAction(
   }
 
   const { nome } = validatedFields.data;
+  const currentOrgId = (orgId as string) ?? "";
 
   try {
-    if (!clerkUserId) {
-      return { message: "Erro: Utilizador não autenticado no Clerk." };
-    }
+    if (!clerkUserId) return { message: "Não autenticado." };
 
-    const userInDB = await sql`
-      SELECT id FROM usuarios WHERE clerk_user_id = ${clerkUserId}
-    `;
-
-    if (userInDB.length === 0) {
-      return { message: "Erro: Utilizador não sincronizado na base de dados." };
-    }
+    const userInDB =
+      await sql`SELECT id FROM usuarios WHERE clerk_user_id = ${clerkUserId as string}`;
+    if (userInDB.length === 0)
+      return { message: "Utilizador não sincronizado." };
 
     const dbUserId = userInDB[0].id;
-    const currentOrgId = orgId as string;
 
     await sql`
       INSERT INTO categorias (nome, parent_id, adicionado_por, clerk_org_id)
-      VALUES (${nome}, NULL, ${dbUserId}, ${currentOrgId})
+      VALUES (${nome}, NULL, ${dbUserId as string}, ${currentOrgId})
     `;
-
-    console.log(`Sucesso! Categoria "${nome}" criada.`);
   } catch (error) {
-    console.error("Database Error:", error);
-    return { message: "Erro ao gravar categoria." };
+    console.error(error);
+    return { message: "Erro na base de dados." };
   }
 
-  revalidatePath(`/aplicacao/${orgId}/categorias`);
-  redirect(`/aplicacao/${orgId}/categorias`);
+  revalidatePath(`/aplicacao/${currentOrgId}/categorias`);
+  redirect(`/aplicacao/${currentOrgId}/categorias`);
 }
 
-// 4) CRIAR SUBCATEGORIA
-export async function createSubCategoria(
-  data: CriarSubCategoria,
-): Promise<Categoria> {
-  const result = await sql`
-    INSERT INTO categorias (nome, parent_id, adicionado_por)
-    VALUES (${data.nome}, ${data.parent_id}, ${data.adicionado_por})
-    RETURNING *
-  `;
-  const rows = result as unknown as Categoria[];
-  return rows[0];
-}
-
-// 4. VERSAO ADPTADA - Action para Subcategoria
 export async function createSubCategoriaAction(
   prevState: CreateCategoriaState,
   formData: FormData,
@@ -149,111 +119,62 @@ export async function createSubCategoriaAction(
   if (!validatedFields.success) {
     return {
       errors: validatedFields.error.flatten().fieldErrors,
-      message: "Erro de validação na subcategoria.",
+      message: "Erro de validação.",
     };
   }
 
   const { nome, parent_id } = validatedFields.data;
-  const userId = "11111111-1111-1111-1111-111111111111";
+  const { auth } = await import("@clerk/nextjs/server");
+  const { orgId, userId: clerkUserId } = await auth();
+  const currentOrgId = (orgId as string) ?? "";
 
   try {
+    const userInDB =
+      await sql`SELECT id FROM usuarios WHERE clerk_user_id = ${clerkUserId as string}`;
+    const dbUserId = userInDB[0]?.id || "11111111-1111-1111-1111-111111111111";
+
     const existing = await sql`
       SELECT id_categoria FROM categorias 
-      WHERE LOWER(nome) = LOWER(${nome}) AND parent_id = ${parent_id}
+      WHERE LOWER(nome) = LOWER(${nome}) AND parent_id = ${parent_id as string}
     `;
 
     if (existing.length > 0) {
       return {
-        errors: {
-          nome: ["Já existe esta subcategoria dentro desta categoria pai."],
-        },
-        message: "Erro: Nome duplicado no mesmo nível.",
+        errors: { nome: ["Nome já existe."] },
+        message: "Erro: Duplicado.",
       };
     }
 
     await sql`
-      INSERT INTO categorias (nome, parent_id, adicionado_por)
-      VALUES (${nome}, ${parent_id}, ${userId})
+      INSERT INTO categorias (nome, parent_id, adicionado_por, clerk_org_id)
+      VALUES (${nome}, ${parent_id as string}, ${dbUserId as string}, ${currentOrgId})
     `;
   } catch (error) {
-    console.error("Database Error:", error);
-    return { message: "Erro de base de dados ao criar subcategoria." };
+    return { message: "Erro ao criar subcategoria." };
   }
 
-  console.log("add subcategoria");
-  const { auth } = await import("@clerk/nextjs/server");
-  const { orgId } = await auth();
-
-  revalidatePath(`/aplicacao/${orgId}/categorias`);
-  revalidatePath(`/aplicacao/${orgId}/categorias/${parent_id}/detalhes`);
-
-  redirect(`/aplicacao/${orgId}/categorias/${parent_id}/detalhes`);
+  revalidatePath(`/aplicacao/${currentOrgId}/categorias`);
+  revalidatePath(`/aplicacao/${currentOrgId}/categorias/${parent_id}/detalhes`);
+  redirect(`/aplicacao/${currentOrgId}/categorias/${parent_id}/detalhes`);
 }
-
-// 5) ATUALIZAR CATEGORIA
-export async function updateCategoria(
-  id: string,
-  nome: string,
-): Promise<Categoria> {
-  const result = await sql`
-    UPDATE categorias
-    SET nome = ${nome}, updated_at = NOW()
-    WHERE id_categoria = ${id}
-    RETURNING *
-  `;
-  const rows = result as unknown as Categoria[];
-  return rows[0];
-}
-
-// 6) DELETAR CATEGORIA
-// export async function deleteCategoria(id: string): Promise<void> {
-//   await sql`
-//     DELETE FROM categorias
-//     WHERE id_categoria = ${id}
-//   `;
-// }
-
-// Substitui a action pura de DELETE
 
 export async function deleteCategoriaAction(
   id: string,
-  orgId: string, // <-- Agora recebemos por argumento
+  orgId: string,
   prevState: DeleteState,
 ): Promise<DeleteState> {
-  // 1. Validar o ID com o Zod
-  const validatedFields = DeleteSchema.safeParse({ id });
-
-  if (!validatedFields.success) {
-    return {
-      errors: validatedFields.error.flatten().fieldErrors,
-      message: "ID de categoria inválido.",
-    };
-  }
-
-  // Já não precisamos do 'await auth()' aqui dentro,
-  // pois o orgId vem por parâmetro!
-
   try {
     const result = await sql`
       DELETE FROM categorias
-      WHERE id_categoria = ${id}
+      WHERE id_categoria = ${id as string}
     `;
-
-    if (result.count === 0) {
-      return { message: "Categoria não encontrada." };
-    }
+    if (result.count === 0) return { message: "Não encontrada." };
   } catch (error: any) {
-    console.error("Database Error:", error);
-    if (error.code === "23503") {
-      return {
-        message:
-          "Não é possível excluir: existem subcategorias ou produtos vinculados.",
-      };
-    }
-    return { message: "Erro de base de dados ao tentar excluir." };
+    if (error.code === "23503")
+      return { message: "Existem produtos vinculados." };
+    return { message: "Erro ao eliminar." };
   }
 
-  // 3. Revalidar e sair
   revalidatePath(`/aplicacao/${orgId}/categorias`);
   redirect(`/aplicacao/${orgId}/categorias`);
 }
@@ -262,23 +183,15 @@ export async function deleteSubcategoriaAction(
   subcategoriaId: string,
   orgId: string,
 ) {
+  const { auth } = await import("@clerk/nextjs/server");
   const { userId } = await auth();
-
-  if (!userId) {
-    return { message: "Não autorizado." };
-  }
+  if (!userId) return { message: "Não autorizado." };
 
   try {
-    await sql`
-  DELETE FROM categorias
-  WHERE id_categoria = ${subcategoriaId}
-`;
-
+    await sql`DELETE FROM categorias WHERE id_categoria = ${subcategoriaId as string}`;
     revalidatePath(`/aplicacao/${orgId}/categorias`);
-
     return { message: "" };
   } catch (error) {
-    console.error(error);
-    return { message: "Erro ao excluir subcategoria." };
+    return { message: "Erro ao excluir." };
   }
 }

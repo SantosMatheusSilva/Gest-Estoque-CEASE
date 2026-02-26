@@ -1,3 +1,19 @@
+// >>>>>>>>>> NOVOS TIPOS PARA CORRIGIR O ERRO DE BUILD <<<<<<<<<<
+
+export type CreateCategoriaState = {
+  errors?: {
+    nome?: string[];
+    parent_id?: string[];
+  };
+  message?: string | null;
+};
+
+export type DeleteState = {
+  message?: string | null;
+  errors?: {
+    id?: string[];
+  };
+};
 //>>>>>>>>>> Type Categoria <<<<<<<<<<<
 
 export type Categoria = {

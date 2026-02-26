@@ -5,7 +5,6 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 
-// 1. Definir o tipo que estava em falta
 export type DeleteState = {
   message: string | null;
 };
@@ -17,7 +16,7 @@ const DeleteSchema = z.object({
 export async function deleteCategoriaAction(
   id: string,
   orgId: string,
-  prevState: DeleteState, // Agora o TS já sabe o que é isto
+  prevState: DeleteState,
 ) {
   const validatedFields = DeleteSchema.safeParse({ id });
 
@@ -37,17 +36,17 @@ export async function deleteCategoriaAction(
   } catch (error: any) {
     console.error("Database Error:", error);
 
-    // Erro de chave estrangeira (Foreign Key Constraint)
     if (error.code === "23503") {
       return {
         message:
-          "Não é possível excluir: existem subcategorias ou produtos vinculados.",
+          "Não é possível excluir: existem produtos vinculados a esta categoria.",
       };
     }
     return { message: "Erro de base de dados ao tentar excluir." };
   }
 
-  // Se chegou aqui, deu certo. Revalidamos e saímos.
+  // Sucesso: Revalidar o caminho da listagem
   revalidatePath(`/aplicacao/${orgId}/categorias`);
+  // Redirecionar para sair da página de detalhes que já não existe
   redirect(`/aplicacao/${orgId}/categorias`);
 }

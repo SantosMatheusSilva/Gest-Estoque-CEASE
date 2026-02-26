@@ -1,50 +1,38 @@
 "use client";
 
-import React, { useState, useCallback, useEffect, useRef } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { z } from "zod";
 import { TextField, Label, Input, FieldError } from "@heroui/react";
 import { Button } from "@/src/ui/Button";
 import Surface from "@/src/ui/Surface";
+import { SubCategoria } from "@/src/db/definitions";
 
-// Zod validation schema
+// Validação do formulário
 const subcategoriaSchema = z.object({
   nome: z
     .string()
     .min(3, "O nome deve ter pelo menos 3 caracteres")
     .max(50, "O nome deve ter no máximo 50 caracteres")
     .trim(),
-  parent_id: z.string().uuid("ID de categoria inválido"),
 });
 
 export interface EditSubcategoryFormProps {
-  subcategory: { id_categoria: string; nome: string; parent_id: string };
-  parentCategories: Array<{ id_categoria: string; nome: string }>;
-  onSubmit?: (data: {
-    id_categoria: string;
-    nome: string;
-    parent_id: string;
-  }) => Promise<void>;
+  subcategory: SubCategoria;
+  orgId: string;
+  onSubmit?: (data: { id_categoria: string; nome: string }) => Promise<void>;
   onCancel?: () => void;
 }
 
 export function EditSubcategoryForm({
   subcategory,
-  parentCategories,
+  orgId,
   onSubmit,
   onCancel,
 }: EditSubcategoryFormProps) {
-  const [formData, setFormData] = useState({
-    nome: subcategory.nome,
-    parent_id: subcategory.parent_id,
-  });
+  const [formData, setFormData] = useState({ nome: subcategory.nome });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
-
-  // Exclude self from parent options
-  const availableParents = parentCategories.filter(
-    (cat) => cat.id_categoria !== subcategory.id_categoria,
-  );
 
   useEffect(() => {
     formRef.current?.querySelector("input")?.focus();
@@ -52,30 +40,16 @@ export function EditSubcategoryForm({
 
   const handleNomeChange = useCallback(
     (value: string) => {
-      setFormData((prev) => ({ ...prev, nome: value }));
+      setFormData({ nome: value });
       if (errors.nome) {
         setErrors((prev) => {
-          const newErrors = { ...prev };
-          delete newErrors.nome;
-          return newErrors;
+          const copy = { ...prev };
+          delete copy.nome;
+          return copy;
         });
       }
     },
     [errors.nome],
-  );
-
-  const handleParentChange = useCallback(
-    (value: string) => {
-      setFormData((prev) => ({ ...prev, parent_id: value }));
-      if (errors.parent_id) {
-        setErrors((prev) => {
-          const newErrors = { ...prev };
-          delete newErrors.parent_id;
-          return newErrors;
-        });
-      }
-    },
-    [errors.parent_id],
   );
 
   const validateForm = useCallback(() => {
@@ -106,7 +80,6 @@ export function EditSubcategoryForm({
         await onSubmit?.({
           id_categoria: subcategory.id_categoria,
           nome: formData.nome.trim(),
-          parent_id: formData.parent_id,
         });
       } catch (err) {
         console.error("Erro ao editar subcategoria:", err);
@@ -118,7 +91,7 @@ export function EditSubcategoryForm({
   );
 
   return (
-    <Surface className="w-full max-w-md">
+    <Surface className="w-full max-w-sm">
       <form
         ref={formRef}
         onSubmit={handleSubmit}
@@ -139,28 +112,6 @@ export function EditSubcategoryForm({
           />
           <FieldError>{errors.nome}</FieldError>
         </TextField>
-
-        <div className="flex flex-col gap-1">
-          <Label htmlFor="parent_id">Categoria Pai *</Label>
-          <select
-            id="parent_id"
-            name="parent_id"
-            value={formData.parent_id}
-            onChange={(e) => handleParentChange(e.target.value)}
-            required
-            disabled={isSubmitting}
-            className="px-3 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            {availableParents.map((cat) => (
-              <option key={cat.id_categoria} value={cat.id_categoria}>
-                {cat.nome}
-              </option>
-            ))}
-          </select>
-          {errors.parent_id && (
-            <div className="text-red-500 text-sm">{errors.parent_id}</div>
-          )}
-        </div>
 
         <div className="flex gap-2 mt-4">
           <Button type="submit" variant="primary" isDisabled={isSubmitting}>

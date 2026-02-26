@@ -1,12 +1,13 @@
 "use client";
 
-import React, { useState, useCallback, useEffect, useRef } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { z } from "zod";
 import { TextField, Label, Input, FieldError } from "@heroui/react";
 import { Button } from "@/src/ui/Button";
 import Surface from "@/src/ui/Surface";
+import { CategoriaRaiz } from "@/src/db/definitions";
 
-// Zod validation schema
+// Validação do formulário
 const categoriaSchema = z.object({
   nome: z
     .string()
@@ -16,7 +17,7 @@ const categoriaSchema = z.object({
 });
 
 export interface EditCategoryFormProps {
-  category: { id_categoria: string; nome: string };
+  category: CategoriaRaiz;
   onSubmit?: (data: { id_categoria: string; nome: string }) => Promise<void>;
   onCancel?: () => void;
 }
@@ -31,7 +32,7 @@ export function EditCategoryForm({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
 
-  // Auto-focus input
+  // Foco automático no input
   useEffect(() => {
     formRef.current?.querySelector("input")?.focus();
   }, []);

@@ -14,9 +14,12 @@ export default function DeleteSubcategoriaButton({
   subcategoriaId,
   orgId,
 }: Props) {
-  const action = deleteSubcategoriaAction.bind(null, subcategoriaId, orgId);
+  // Prepara a action com os argumentos necessários
+  const deleteActionWithArgs = async () => {
+    return await deleteSubcategoriaAction(subcategoriaId, orgId);
+  };
 
-  const [state, formAction] = useActionState(action, {
+  const [state, formAction] = useActionState(deleteActionWithArgs, {
     message: "",
   });
 
@@ -25,7 +28,7 @@ export default function DeleteSubcategoriaButton({
       <IconButton type="submit" variant="tertiary" startIcon={<TrashBin />} />
 
       {state?.message && (
-        <p className="text-red-500 text-sm">{state.message}</p>
+        <p className="text-red-500 text-sm mt-1">{state.message}</p>
       )}
     </form>
   );

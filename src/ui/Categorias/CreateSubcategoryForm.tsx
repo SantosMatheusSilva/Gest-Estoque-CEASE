@@ -6,10 +6,12 @@ import { InputField } from "../InputField";
 import { Modal } from "@heroui/react";
 import { IconButton } from "@/src/ui/IconButton";
 import { Plus } from "@gravity-ui/icons";
-import {
-  createSubCategoriaAction,
-  CreateCategoriaState,
-} from "@/src/lib/categoriaActions";
+// import {
+//   createSubCategoriaAction,
+//   CreateCategoriaState,
+// } from "@/src/lib/categoriaActions";
+import { createSubCategoriaAction } from "@/src/lib/categoriaActions";
+import type { CreateCategoriaState } from "@/src/lib/definitions";
 import { useActionState } from "react";
 
 // passando a props da page.tsx para o forms
