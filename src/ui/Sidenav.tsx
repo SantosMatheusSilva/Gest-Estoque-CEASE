@@ -1,7 +1,8 @@
 import Link from "next/link";
 import BaseSurface from "./Surface";
 import Image from "next/image";
-import { House, Box, Copy } from "@gravity-ui/icons";
+import { House, Box, Copy, ArrowsOppositeToDots } from "@gravity-ui/icons";
+
 import { auth } from "@clerk/nextjs/server";
 import { NavLink } from "./NavLink";
 
@@ -13,6 +14,11 @@ async function Sidenav() {
       label: "Home",
       href: `/aplicacao/${orgId}`,
       icon: <House className="w-5 h-5" />,
+    },
+    {
+      label: "Movimentos",
+      href: `/aplicacao/${orgId}/movimentos`,
+      icon: <ArrowsOppositeToDots className="w-5 h-5" />,
     },
     {
       label: "Produtos",
@@ -53,7 +59,7 @@ async function Sidenav() {
         <div className="flex flex-col gap-3 p-4">
           <BaseSurface
             variant="default"
-            className="flex grow mt-4 flex-col rounded-3xl p-4 space-y-2"
+            className="flex grow mt-4 flex-col gap-3 rounded-3xl p-2 space-y-2"
           >
             {links.map((link) => (
               <NavLink key={link.href} href={link.href}>

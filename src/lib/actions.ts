@@ -23,10 +23,11 @@ import { fetchUsuarioDB } from "../db/data";
 // ========== PRODUTOS ==========
 
 // 1) LISTAR TODOS
-export async function getAllProdutos(): Promise<Produto[]> {
+export async function getAllProdutos(clerk_org_id: string): Promise<Produto[]> {
   const result = await sql`
     SELECT *
     FROM produtos
+    WHERE clerk_org_id = ${clerk_org_id}
     ORDER BY created_at DESC
   `;
   return result as unknown as Produto[];
@@ -113,7 +114,6 @@ export async function criarUsuario(formData: FormData) {
   console.log("Usuário:", email);
   console.log("Senha:", senha);
 }
-
 
 // ========== PRODUTOS - ACTIONS COM VALIDAÇÃO ZOD ==========
 
@@ -551,7 +551,7 @@ export async function deleteProdutoAction(
 const CreateMovimentoEstoqueSchema = z.object({
   produto_id: z.string().uuid("Selecione um produto válido"),
 
-  business_id: z.string().uuid("Business ID inválido"),
+  //business_id: z.string().uuid("Business ID inválido"),
 
   quantidade: z.string().transform((val) => {
     const num = Number(val);
@@ -566,11 +566,9 @@ const CreateMovimentoEstoqueSchema = z.object({
     message: "Tipo de movimento inválido.",
   }),
 
-  motivo: z
-    .enum(["compra", "venda", "perda", "consumo", "correcao"])
-    .optional()
-    .or(z.literal(""))
-    .transform((val) => (val === "" ? undefined : val)),
+  motivo: z.enum(["compra", "venda", "perda", "consumo", "correcao"], {
+    message: "Motivo de movimento inválido.",
+  }),
 
   observacao: z
     .string()
@@ -596,13 +594,18 @@ export type CreateMovimentoEstoqueState = {
 
 // 3. Action para CRIAR Movimento de Estoque
 export async function createMovimentoEstoqueAction(
-  userId: string,
   prevState: CreateMovimentoEstoqueState,
   formData: FormData,
 ): Promise<CreateMovimentoEstoqueState> {
+  const { orgId } = await auth();
+  const dbUser = await fetchUsuarioDB(orgId as string);
+
+  if (!dbUser) {
+    return { message: "Utilizador não encontrado na base de dados." };
+  }
+
   const validatedFields = CreateMovimentoEstoqueSchema.safeParse({
     produto_id: formData.get("produto_id"),
-    business_id: formData.get("business_id"),
     quantidade: formData.get("quantidade"),
     tipo: formData.get("tipo"),
     motivo: formData.get("motivo"),
@@ -616,7 +619,7 @@ export async function createMovimentoEstoqueAction(
     };
   }
 
-  const { produto_id, business_id, quantidade, tipo, motivo, observacao } =
+  const { produto_id, quantidade, tipo, motivo, observacao } =
     validatedFields.data;
 
   try {
@@ -624,7 +627,7 @@ export async function createMovimentoEstoqueAction(
       SELECT id, quantidade_estoque, estoque_minimo
       FROM produtos
       WHERE id = ${produto_id}
-        AND business_id = ${business_id}
+        AND clerk_org_id = ${orgId as string}
     `;
 
     if (produto.length === 0) {
@@ -634,7 +637,7 @@ export async function createMovimentoEstoqueAction(
       };
     }
 
-    const estoqueAtual = Number((produto[0] as any).quantidade_estoque);
+    const estoqueAtual = Number(produto[0].quantidade_estoque);
 
     if (tipo === "saida" && estoqueAtual < quantidade) {
       return {
@@ -648,7 +651,7 @@ export async function createMovimentoEstoqueAction(
     await sql`
       INSERT INTO movimentos_estoque (
         produto_id,
-        business_id,
+        clerk_org_id,
         quantidade,
         tipo,
         motivo,
@@ -657,12 +660,12 @@ export async function createMovimentoEstoqueAction(
       )
       VALUES (
         ${produto_id},
-        ${business_id},
+        ${orgId as string},
         ${quantidade},
         ${tipo},
         ${motivo ?? null},
         ${observacao ?? null},
-        ${userId}
+        ${dbUser.id}
       )
     `;
 
@@ -676,6 +679,7 @@ export async function createMovimentoEstoqueAction(
         END,
         updated_at = NOW()
       WHERE id = ${produto_id}
+      AND clerk_org_id = ${orgId as string}
     `;
   } catch (error) {
     console.error("Database Error:", error);

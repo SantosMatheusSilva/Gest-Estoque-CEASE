@@ -19,7 +19,7 @@ export function NavLink({ href, children, className = "" }: NavLinkProps) {
     <Link
       href={href}
       className={[
-        "w-full flex justify-center items-center gap-2 px-4 py-2 rounded-4xl border border-gray-300 transition-colors",
+        "w-full flex justify-center items-center gap-2 px-2 py-2 rounded-4xl border border-gray-300 transition-colors",
         isActive
           ? "bg-blue-100 border-blue-400 text-blue-700"
           : "hover:bg-gray-100",

@@ -10,8 +10,10 @@ import type { Produto, CreateProduto } from "../db/definitions";
 // Camada “limpa” que o app vai usar
 
 // FETCH (lista todos)
-export async function fetchAllProdutos(): Promise<Produto[]> {
-  return await getAllProdutos();
+export async function fetchAllProdutos(
+  clerk_org_id: string,
+): Promise<Produto[]> {
+  return await getAllProdutos(clerk_org_id);
 }
 
 // FETCH (um só produto)
