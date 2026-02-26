@@ -1,4 +1,7 @@
+//categoriaActions.ts
+
 "use server";
+import "server-only";
 
 import { sql } from "../db";
 import { revalidatePath } from "next/cache";

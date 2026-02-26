@@ -1,17 +1,26 @@
-import { PageLayout } from "../PageLayout";
-import CategoryCards from "./CategoryCard";
+import CategoryCardsServer from "./CategoryCardsServer";
 import { CreateCategoryForm } from "./CreateCategoryForm";
 
-function CategoryPageLayout() {
+type Props = {
+  categoriasComSubcategorias: any[];
+  orgId: string;
+  userId: string;
+};
+
+export default function CategoryPageLayout({
+  categoriasComSubcategorias,
+  orgId,
+  userId,
+}: Props) {
   return (
-    <PageLayout
-      title="Categorias"
-      description="Lista de categorias e subcategorias"
-      actions={<CreateCategoryForm />}
-    >
-      <CategoryCards />
-    </PageLayout>
+    <main className="space-y-6">
+      <CreateCategoryForm orgId={orgId} />
+
+      <CategoryCardsServer
+        categoriasComSubcategorias={categoriasComSubcategorias ?? []}
+        orgId={orgId}
+        userId={userId}
+      />
+    </main>
   );
 }
-
-export default CategoryPageLayout;

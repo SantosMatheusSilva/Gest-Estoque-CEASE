@@ -3,130 +3,128 @@
 **StockFlow**  
 _Smart Inventory Management for Growing Businesses_
 
----
-
 # Estrutura geral (Next.js App Router)
 
 src
 ├─ app/
-│  ├─ (marketing)/  Route Groups (Grupos de Rotas)
-│  │  ├─ (home)/  Route Groups (Grupos de Rotas)
-│  │  │  └─ page.tsx  
-│  │  ├─ contacto/
-│  │  │  └─ page.tsx
-│  │  ├─ faq/
-│  │  │  └─ page.tsx
-│  │  ├─ funcionalidades/
-│  │  │  └─ page.tsx
-│  │  ├─ planos/
-│  │  │  └─ page.tsx
-│  │  └─ sobrenos/
-│  │     └─ page.tsx
-│  │
-│  ├─ aplicacao/
-│  │  └─ [orgId]/
-│  │     │  └─ (dashboard)/
-│  │     │       └─ page.tsx
-│  │     ├─ categorias/
-│  │     │      └─ [id]/
-│  │     │         └─ detalhes/
-│  │     │             └─ page.tsx
-│  │     ├─ page.tsx
-│  │     │
-│  │     │
-│  │     │
-│  │     ├─ perfil/
-│  │     │   └─ page.tsx
-│  │     ├─ produtos/
-│  │        └─ [id]/
-│  │            └─ detalhes/
-│  │                └─ not-found.tsx
-│  │     
-│  ├─ auth/
-│  │  └─ login/
-│  │     └─ page.tsx
-│  ├─ teste-components/
-│  │  └─ page.tsx
-│  │     
-│  ├─ global.css
-│  ├─ layout.tsx
-│  │     
-│  │
+│ ├─ (marketing)/ Route Groups (Grupos de Rotas)
+│ │ ├─ (home)/ Route Groups (Grupos de Rotas)
+│ │ │ └─ page.tsx  
+│ │ ├─ contacto/
+│ │ │ └─ page.tsx
+│ │ ├─ faq/
+│ │ │ └─ page.tsx
+│ │ ├─ funcionalidades/
+│ │ │ └─ page.tsx
+│ │ ├─ planos/
+│ │ │ └─ page.tsx
+│ │ └─ sobrenos/
+│ │ └─ page.tsx
+│ │
+│ ├─ aplicacao/
+│ │ └─ [orgId]/
+│ │ │ └─ (dashboard)/
+│ │ │ └─ page.tsx
+│ │ ├─ categorias/
+│ │ │ └─ [id]/
+│ │ │ └─ detalhes/
+│ │ │ └─ page.tsx
+│ │ ├─ page.tsx
+│ │ │
+│ │ │
+│ │ │
+│ │ ├─ perfil/
+│ │ │ └─ page.tsx
+│ │ ├─ produtos/
+│ │ └─ [id]/
+│ │ └─ detalhes/
+│ │ └─ not-found.tsx
+│ │  
+│ ├─ auth/
+│ │ └─ login/
+│ │ └─ page.tsx
+│ ├─ teste-components/
+│ │ └─ page.tsx
+│ │  
+│ ├─ global.css
+│ ├─ layout.tsx
+│ │  
+│ │
 ├─ db/ - neon sql
-│  ├─ bootstrapUser.ts
-│  ├─ data.ts → queries (SELECT)
-│  ├─ definition.ts → tipos
-│  └─ index.ts → conexão
+│ ├─ bootstrapUser.ts
+│ ├─ data.ts → queries (SELECT)
+│ ├─ definition.ts → tipos
+│ └─ index.ts → conexão
 │
 ├─ lib/
-│  ├─ actions.ts
-│  ├─ categoriaActions.ts
-│  ├─ data.ts
-│  ├─ delete-actions.ts
-│  └─ utils.ts
+│ ├─ actions.ts
+│ ├─ categoriaActions.ts
+│ ├─ data.ts
+│ ├─ delete-actions.ts
+│ └─ utils.ts
 │
 ├─ ui/
-│  ├─ Categorias/
-│  │  ├─ CategoryCard.tsx
-│  │  ├─ CategoryPageLayout.tsx
-│  │  ├─ CreateCategoryForm.tsx
-│  │  ├─ CreateSubcategoryForm.tsx
-│  │  ├─ DeleteCategoriaButton..tsx
-│  │  ├─ DeleteSubcategoriaButton.tsx
-│  │  ├─ DetailPageLayout.tsx
-│  │  ├─ EditCategoryForm.tsx
-│  │  └─ EditSubcategoryForm.tsx
-│  │
-│  ├─ Contacto/
-│  │  └─ ContactoForm.tsx
-│  │
-│  ├─ dashboard/
-│  │  └─ ContactoForm.tsx     
-│  │
-│  ├─ Faq/
-│  │  └─ FaqAccordion.tsx
-│  │
-│  ├─ Funcionalidades/
-│  │  ├─ FeaturesCard.tsx
-│  │  ├─ FeaturesGrid.tsx
-│  │  └─ FeaturesIntro.tsx
-│  │
-│  ├─ Planos/
-│  │  └─ PricingPageLayout.tsx
-│  │
-│  │
-│  ├─ Produtos/
-│  │  ├─ CreateProductForm.tsx
-│  │  ├─ DeleteProductButton.tsx
-│  │  ├─ EditProductForm.tsx
-│  │  ├─ ProductCard.tsx
-│  │  ├─ ProductDetailPageLayout.tsx
-│  │  └─ ProductPageLayout.tsx
-│  │
-│  ├─ SobreNos/
-│  │  ├─ Imagem.tsx
-│  │  ├─ Texto.tsx
-│  │  └─ Titulo.tsx
-│  │
-│  ├─ Usuario/
-│  │  ├─ Title.tsx
-│  │  ├─ UserDropdown.tsx
-│  │  └─ UsuarioForm.tsx
-│  │
-│  ├─Button.tsx
-│  ├─ Footer.tsx
-│  ├─ FormSurface.tsx
-│  ├─ IconButton.tsx
-│  ├─ InputField.tsx
-│  ├─ Navbar.tsx
-│  ├─ NavLink.tsx
-│  ├─ PageLayout.tsx
-│  ├─ SelectField.tsx
-│  ├─ Sidenav.tsx
-│  ├─ Surface.tsx
-│  ├─ Title.tsx
-│  └─ Topbar.tsx
-
+│ ├─ Categorias/
+│ │ ├─ CategoryCard.tsx
+│ │ ├─ CategoryPageLayout.tsx
+│ │ ├─ CreateCategoryForm.tsx
+│ │ ├─ CreateSubcategoryForm
+│ │ ├─ CreateSubcategoryForm.tsx
+│ │ ├─ DeleteCategoriaButton..tsx
+│ │ ├─ DeleteSubcategoriaButton.tsx
+│ │ ├─ DetailPageLayout.tsx
+│ │ ├─ EditCategoryForm.tsx
+│ │ └─ EditSubcategoryForm.tsx
+│ │
+│ ├─ Contacto/
+│ │ └─ ContactoForm.tsx
+│ │
+│ ├─ dashboard/
+│ │ └─ ContactoForm.tsx  
+│ │
+│ ├─ Faq/
+│ │ └─ FaqAccordion.tsx
+│ │
+│ ├─ Funcionalidades/
+│ │ ├─ FeaturesCard.tsx
+│ │ ├─ FeaturesGrid.tsx
+│ │ └─ FeaturesIntro.tsx
+│ │
+│ ├─ Planos/
+│ │ └─ PricingPageLayout.tsx
+│ │
+│ │
+│ ├─ Produtos/
+│ │ ├─ CreateProductForm.tsx
+│ │ ├─ DeleteProductButton.tsx
+│ │ ├─ EditProductForm.tsx
+│ │ ├─ ProductCard.tsx
+│ │ ├─ ProductDetailPageLayout.tsx
+│ │ └─ ProductPageLayout.tsx
+│ │
+│ ├─ SobreNos/
+│ │ ├─ Imagem.tsx
+│ │ ├─ Texto.tsx
+│ │ └─ Titulo.tsx
+│ │
+│ ├─ Usuario/
+│ │ ├─ Title.tsx
+│ │ ├─ UserDropdown.tsx
+│ │ └─ UsuarioForm.tsx
+│ │
+│ ├─Button.tsx
+│ ├─ Footer.tsx
+│ ├─ FormSurface.tsx
+│ ├─ IconButton.tsx
+│ ├─ InputField.tsx
+│ ├─ Navbar.tsx
+│ ├─ NavLink.tsx
+│ ├─ PageLayout.tsx
+│ ├─ SelectField.tsx
+│ ├─ Sidenav.tsx
+│ ├─ Surface.tsx
+│ ├─ Title.tsx
+│ └─ Topbar.tsx
 
 🏠 HOME (/) -> FEITO!
 Objetivo
@@ -300,9 +298,8 @@ Funcionalidades:
 Plano Premim e Gratuito
 
 db: tabela planos
-    tabela movimentos (formMovimentosEstoque / pageMovimentosEstoque)
-    tabela business (id_bussiness, nome_business, id_adm, id_usario)
-
+tabela movimentos (formMovimentosEstoque / pageMovimentosEstoque)
+tabela business (id_bussiness, nome_business, id_adm, id_usario)
 
     Admin:
 
@@ -324,7 +321,3 @@ adm adiciona convite
 business db
 
 Ideia de Negócio
-
-
-
-
