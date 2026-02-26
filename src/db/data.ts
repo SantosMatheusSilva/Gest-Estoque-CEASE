@@ -204,7 +204,7 @@ export async function fetchCategoriaComSubcategorias(orgId: string) {
          updated_at,
          adicionado_por
        FROM categorias
-       WHERE clerk_org_id = ${orgId}
+       
        ORDER BY nome
      `;
 
@@ -217,8 +217,12 @@ export async function fetchCategoriaComSubcategorias(orgId: string) {
         id_categoria: categoria.id_categoria,
         nome: categoria.nome,
         parent_id: categoria.parent_id,
-        created_at: categoria.created_at.toLocaleDateString(),
-        updated_at: categoria.updated_at.toLocaleDateString(),
+        created_at: categoria.created_at
+          ? new Date(categoria.created_at).toLocaleDateString()
+          : "N/A",
+        updated_at: categoria.updated_at
+          ? new Date(categoria.updated_at).toLocaleDateString()
+          : "N/A",
         adicionado_por: categoria.adicionado_por,
         subcategorias: [],
       });

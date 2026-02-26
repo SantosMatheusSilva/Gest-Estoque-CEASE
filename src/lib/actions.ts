@@ -114,189 +114,6 @@ export async function criarUsuario(formData: FormData) {
   console.log("Senha:", senha);
 }
 
-// ========== CATEGORIAS ==========
-
-// 1) LISTAR TODAS AS CATEGORIAS RAIZ
-export async function getAllCategorias(): Promise<Categoria[]> {
-  const result = await sql`
-    SELECT *
-    FROM categorias
-    WHERE parent_id IS NULL
-    ORDER BY created_at DESC
-  `;
-  return result as unknown as Categoria[];
-}
-
-// 2) BUSCAR CATEGORIA POR ID
-export async function getCategoriaById(id: string): Promise<Categoria | null> {
-  const result = await sql`
-    SELECT *
-    FROM categorias
-    WHERE id_categoria = ${id}
-  `;
-  const rows = result as unknown as Categoria[];
-  return rows[0] ?? null;
-}
-
-// ========== CATEGORIAS ==========
-
-// 1. Definição do Tipo (Unificado para evitar erros)
-export type CreateCategoriaState = {
-  errors?: {
-    nome?: string[];
-    parent_id?: string[];
-  };
-  message?: string | null;
-};
-
-// 2. Schemas de Validação
-const CategoriaSchema = z.object({
-  nome: z
-    .string()
-    .min(3, "O nome deve ter pelo menos 3 caracteres")
-    .max(50, "O nome deve ter no máximo 50 caracteres")
-    .trim(),
-});
-
-const SubCategoriaSchema = CategoriaSchema.extend({
-  parent_id: z.string().uuid("ID da categoria pai inválido."),
-});
-
-// 3. Action para Categoria Raiz
-export async function createCategoriaAction(
-  prevState: CreateCategoriaState,
-  formData: FormData,
-): Promise<CreateCategoriaState> {
-  const validatedFields = CategoriaSchema.safeParse({
-    nome: formData.get("nome"),
-  });
-
-  if (!validatedFields.success) {
-    return {
-      errors: validatedFields.error.flatten().fieldErrors,
-      message: "Campos inválidos. Falha ao criar categoria.",
-    };
-  }
-
-  const { nome } = validatedFields.data;
-  const userId = "id_temporario_usuario";
-
-  try {
-    const existing = await sql`
-      SELECT id_categoria FROM categorias 
-      WHERE LOWER(nome) = LOWER(${nome}) AND parent_id IS NULL
-    `;
-
-    if (existing.length > 0) {
-      return {
-        errors: { nome: ["Já existe uma categoria com este nome."] },
-        message: "Erro: Nome duplicado.",
-      };
-    }
-
-    await sql`
-      INSERT INTO categorias (nome, parent_id, adicionado_por)
-      VALUES (${nome}, NULL, ${userId})
-    `;
-  } catch (error) {
-    console.error("Database Error:", error);
-    return {
-      message: "Erro de base de dados: Não foi possível criar a categoria.",
-    };
-  }
-
-  console.log("Categoria Criada com sucesso!");
-
-  revalidatePath("/aplicacao/categorias");
-  redirect("/aplicacao/categorias");
-}
-
-// 4) CRIAR SUBCATEGORIA
-export async function createSubCategoria(
-  data: CriarSubCategoria,
-): Promise<Categoria> {
-  const result = await sql`
-    INSERT INTO categorias (nome, parent_id, adicionado_por)
-    VALUES (${data.nome}, ${data.parent_id}, ${data.adicionado_por})
-    RETURNING *
-  `;
-  const rows = result as unknown as Categoria[];
-  return rows[0];
-}
-
-// 4. VERSAO ADPTADA - Action para Subcategoria
-export async function createSubCategoriaAction(
-  prevState: CreateCategoriaState,
-  formData: FormData,
-): Promise<CreateCategoriaState> {
-  const validatedFields = SubCategoriaSchema.safeParse({
-    nome: formData.get("nome"),
-    parent_id: formData.get("parent_id"),
-  });
-
-  if (!validatedFields.success) {
-    return {
-      errors: validatedFields.error.flatten().fieldErrors,
-      message: "Erro de validação na subcategoria.",
-    };
-  }
-
-  const { nome, parent_id } = validatedFields.data;
-  const userId = "11111111-1111-1111-1111-111111111111";
-
-  try {
-    const existing = await sql`
-      SELECT id_categoria FROM categorias 
-      WHERE LOWER(nome) = LOWER(${nome}) AND parent_id = ${parent_id}
-    `;
-
-    if (existing.length > 0) {
-      return {
-        errors: {
-          nome: ["Já existe esta subcategoria dentro desta categoria pai."],
-        },
-        message: "Erro: Nome duplicado no mesmo nível.",
-      };
-    }
-
-    await sql`
-      INSERT INTO categorias (nome, parent_id, adicionado_por)
-      VALUES (${nome}, ${parent_id}, ${userId})
-    `;
-  } catch (error) {
-    console.error("Database Error:", error);
-    return { message: "Erro de base de dados ao criar subcategoria." };
-  }
-
-  console.log(formData.get("parent_id"));
-
-  revalidatePath("/aplicacao/categorias");
-  revalidatePath(`/aplicacao/categorias/${parent_id}/detalhes`);
-  redirect(`/aplicacao/categorias/${parent_id}/detalhes`);
-}
-
-// 5) ATUALIZAR CATEGORIA
-export async function updateCategoria(
-  id: string,
-  nome: string,
-): Promise<Categoria> {
-  const result = await sql`
-    UPDATE categorias
-    SET nome = ${nome}, updated_at = NOW()
-    WHERE id_categoria = ${id}
-    RETURNING *
-  `;
-  const rows = result as unknown as Categoria[];
-  return rows[0];
-}
-
-// 6) DELETAR CATEGORIA
-export async function deleteCategoria(id: string): Promise<void> {
-  await sql`
-    DELETE FROM categorias
-    WHERE id_categoria = ${id}
-  `;
-}
 
 // ========== PRODUTOS - ACTIONS COM VALIDAÇÃO ZOD ==========
 
@@ -311,18 +128,22 @@ const CreateProdutoSchema = z.object({
   quantidade_estoque: z.string().transform((val) => {
     const num = Number(val);
     if (isNaN(num)) throw new Error("A quantidade deve ser um número");
-    if (!Number.isInteger(num)) throw new Error("A quantidade deve ser um número inteiro");
+    if (!Number.isInteger(num))
+      throw new Error("A quantidade deve ser um número inteiro");
     if (num < 0) throw new Error("A quantidade não pode ser negativa");
     return num;
   }),
 
-  preco_custo: z.string().optional().transform((val) => {
-    if (!val) return undefined;
-    const num = Number(val);
-    if (isNaN(num)) throw new Error("O preço de custo deve ser um número");
-    if (num <= 0) throw new Error("O preço de custo deve ser maior que zero");
-    return num;
-  }),
+  preco_custo: z
+    .string()
+    .optional()
+    .transform((val) => {
+      if (!val) return undefined;
+      const num = Number(val);
+      if (isNaN(num)) throw new Error("O preço de custo deve ser um número");
+      if (num <= 0) throw new Error("O preço de custo deve ser maior que zero");
+      return num;
+    }),
 
   preco_venda: z.string().transform((val) => {
     const num = Number(val);
@@ -360,13 +181,16 @@ const CreateProdutoSchema = z.object({
     .or(z.literal(""))
     .transform((val) => (val === "" ? undefined : val)),
 
-  estoque_minimo: z.string().optional().transform((val) => {
-    if (!val || val === "") return undefined;
-    const num = Number(val);
-    if (isNaN(num)) throw new Error("O estoque mínimo deve ser um número");
-    if (num < 0) throw new Error("O estoque mínimo não pode ser negativo");
-    return num;
-  }),
+  estoque_minimo: z
+    .string()
+    .optional()
+    .transform((val) => {
+      if (!val || val === "") return undefined;
+      const num = Number(val);
+      if (isNaN(num)) throw new Error("O estoque mínimo deve ser um número");
+      if (num < 0) throw new Error("O estoque mínimo não pode ser negativo");
+      return num;
+    }),
 
   unidade: z
     .string()
@@ -377,19 +201,17 @@ const CreateProdutoSchema = z.object({
     .transform((val) => (val === "" ? undefined : val)),
 
   is_final: z
-  .string()
-  .nullable()   // ✅ aceita null
-  .optional()
-  .transform((val) => val === "true"),
+    .string()
+    .nullable() // ✅ aceita null
+    .optional()
+    .transform((val) => val === "true"),
 
-ativo: z
-  .string()
-  .nullable()   // ✅ aceita null
-  .optional()
-  .transform((val) => val !== "false"),
-
+  ativo: z
+    .string()
+    .nullable() // ✅ aceita null
+    .optional()
+    .transform((val) => val !== "false"),
 });
-
 
 // 2. Schema para Editar Produto (partial do anterior)
 const UpdateProdutoSchema = z.object({
@@ -464,13 +286,11 @@ export type CreateProdutoState = {
   message?: string | null;
 };
 
-
 // 4. Action para CRIAR Produto
 export async function createProdutoAction(
   prevState: CreateProdutoState,
   formData: FormData,
 ): Promise<CreateProdutoState> {
-
   const { orgId, userId: clerkUserId } = await auth();
 
   const validatedFields = CreateProdutoSchema.safeParse({
@@ -492,7 +312,10 @@ export async function createProdutoAction(
   });
 
   if (!validatedFields.success) {
-    console.log("❌ Erros de validação:", validatedFields.error.flatten().fieldErrors);
+    console.log(
+      "❌ Erros de validação:",
+      validatedFields.error.flatten().fieldErrors,
+    );
     return {
       errors: validatedFields.error.flatten().fieldErrors,
       message: "Campos inválidos. Falha ao criar produto.",
@@ -568,7 +391,6 @@ export async function createProdutoAction(
   revalidatePath("/aplicacao/produtos");
   redirect("/aplicacao/produtos");
 }
-
 
 // 5. Action para EDITAR Produto
 export async function updateProdutoAction(
@@ -866,7 +688,3 @@ export async function createMovimentoEstoqueAction(
   revalidatePath("/aplicacao/movimentos");
   redirect("/aplicacao/movimentos");
 }
-
-
-
-

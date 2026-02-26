@@ -1,26 +1,31 @@
+// src/ui/Categorias/CreateCategoryForm.tsx
 "use client";
 
 import { Button } from "@/src/ui/Button";
 import FormSurface from "@/src/ui/Surface";
-import Form from "next/form";
+// Alterado: Usar form normal para Server Actions com estado
 import { InputField } from "../InputField";
 import { Modal } from "@heroui/react";
 import { IconButton } from "@/src/ui/IconButton";
 import { Plus } from "@gravity-ui/icons";
 
-import { createCategoriaAction, CreateCategoriaState } from "@/src/lib/actions";
-import { useActionState } from "react";
+import { createCategoriaAction, CreateCategoriaState } from "@/src/lib/categoriaActions";
+import { useActionState, useEffect } from "react";
 
 export function CreateCategoryForm() {
   const initialState: CreateCategoriaState = { message: null, errors: {} };
-  const [State, formAction] = useActionState(
+
+  // State capturado da Server Action
+  const [state, formAction, isPending] = useActionState(
     createCategoriaAction,
     initialState,
   );
-  console.log("teste");
+
   return (
     <Modal>
+      {/* Gatilho do Modal */}
       <IconButton startIcon={<Plus />}>Adicionar Categoria</IconButton>
+
       <Modal.Backdrop>
         <Modal.Container placement="auto">
           <Modal.Dialog className="sm:max-w-md">
@@ -28,15 +33,18 @@ export function CreateCategoryForm() {
             <Modal.Header>
               <Modal.Heading>Criar Categoria</Modal.Heading>
               <p className="mt-1.5 text-sm leading-5 text-muted">
-                Preencha o formulário abaixo para criar uma nova categoria.
+                Preencha o formulário abaixo.
               </p>
             </Modal.Header>
+
             <Modal.Body className="p-6">
               <FormSurface variant="default">
-                <Form action={formAction} id="create-category">
+                {/* 1. Usar tag form padrão. 2. Passar a action do hook */}
+                <form action={formAction} id="create-category">
                   <InputField
                     label="Nome"
                     description="Digite o nome da categoria"
+                    // Garante que o name="nome" coincide com o Zod no actions.ts
                     inputProps={{
                       id: "nome",
                       name: "nome",
@@ -44,15 +52,30 @@ export function CreateCategoryForm() {
                       required: true,
                     }}
                   />
-                </Form>
+                  {/* Mostrar erros de validação vindos do servidor */}
+                  {state?.errors?.nome && (
+                    <p className="text-red-500 text-xs mt-1">
+                      {state.errors.nome[0]}
+                    </p>
+                  )}
+                  {state?.message && !state.errors && (
+                    <p className="text-red-500 text-xs mt-1">{state.message}</p>
+                  )}
+                </form>
               </FormSurface>
             </Modal.Body>
+
             <Modal.Footer>
               <Button slot="close" variant="secondary">
                 Cancelar
               </Button>
-              <Button slot="close" type="submit" form="create-category">
-                Criar
+              {/* Botão de submissão */}
+              <Button
+                type="submit"
+                form="create-category"
+                isDisabled={isPending}
+              >
+                {isPending ? "A criar..." : "Criar"}
               </Button>
             </Modal.Footer>
           </Modal.Dialog>
@@ -61,7 +84,6 @@ export function CreateCategoryForm() {
     </Modal>
   );
 }
-
 //   const CreateInvoice = FormSchema.omit({ id: true, date: true });
 
 // export type State = {

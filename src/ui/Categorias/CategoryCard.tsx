@@ -10,9 +10,6 @@ export default async function CategoryCards() {
   const categoriasComSubcategorias =
     await fetchCategoriaComSubcategorias(orgId);
 
-  //debug logs
-  /*   console.log("Categories data:", categoriasComSubcategorias);
-  console.log("First category:", categoriasComSubcategorias[0]); */
   if (categoriasComSubcategorias.length === 0) {
     return (
       <div className="flex h-full flex-col items-center justify-center align-center gap-2">
@@ -75,7 +72,7 @@ export default async function CategoryCards() {
           <Card.Footer>
             <Link
               className="hover:underline flex items-center gap-1"
-              href={`/aplicacao/categorias/${categoria.id_categoria}/detalhes`}
+              href={`/aplicacao/${orgId}/categorias/${categoria.id_categoria}/detalhes`}
             >
               Detalhes <ArrowUpRightFromSquare />
             </Link>

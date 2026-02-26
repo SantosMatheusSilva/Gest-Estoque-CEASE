@@ -1,3 +1,171 @@
+"use client";
+
+import React, { useState, useCallback, useEffect, useRef } from "react";
+import { z } from "zod";
+import { TextField, Label, Input, FieldError } from "@heroui/react";
+import { Button } from "@/src/ui/Button";
+import Surface from "@/src/ui/Surface";
+
+// Zod validation schema
+const subcategoriaSchema = z.object({
+  nome: z
+    .string()
+    .min(3, "O nome deve ter pelo menos 3 caracteres")
+    .max(50, "O nome deve ter no máximo 50 caracteres")
+    .trim(),
+  parent_id: z.string().uuid("ID de categoria inválido"),
+});
+
+export interface EditSubcategoryFormProps {
+  subcategory: { id_categoria: string; nome: string; parent_id: string };
+  parentCategories: Array<{ id_categoria: string; nome: string }>;
+  onSubmit?: (data: {
+    id_categoria: string;
+    nome: string;
+    parent_id: string;
+  }) => Promise<void>;
+  onCancel?: () => void;
+}
+
+export function EditSubcategoryForm({
+  subcategory,
+  parentCategories,
+  onSubmit,
+  onCancel,
+}: EditSubcategoryFormProps) {
+  const [formData, setFormData] = useState({
+    nome: subcategory.nome,
+    parent_id: subcategory.parent_id,
+  });
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const formRef = useRef<HTMLFormElement>(null);
+
+  // Exclude self from parent options
+  const availableParents = parentCategories.filter(
+    (cat) => cat.id_categoria !== subcategory.id_categoria,
+  );
+
+  useEffect(() => {
+    formRef.current?.querySelector("input")?.focus();
+  }, []);
+
+  const handleNomeChange = useCallback(
+    (value: string) => {
+      setFormData((prev) => ({ ...prev, nome: value }));
+      if (errors.nome) setErrors((prev) => ({ ...prev, nome: undefined }));
+    },
+    [errors.nome],
+  );
+
+  const handleParentChange = useCallback(
+    (value: string) => {
+      setFormData((prev) => ({ ...prev, parent_id: value }));
+      if (errors.parent_id)
+        setErrors((prev) => ({ ...prev, parent_id: undefined }));
+    },
+    [errors.parent_id],
+  );
+
+  const validateForm = useCallback(() => {
+    try {
+      subcategoriaSchema.parse(formData);
+      setErrors({});
+      return true;
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        const newErrors: Record<string, string> = {};
+        error.issues.forEach((issue) => {
+          if (issue.path.length > 0)
+            newErrors[issue.path[0] as string] = issue.message;
+        });
+        setErrors(newErrors);
+      }
+      return false;
+    }
+  }, [formData]);
+
+  const handleSubmit = useCallback(
+    async (e: React.FormEvent) => {
+      e.preventDefault();
+      if (!validateForm()) return;
+
+      setIsSubmitting(true);
+      try {
+        await onSubmit?.({
+          id_categoria: subcategory.id_categoria,
+          nome: formData.nome.trim(),
+          parent_id: formData.parent_id,
+        });
+      } catch (err) {
+        console.error("Erro ao editar subcategoria:", err);
+      } finally {
+        setIsSubmitting(false);
+      }
+    },
+    [formData, validateForm, onSubmit, subcategory.id_categoria],
+  );
+
+  return (
+    <Surface className="w-full max-w-md">
+      <form
+        ref={formRef}
+        onSubmit={handleSubmit}
+        className="flex flex-col gap-4"
+      >
+        <TextField
+          name="nome"
+          isRequired
+          value={formData.nome}
+          onChange={handleNomeChange}
+        >
+          <Label>Nome da Subcategoria</Label>
+          <Input
+            value={formData.nome}
+            onChange={(e) => handleNomeChange(e.target.value)}
+            placeholder="Digite o nome da subcategoria"
+            disabled={isSubmitting}
+          />
+          <FieldError>{errors.nome}</FieldError>
+        </TextField>
+
+        <div className="flex flex-col gap-1">
+          <Label htmlFor="parent_id">Categoria Pai *</Label>
+          <select
+            id="parent_id"
+            name="parent_id"
+            value={formData.parent_id}
+            onChange={(e) => handleParentChange(e.target.value)}
+            required
+            disabled={isSubmitting}
+            className="px-3 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            {availableParents.map((cat) => (
+              <option key={cat.id_categoria} value={cat.id_categoria}>
+                {cat.nome}
+              </option>
+            ))}
+          </select>
+          {errors.parent_id && (
+            <div className="text-red-500 text-sm">{errors.parent_id}</div>
+          )}
+        </div>
+
+        <div className="flex gap-2 mt-4">
+          <Button type="submit" variant="primary" isDisabled={isSubmitting}>
+            {isSubmitting ? "A guardar..." : "Guardar Alterações"}
+          </Button>
+          {onCancel && (
+            <Button type="button" onClick={onCancel}>
+              Cancelar
+            </Button>
+          )}
+        </div>
+      </form>
+    </Surface>
+  );
+}
+
 /* "use client";
 
 import React, { useState, useCallback, useEffect, useRef } from "react";

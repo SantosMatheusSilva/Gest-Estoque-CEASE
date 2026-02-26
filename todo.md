@@ -18,28 +18,51 @@ src
 │  │  │  └─ page.tsx
 │  │  ├─ funcionalidades/
 │  │  │  └─ page.tsx
+│  │  ├─ planos/
+│  │  │  └─ page.tsx
 │  │  └─ sobrenos/
 │  │     └─ page.tsx
 │  │
-│  ├─ layout/
-│  │
 │  ├─ aplicacao/
-│  │  └─ (dashboard)/
+│  │  └─ [orgId]/
+│  │     │  └─ (dashboard)/
+│  │     │       └─ page.tsx
+│  │     ├─ categorias/
+│  │     │      └─ [id]/
+│  │     │         └─ detalhes/
+│  │     │             └─ page.tsx
+│  │     ├─ page.tsx
+│  │     │
+│  │     │
+│  │     │
+│  │     ├─ perfil/
+│  │     │   └─ page.tsx
+│  │     ├─ produtos/
+│  │        └─ [id]/
+│  │            └─ detalhes/
+│  │                └─ not-found.tsx
+│  │     
+│  ├─ auth/
+│  │  └─ login/
 │  │     └─ page.tsx
+│  ├─ teste-components/
+│  │  └─ page.tsx
+│  │     
+│  ├─ global.css
+│  ├─ layout.tsx
+│  │     
 │  │
-│  └─ categorias/
-│     └─ [id]/
-│        └─ detalhes/
-│           └─ page.tsx
-│
 ├─ db/ - neon sql
+│  ├─ bootstrapUser.ts
 │  ├─ data.ts → queries (SELECT)
 │  ├─ definition.ts → tipos
 │  └─ index.ts → conexão
 │
 ├─ lib/
 │  ├─ actions.ts
+│  ├─ categoriaActions.ts
 │  ├─ data.ts
+│  ├─ delete-actions.ts
 │  └─ utils.ts
 │
 ├─ ui/
@@ -53,7 +76,10 @@ src
 │  │  └─ EditSubcategoryForm.tsx
 │  │
 │  ├─ Contacto/
-│  │  └─ ContactoForm.tsx    
+│  │  └─ ContactoForm.tsx
+│  │
+│  ├─ dashboard/
+│  │  └─ ContactoForm.tsx     
 │  │
 │  ├─ Faq/
 │  │  └─ FaqAccordion.tsx
@@ -62,6 +88,10 @@ src
 │  │  ├─ FeaturesCard.tsx
 │  │  ├─ FeaturesGrid.tsx
 │  │  └─ FeaturesIntro.tsx
+│  │
+│  ├─ Planos/
+│  │  └─ PricingPageLayout.tsx
+│  │
 │  │
 │  ├─ Produtos/
 │  │  ├─ CreateProductForm.tsx
@@ -87,10 +117,12 @@ src
 │  ├─ IconButton.tsx
 │  ├─ InputField.tsx
 │  ├─ Navbar.tsx
+│  ├─ NavLink.tsx
 │  ├─ PageLayout.tsx
 │  ├─ SelectField.tsx
 │  ├─ Sidenav.tsx
 │  ├─ Surface.tsx
+│  ├─ Title.tsx
 │  └─ Topbar.tsx
 
 

@@ -9,7 +9,7 @@ import { Plus } from "@gravity-ui/icons";
 import {
   createSubCategoriaAction,
   CreateCategoriaState,
-} from "@/src/lib/actions";
+} from "@/src/lib/categoriaActions";
 import { useActionState } from "react";
 
 // passando a props da page.tsx para o forms
