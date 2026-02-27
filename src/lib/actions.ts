@@ -228,7 +228,8 @@ const UpdateProdutoSchema = z.object({
       if (!val) return undefined;
       const num = Number(val);
       if (isNaN(num)) throw new Error("A quantidade deve ser um número");
-      if (!Number.isInteger(num)) throw new Error("A quantidade deve ser um número inteiro");
+      if (!Number.isInteger(num))
+        throw new Error("A quantidade deve ser um número inteiro");
       if (num < 0) throw new Error("A quantidade não pode ser negativa");
       return num;
     })
@@ -282,13 +283,16 @@ const UpdateProdutoSchema = z.object({
     .or(z.literal(""))
     .transform((val) => (val === "" ? undefined : val)),
 
-  estoque_minimo: z.string().optional().transform((val) => {
-    if (!val || val === "") return undefined;
-    const num = Number(val);
-    if (isNaN(num)) throw new Error("O estoque mínimo deve ser um número");
-    if (num < 0) throw new Error("O estoque mínimo não pode ser negativo");
-    return num;
-  }),
+  estoque_minimo: z
+    .string()
+    .optional()
+    .transform((val) => {
+      if (!val || val === "") return undefined;
+      const num = Number(val);
+      if (isNaN(num)) throw new Error("O estoque mínimo deve ser um número");
+      if (num < 0) throw new Error("O estoque mínimo não pode ser negativo");
+      return num;
+    }),
 
   unidade: z
     .string()
@@ -310,7 +314,6 @@ const UpdateProdutoSchema = z.object({
     .optional()
     .transform((val) => val !== "false"),
 });
-
 
 // 3. Tipo de Estado para o Form
 export type CreateProdutoState = {
@@ -493,7 +496,8 @@ export async function updateProdutoAction(
     }
 
     if (nome) {
-      const categoriaAtual = id_categoria || (produtoExistente[0] as Produto).id_categoria;
+      const categoriaAtual =
+        id_categoria || (produtoExistente[0] as Produto).id_categoria;
       const existing = await sql`
         SELECT id FROM produtos 
         WHERE LOWER(nome) = LOWER(${nome}) 
@@ -503,7 +507,9 @@ export async function updateProdutoAction(
 
       if (existing.length > 0) {
         return {
-          errors: { nome: ["Já existe outro produto com este nome nesta categoria."] },
+          errors: {
+            nome: ["Já existe outro produto com este nome nesta categoria."],
+          },
           message: "Erro: Nome duplicado.",
         };
       }
@@ -549,7 +555,6 @@ export async function updateProdutoAction(
   revalidatePath(`/aplicacao/produtos/${id}/detalhes`);
   redirect("/aplicacao/produtos");
 }
-
 
 // ========== DELETE PRODUTO COM VALIDAÇÃO ZOD ==========
 
@@ -669,8 +674,8 @@ export async function createMovimentoEstoqueAction(
   prevState: CreateMovimentoEstoqueState,
   formData: FormData,
 ): Promise<CreateMovimentoEstoqueState> {
-  const { orgId } = await auth();
-  const dbUser = await fetchUsuarioDB(orgId as string);
+  const { orgId, userId } = await auth();
+  const dbUser = await fetchUsuarioDB(userId as string);
 
   if (!dbUser) {
     return { message: "Utilizador não encontrado na base de dados." };

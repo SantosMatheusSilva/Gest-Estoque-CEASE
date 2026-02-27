@@ -20,28 +20,36 @@ src
 │ │ │ └─ page.tsx
 │ │ └─ sobrenos/
 │ │ └─ page.tsx
+│ ├─ layout.tsx
 │ │
 │ ├─ aplicacao/
 │ │ └─ [orgId]/
-│ │ │ └─ (dashboard)/
-│ │ │ └─ page.tsx
-│ │ ├─ categorias/
-│ │ │ └─ [id]/
-│ │ │ └─ detalhes/
-│ │ │ └─ page.tsx
-│ │ ├─ page.tsx
-│ │ │
-│ │ │
-│ │ ├─ perfil/
-│ │ │ └─ page.tsx
-│ │ ├─ produtos/
-│ │ └─ [id]/
-│ │ └─ detalhes/
-│ │ └─ not-found.tsx
+│ │     │   └─ (dashboard)/
+│ │     │       └─ page.tsx
+│ │     ├─ admin/
+│ │     │   └─ page.tsx
+│ │     │ 
+│ │     ├─ categorias/
+│ │     │ └─ [id]/
+│ │     │       └─ detalhes/
+│ │     │           └─ page.tsx
+│ │     │
+│ │     ├─ movimentos/
+│ │     │       └─ page.tsx
+│ │     │
+│ │     ├─ produtos/
+│ │     │   └─ [id]/
+│ │     │       └─ detalhes/
+│ │     │       ├─ not-found.tsx
+│ │     │       └─ page.tsx
+│ │     └─ layout.tsx
+│ │     
+│ │      
+│ ├─ page.tsx  
 │ │  
 │ ├─ auth/
 │ │ └─ login/
-│ │ └─ page.tsx
+│ │     └─ page.tsx
 │ ├─ teste-components/
 │ │ └─ page.tsx
 │ │  
@@ -91,7 +99,7 @@ src
 │ │ ├─ ProductsTable.tsx
 │ │ ├─ TodayMovementsCard.tsx
 │ │ └─ TotalItemsCard.tsx
-│ │ 
+│ │
 │ │
 │ ├─ Faq/
 │ │ └─ FaqAccordion.tsx
@@ -302,13 +310,6 @@ ContactForm
 ```
 
 ```
-
-Próximos Passos:
-
-Home - corrigir o BUTTON - está redirecionando para páginas inexistentes
-Cards - dashboard
-CloudFire
-
 Funcionalidades:
 
 Plano Premim e Gratuito

@@ -1,5 +1,3 @@
-"use client";
-
 import { PageLayout } from "../PageLayout";
 import BaseSurface from "../Surface";
 import { formatDateToLocal } from "@/src/lib/utils";

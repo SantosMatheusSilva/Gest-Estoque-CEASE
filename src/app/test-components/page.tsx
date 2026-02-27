@@ -148,7 +148,8 @@ export default function TestComponentsPage() {
           <div className="space-y-4">
             <h3 className="text-lg font-medium">Create Category Form</h3>
             <CreateCategoryForm
-            //nome={nome}
+              orgId="test-org"
+              //nome={nome}
             />
           </div>
 
