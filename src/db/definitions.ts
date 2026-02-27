@@ -17,12 +17,11 @@ export type DeleteState = {
 //>>>>>>>>>> Type Categoria <<<<<<<<<<<
 
 export type Categoria = {
-  // tipo de dado - como esta na db
   id_categoria: string;
   nome: string;
   parent_id: string | null;
-  created_at: Date;
-  updated_at: Date;
+  created_at: Date | string; // ✅ aceita ambos
+  updated_at: Date | string; // ✅ aceita ambos
   adicionado_por: string;
   business_id?: string;
   clerk_org_id: string;

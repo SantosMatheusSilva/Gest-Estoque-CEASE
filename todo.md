@@ -66,6 +66,7 @@ src
 ├─ ui/
 │ ├─ Categorias/
 │ │ ├─ CategoryCard.tsx
+│ │ ├─ CategoryCardsServer.tsx
 │ │ ├─ CategoryPageLayout.tsx
 │ │ ├─ CreateCategoryForm.tsx
 │ │ ├─ CreateSubcategoryForm

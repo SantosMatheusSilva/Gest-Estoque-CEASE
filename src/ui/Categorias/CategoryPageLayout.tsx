@@ -1,5 +1,6 @@
-import CategoryCardsServer from "./CategoryCardsServer";
+"use client";
 import { CreateCategoryForm } from "./CreateCategoryForm";
+import CategoryCards from "./CategoryCard";
 
 type Props = {
   categoriasComSubcategorias: any[];
@@ -15,8 +16,7 @@ export default function CategoryPageLayout({
   return (
     <main className="space-y-6">
       <CreateCategoryForm orgId={orgId} />
-
-      <CategoryCardsServer
+      <CategoryCards
         categoriasComSubcategorias={categoriasComSubcategorias ?? []}
         orgId={orgId}
         userId={userId}

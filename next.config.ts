@@ -1,6 +1,9 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  turbopack: {
+    root: __dirname,
+  },
   images: {
     remotePatterns: [
       {
@@ -14,4 +17,3 @@ const nextConfig: NextConfig = {
 export default nextConfig;
 
 // cacheComponents: true, --> ver docs Next.js sobre caching de componentes do servidor
-

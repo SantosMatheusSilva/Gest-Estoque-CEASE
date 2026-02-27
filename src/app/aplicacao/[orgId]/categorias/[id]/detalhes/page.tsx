@@ -1,30 +1,26 @@
 import { auth } from "@clerk/nextjs/server";
-import CategoryPageLayout from "@/src/ui/Categorias/CategoryPageLayout";
-import { fetchCategoriaComSubcategorias } from "@/src/db/data";
+import DetailPageLayout from "@/src/ui/Categorias/DetailPageLayout";
+import { fetchCategoriaComSubcategoriaPorId } from "@/src/db/data";
 
-type PageProps = {
-  params: {
-    orgId: string;
-  };
-};
+type PageProps = { params: Promise<{ orgId: string; id: string }> };
 
 export default async function Page({ params }: PageProps) {
-  const { orgId } = params;
-
+  const { orgId, id } = await params; // await nos params
   const { userId } = await auth();
 
-  if (!orgId) {
-    return <div>Organização não encontrada.</div>;
-  }
+  if (!id) return <div>ID inválido.</div>;
 
-  const categoriasComSubcategorias =
-    await fetchCategoriaComSubcategorias(orgId);
+  const categoriaInfo = await fetchCategoriaComSubcategoriaPorId(id);
+  if (!categoriaInfo) return <div>Categoria não encontrada.</div>;
 
   return (
-    <CategoryPageLayout
-      categoriasComSubcategorias={categoriasComSubcategorias ?? []}
-      orgId={orgId}
-      userId={userId ?? ""}
-    />
+    <main className="space-y-6">
+      <DetailPageLayout
+        categoriaInfo={categoriaInfo}
+        parent_id={id}
+        orgId={orgId}
+        userId={userId ?? ""}
+      />
+    </main>
   );
 }

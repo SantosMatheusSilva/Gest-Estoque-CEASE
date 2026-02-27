@@ -113,44 +113,46 @@ export async function fetchCategoriaPorId(id: string) {
   }
 }
 
+// src/db/data.ts
+
 export async function fetchCategoriaComSubcategoriaPorId(id: string) {
   try {
-    // Buscar todas as categorias de uma vez
-    const categoria = await sql<CategoriaRaiz[]>`
+    const resultado = await sql<CategoriaRaiz[]>`
       SELECT
-    c.id_categoria,
-    c.nome,
-    c.parent_id,
-    c.created_at,
-    c.updated_at,
-    c.adicionado_por,
-    (
-      SELECT COUNT(*)
-      FROM produtos p
-      WHERE p.id_categoria = c.id_categoria
-    ) AS total_produtos
-  FROM categorias c
-  WHERE c.id_categoria = ${id}
-     OR c.parent_id = ${id}
-  ORDER BY c.nome
+        c.id_categoria,
+        c.nome,
+        c.parent_id,
+        c.created_at,
+        c.updated_at,
+        c.adicionado_por,
+        (
+          SELECT COUNT(*)
+          FROM produtos p
+          WHERE p.id_categoria = c.id_categoria
+        ) AS total_produtos
+      FROM categorias c
+      WHERE c.id_categoria = ${id}
+        OR c.parent_id = ${id}
+      ORDER BY c.nome
     `;
 
-    // Criar um mapa para acesso rápido por ID
     const categoriaMap = new Map();
 
-    // Inicializar todas as categorias com array vazio de subcategorias
-    categoria.forEach((categoria) => {
-      categoriaMap.set(categoria.id_categoria, {
-        ...categoria,
-        created_at: categoria.created_at,
-        updated_at: categoria.updated_at,
-        adicionado_por: categoria.adicionado_por,
+    resultado.forEach((row) => {
+      categoriaMap.set(row.id_categoria, {
+        ...row,
+        // ✅ Serializar datas aqui — Date → string
+        created_at: row.created_at
+          ? new Date(row.created_at).toISOString()
+          : "",
+        updated_at: row.updated_at
+          ? new Date(row.updated_at).toISOString()
+          : "",
         subcategorias: [],
       });
     });
 
-    // Organizar em estrutura hierárquica
-    let categoriaRaiz: CategoriaRaiz = {} as CategoriaRaiz;
+    let categoriaRaiz: any = null;
 
     categoriaMap.forEach((categoria) => {
       if (categoria.parent_id === null) {
@@ -163,7 +165,6 @@ export async function fetchCategoriaComSubcategoriaPorId(id: string) {
       }
     });
 
-    //console.log("Categorias com subcategorias:", categoriaRaiz);
     return categoriaRaiz;
   } catch (error) {
     console.error("Database Error:", error);
