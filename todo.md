@@ -32,7 +32,6 @@ src
 │ │ ├─ page.tsx
 │ │ │
 │ │ │
-│ │ │
 │ │ ├─ perfil/
 │ │ │ └─ page.tsx
 │ │ ├─ produtos/
@@ -81,7 +80,18 @@ src
 │ │ └─ ContactoForm.tsx
 │ │
 │ ├─ dashboard/
-│ │ └─ ContactoForm.tsx  
+│ ├─ Categorias/
+│ │ ├─ DashboardCards.tsx
+│ │ ├─ DashLayoutPage.tsx
+│ │ ├─ index.ts
+│ │ ├─ InventoryValueCard.tsx
+│ │ ├─ KpiCard.tsx
+│ │ ├─ LowStockCard.tsx
+│ │ ├─ OutOfStockCard.tsx
+│ │ ├─ ProductsTable.tsx
+│ │ ├─ TodayMovementsCard.tsx
+│ │ └─ TotalItemsCard.tsx
+│ │ 
 │ │
 │ ├─ Faq/
 │ │ └─ FaqAccordion.tsx
@@ -90,6 +100,11 @@ src
 │ │ ├─ FeaturesCard.tsx
 │ │ ├─ FeaturesGrid.tsx
 │ │ └─ FeaturesIntro.tsx
+│ │
+│ ├─ Movimentos/
+│ │ ├─ CreateMovimentForm.tsx
+│ │ ├─ MovimentsPageLayout.tsx
+│ │ └─ MovimentsTable.tsx
 │ │
 │ ├─ Planos/
 │ │ └─ PricingPageLayout.tsx

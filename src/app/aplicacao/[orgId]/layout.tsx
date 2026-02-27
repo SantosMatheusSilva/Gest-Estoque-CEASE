@@ -23,7 +23,10 @@ export default async function AppLayout({ children, params }: Props) {
   //chamar bootstrapUser para criar o usuario na db caso nao exista.
   /* const usuarioDb = */ await bootstrapUser({
     clerkUserId: userId,
-    email: sessionClaims.email as string,
+    email: (sessionClaims.emailAdress ?? sessionClaims.email) as string, //add ANA
+    orgId: activeOrgId ?? undefined,
+    orgName: (sessionClaims.org_name as string) ?? undefined, //add ANA
+    orgRole: (sessionClaims.org_role as string) ?? undefined, //add ANA
   });
   // se o usuario não tiver uma org, retornar: MELHOR PARA REDIRECIONAR DEPOIS
   if (!activeOrgId) redirect("/aplicacao");

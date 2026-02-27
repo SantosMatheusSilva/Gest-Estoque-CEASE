@@ -1,13 +1,35 @@
 import Link from "next/link";
 import BaseSurface from "./Surface";
 import Image from "next/image";
-import { House, Box, Copy, ArrowsOppositeToDots } from "@gravity-ui/icons";
+import {
+  House,
+  Box,
+  Copy,
+  ArrowsOppositeToDots,
+  ChartBar,
+} from "@gravity-ui/icons";
 
 import { auth } from "@clerk/nextjs/server";
 import { NavLink } from "./NavLink";
+import { sql } from "@/src/db/index";
 
 async function Sidenav() {
-  const { orgId } = await auth();
+  const { orgId, userId } = await auth(); // ← userId adicionado aqui
+
+  let isAdmin = false;
+
+  if (userId && orgId) {
+    const membershipResult = await sql`
+    SELECT bm.role
+    FROM business_memberships bm
+    INNER JOIN usuarios u ON u.id = bm.user_id
+    INNER JOIN business b ON b.id = bm.business_id
+    WHERE u.clerk_user_id = ${userId}
+      AND b.clerk_org_id = ${orgId}
+    LIMIT 1
+  `;
+    isAdmin = membershipResult?.[0]?.role === "admin";
+  }
 
   const links = [
     {
@@ -30,6 +52,15 @@ async function Sidenav() {
       href: `/aplicacao/${orgId}/categorias`,
       icon: <Copy className="w-5 h-5" />,
     },
+    ...(isAdmin
+      ? [
+          {
+            label: "Admin",
+            href: `/aplicacao/${orgId}/admin`,
+            icon: <ChartBar className="w-5 h-5" />,
+          },
+        ]
+      : []),
   ];
 
   return (
