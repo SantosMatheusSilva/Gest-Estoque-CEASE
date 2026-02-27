@@ -228,8 +228,7 @@ const UpdateProdutoSchema = z.object({
       if (!val) return undefined;
       const num = Number(val);
       if (isNaN(num)) throw new Error("A quantidade deve ser um número");
-      if (!Number.isInteger(num))
-        throw new Error("A quantidade deve ser um número inteiro");
+      if (!Number.isInteger(num)) throw new Error("A quantidade deve ser um número inteiro");
       if (num < 0) throw new Error("A quantidade não pode ser negativa");
       return num;
     })
@@ -242,6 +241,17 @@ const UpdateProdutoSchema = z.object({
       const num = Number(val);
       if (isNaN(num)) throw new Error("O preço deve ser um número");
       if (num <= 0) throw new Error("O preço deve ser maior que zero");
+      return num;
+    })
+    .optional(),
+
+  preco_venda: z
+    .string()
+    .transform((val) => {
+      if (!val) return undefined;
+      const num = Number(val);
+      if (isNaN(num)) throw new Error("O preço de venda deve ser um número");
+      if (num <= 0) throw new Error("O preço de venda deve ser maior que zero");
       return num;
     })
     .optional(),
@@ -262,7 +272,45 @@ const UpdateProdutoSchema = z.object({
     .optional()
     .or(z.literal(""))
     .transform((val) => (val === "" ? undefined : val)),
+
+  // ✅ NOVOS CAMPOS
+  sku: z
+    .string()
+    .max(100, "O SKU deve ter no máximo 100 caracteres")
+    .trim()
+    .optional()
+    .or(z.literal(""))
+    .transform((val) => (val === "" ? undefined : val)),
+
+  estoque_minimo: z.string().optional().transform((val) => {
+    if (!val || val === "") return undefined;
+    const num = Number(val);
+    if (isNaN(num)) throw new Error("O estoque mínimo deve ser um número");
+    if (num < 0) throw new Error("O estoque mínimo não pode ser negativo");
+    return num;
+  }),
+
+  unidade: z
+    .string()
+    .max(20, "A unidade deve ter no máximo 20 caracteres")
+    .trim()
+    .optional()
+    .or(z.literal(""))
+    .transform((val) => (val === "" ? undefined : val)),
+
+  is_final: z
+    .string()
+    .nullable()
+    .optional()
+    .transform((val) => val === "true"),
+
+  ativo: z
+    .string()
+    .nullable()
+    .optional()
+    .transform((val) => val !== "false"),
 });
+
 
 // 3. Tipo de Estado para o Form
 export type CreateProdutoState = {
@@ -402,9 +450,15 @@ export async function updateProdutoAction(
     nome: formData.get("nome"),
     quantidade: formData.get("quantidade"),
     preco: formData.get("preco"),
-    id_categoria: formData.get("id_categoria"),
+    preco_venda: formData.get("preco_venda"),
+    id_categoria: formData.get("produto_categoria_id"),
     descricao: formData.get("descricao"),
     img_url: formData.get("img_url"),
+    sku: formData.get("sku"),
+    estoque_minimo: formData.get("estoque_minimo"),
+    unidade: formData.get("unidade"),
+    is_final: formData.get("is_final"),
+    ativo: formData.get("ativo"),
   });
 
   if (!validatedFields.success) {
@@ -414,8 +468,20 @@ export async function updateProdutoAction(
     };
   }
 
-  const { nome, quantidade, preco, id_categoria, descricao, img_url } =
-    validatedFields.data;
+  const {
+    nome,
+    quantidade,
+    preco,
+    preco_venda,
+    id_categoria,
+    descricao,
+    img_url,
+    sku,
+    estoque_minimo,
+    unidade,
+    is_final,
+    ativo,
+  } = validatedFields.data;
 
   try {
     const produtoExistente = await sql`
@@ -423,14 +489,11 @@ export async function updateProdutoAction(
     `;
 
     if (produtoExistente.length === 0) {
-      return {
-        message: "Produto não encontrado.",
-      };
+      return { message: "Produto não encontrado." };
     }
 
     if (nome) {
-      const categoriaAtual =
-        id_categoria || (produtoExistente[0] as Produto).id_categoria;
+      const categoriaAtual = id_categoria || (produtoExistente[0] as Produto).id_categoria;
       const existing = await sql`
         SELECT id FROM produtos 
         WHERE LOWER(nome) = LOWER(${nome}) 
@@ -440,9 +503,7 @@ export async function updateProdutoAction(
 
       if (existing.length > 0) {
         return {
-          errors: {
-            nome: ["Já existe outro produto com este nome nesta categoria."],
-          },
+          errors: { nome: ["Já existe outro produto com este nome nesta categoria."] },
           message: "Erro: Nome duplicado.",
         };
       }
@@ -451,19 +512,29 @@ export async function updateProdutoAction(
     const nomeValue = nome ?? null;
     const quantidadeValue = quantidade ?? null;
     const precoValue = preco ?? null;
+    const precoVendaValue = preco_venda ?? null;
     const imgUrlValue = img_url ?? null;
     const descricaoValue = descricao ?? null;
     const idCategoriaValue = id_categoria ?? null;
+    const skuValue = sku ?? null;
+    const estoqueMinimoValue = estoque_minimo ?? null;
+    const unidadeValue = unidade ?? null;
 
     await sql`
       UPDATE produtos
       SET
         nome = COALESCE(${nomeValue}, nome),
-        quantidade = COALESCE(${quantidadeValue}, quantidade),
-        preco = COALESCE(${precoValue}, preco),
+        quantidade_estoque = COALESCE(${quantidadeValue}, quantidade_estoque),
+        preco_custo = COALESCE(${precoValue}, preco_custo),
+        preco_venda = COALESCE(${precoVendaValue}, preco_venda),
         img_url = COALESCE(${imgUrlValue}, img_url),
         descricao = COALESCE(${descricaoValue}, descricao),
         id_categoria = COALESCE(${idCategoriaValue}, id_categoria),
+        sku = COALESCE(${skuValue}, sku),
+        estoque_minimo = COALESCE(${estoqueMinimoValue}, estoque_minimo),
+        unidade = COALESCE(${unidadeValue}, unidade),
+        is_final = ${is_final ?? false},
+        ativo = ${ativo ?? true},
         updated_at = NOW()
       WHERE id = ${id}
     `;
@@ -478,6 +549,7 @@ export async function updateProdutoAction(
   revalidatePath(`/aplicacao/produtos/${id}/detalhes`);
   redirect("/aplicacao/produtos");
 }
+
 
 // ========== DELETE PRODUTO COM VALIDAÇÃO ZOD ==========
 

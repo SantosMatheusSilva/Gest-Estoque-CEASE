@@ -1,16 +1,16 @@
 import { PageLayout } from "../PageLayout";
-import { IconButton } from "../IconButton";
-import { TrashBin } from "@gravity-ui/icons";
 import BaseSurface from "../Surface";
 import { Produto, CategoriaRaiz } from "@/src/db/definitions";
 import { formatDateToLocal } from "@/src/lib/utils";
 import { ListBox } from "@heroui/react";
 import EditProductForm from "./EditProductForm";
+import DeleteProductButton from "./DeleteProductButton"; // ✅ importar o componente certo
 
 type Props = {
   produto: Produto;
   categorias: CategoriaRaiz[];
 };
+
 export default function DetailPageLayout({ produto, categorias }: Props) {
   return (
     <PageLayout
@@ -19,9 +19,8 @@ export default function DetailPageLayout({ produto, categorias }: Props) {
       actions={
         <div className="flex gap-2">
           <EditProductForm produto={produto} categorias={categorias} />
-          <IconButton variant="danger" startIcon={<TrashBin />}>
-            Excluir Produto
-          </IconButton>
+          {/* ✅ usar DeleteProductButton em vez do IconButton simples */}
+          <DeleteProductButton produto={produto} variant="button" />
         </div>
       }
     >
@@ -51,7 +50,7 @@ export default function DetailPageLayout({ produto, categorias }: Props) {
             </p>
             <p>
               <strong>Total de produtos em estoque:</strong>{" "}
-              {produto.quantidade || 0}
+              {produto.quantidade_estoque || 0} {/* ✅ nome correto */}
             </p>
           </div>
         </div>
@@ -71,3 +70,4 @@ export default function DetailPageLayout({ produto, categorias }: Props) {
     </PageLayout>
   );
 }
+
