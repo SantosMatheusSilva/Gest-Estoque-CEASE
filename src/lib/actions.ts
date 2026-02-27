@@ -766,6 +766,6 @@ export async function createMovimentoEstoqueAction(
   }
 
   revalidatePath("/aplicacao/produtos");
-  revalidatePath("/aplicacao/movimentos");
-  redirect("/aplicacao/movimentos");
+  revalidatePath(`/aplicacao/${orgId}/produtos`);
+  redirect(`/aplicacao/${orgId}/produtos`);
 }
