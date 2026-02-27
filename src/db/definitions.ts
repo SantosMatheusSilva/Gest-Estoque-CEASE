@@ -58,15 +58,24 @@ export type CriarSubCategoria = {
 export type Produto = {
   id: string;
   nome: string;
-  quantidade: number;
-  preco: number;
+  quantidade_estoque: number;
+  preco_custo?: number | null;
+  preco_venda: number;
   img_url?: string | null;
   descricao?: string | null;
   id_categoria: string;
   created_at: string;
   updated_at: string;
   adicionado_por: string;
+  sku?: string | null;
+  ativo: boolean;
+  estoque_minimo?: number | null;
+  is_final: boolean;
+  unidade?: string | null;
+  business_id?: string | null;
+  clerk_org_id?: string | null;
 };
+
 
 export type CreateProduto = {
   nome: string;
