@@ -17,18 +17,17 @@ export default function ProductCard({ produto }: ProductCardProps) {
   return (
     <Card className="w-[200px] gap-2 hover:shadow-lg transition-shadow">
       <div className="relative h-[140px] w-full shrink-0 overflow-hidden rounded-2xl">
-  <img
-    src={produto.img_url || "/placeholder.png"}
-    alt={produto.nome}
-    className="object-cover w-full h-full"
-  />
-</div>
-
+        <img
+          src={produto.img_url || "/placeholder.png"}
+          alt={produto.nome}
+          className="object-cover w-full h-full"
+        />
+      </div>
 
       <Card.Header>
         <Card.Title>{produto.nome}</Card.Title>
         <Card.Description>
-          {produto.quantidade || 0} un.
+          {produto.quantidade_estoque || 0} un.
         </Card.Description>
       </Card.Header>
 
