@@ -782,15 +782,9 @@ export async function createMovimentoEstoqueAction(
     };
   }
 
-<<<<<<< Updated upstream
-  revalidatePath("/aplicacao/produtos");
-  revalidatePath(`/aplicacao/${orgId}/produtos`);
-  redirect(`/aplicacao/${orgId}/produtos`);
-=======
   console.log("Movimento de estoque registado com sucesso.");
 
   revalidatePath(`/aplicacao/${orgId}/produtos`);
   revalidatePath(`/aplicacao/${orgId}/movimentos`);
   redirect(`/aplicacao/${orgId}/movimentos`);
->>>>>>> Stashed changes
 }

@@ -4,48 +4,33 @@ import { ProdutoType, CategoriaRaiz } from "@/src/db/definitions";
 import { formatDateToLocal } from "@/src/lib/utils";
 import { ListBox } from "@heroui/react";
 import EditProductForm from "./EditProductForm";
-<<<<<<< Updated upstream
 import DeleteProductButton from "./DeleteProductButton"; // ✅ importar o componente certo
 
-=======
 import MovimentsTable from "../Movimentos/MovimentsTable";
 import { MovimentRow } from "../Movimentos/MovimentsTable";
 import { fetchUsuarioDB } from "@/src/db/data";
 import UserAvatar from "../Usuario/UserAvatar";
->>>>>>> Stashed changes
 type Props = {
   produto: ProdutoType;
   categorias: CategoriaRaiz[];
   data: MovimentRow[];
   clerk_user_id: string;
 };
-<<<<<<< Updated upstream
-
-export default function DetailPageLayout({ produto, categorias }: Props) {
-=======
 export default async function DetailPageLayout({
   produto,
   categorias,
   data,
   clerk_user_id,
 }: Props) {
->>>>>>> Stashed changes
   return (
     <PageLayout
       title={`${produto.nome}`}
       description="Detalhes do produto"
       actions={
         <div className="flex gap-2">
-<<<<<<< Updated upstream
           <EditProductForm produto={produto} categorias={categorias} />
           {/* ✅ usar DeleteProductButton em vez do IconButton simples */}
           <DeleteProductButton produto={produto} variant="button" />
-=======
-          {/* <EditProductForm produto={produto} categorias={categorias} /> */}
-          <IconButton variant="danger" startIcon={<TrashBin />}>
-            Excluir Produto
-          </IconButton>
->>>>>>> Stashed changes
         </div>
       }
     >
@@ -76,11 +61,7 @@ export default async function DetailPageLayout({
             </div>
             <p>
               <strong>Total de produtos em estoque:</strong>{" "}
-<<<<<<< Updated upstream
-              {produto.quantidade_estoque || 0} {/* ✅ nome correto */}
-=======
               {produto.quantidade_estoque || 0}
->>>>>>> Stashed changes
             </p>
           </div>
         </div>
@@ -95,4 +76,3 @@ export default async function DetailPageLayout({
     </PageLayout>
   );
 }
-
