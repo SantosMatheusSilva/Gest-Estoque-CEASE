@@ -69,7 +69,8 @@ function CreateProductForm({ categorias }: CreateProductFormProps) {
             <Modal.Header>
               <Modal.Heading>Criar Produto</Modal.Heading>
               <p className="mt-1.5 text-sm leading-5 text-muted">
-                Preencha o formulário abaixo para criar um novo produto.
+                Preencha o formulário abaixo para adicionar um novo produto ao
+                estoque.
               </p>
             </Modal.Header>
             <Modal.Body className="p-6">
@@ -78,6 +79,7 @@ function CreateProductForm({ categorias }: CreateProductFormProps) {
                   action={async (formData) => {
                     await formAction(formData);
                   }}
+                  className="flex flex-col gap-4"
                 >
                   <InputField
                     label="Nome"
@@ -244,7 +246,7 @@ function CreateProductForm({ categorias }: CreateProductFormProps) {
                       type="file"
                       accept="image/*"
                       onChange={handleImageChange}
-                      className="block w-full text-sm text-muted file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-primary file:text-white hover:file:cursor-pointer"
+                      className="border border-gray-300 rounded-lg px-2 py-1 w-full shadow-md"
                     />
                     {isUploading && (
                       <p className="text-xs text-muted mt-1">

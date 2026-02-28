@@ -1,8 +1,13 @@
 import DetailPageLayout from "@/src/ui/Produtos/ProductDetailPageLayout";
 import { fetchProduto } from "@/src/lib/data";
-import { CategoriaRaiz, Produto } from "@/src/db/definitions";
-import { fetchCategoriaComSubcategoriaPorId } from "@/src/db/data";
+import { CategoriaRaiz, Produto, ProdutoType } from "@/src/db/definitions";
+import {
+  fetchCategoriaComSubcategoriaPorId,
+  fetchUsuarioDbById,
+} from "@/src/db/data";
 import { notFound } from "next/navigation";
+import { auth } from "@clerk/nextjs/server";
+import { fetchMovimentosEstoquePorProduto } from "@/src/db/data";
 
 type Props = {
   params: Promise<{
@@ -12,10 +17,13 @@ type Props = {
 
 export default async function ProductDetailsPage({ params }: Props) {
   const { id } = await params;
-  console.log("id: ", id);
+  const { orgId } = await auth();
 
-  const produto: Produto | null = await fetchProduto(id);
+  //console.log("id: ", id);
+  const data = await fetchMovimentosEstoquePorProduto(orgId as string, id);
+  const produto: ProdutoType | null = await fetchProduto(id, orgId as string);
   if (!produto) return notFound();
+  const { clerk_user_id } = await fetchUsuarioDbById(produto.adicionado_por);
 
   // ✅ Proteção contra id_categoria null (produtos antigos)
   const categoria = produto.id_categoria
@@ -27,8 +35,9 @@ export default async function ProductDetailsPage({ params }: Props) {
       <DetailPageLayout
         produto={produto}
         categorias={categoria ? [categoria] : []}
+        data={data ? data : []}
+        clerk_user_id={clerk_user_id}
       />
     </main>
   );
 }
-

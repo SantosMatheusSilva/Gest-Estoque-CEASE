@@ -1,7 +1,8 @@
 import { clerkClient } from "@clerk/nextjs/server";
-
+import { Organization } from "@clerk/nextjs/server";
 import Image from "next/image";
-
+import { Avatar } from "@heroui/react";
+import { PersonFill } from "@gravity-ui/icons";
 export default async function UserAvatar({
   clerkUserId,
 }: {
@@ -14,6 +15,14 @@ export default async function UserAvatar({
   const avatar = user.imageUrl;
 
   return (
-    <Image src={avatar} alt={name as string} className="w-8 h-8 rounded-full" />
+    <div className="flex flex-row gap-2 justify-start items-center">
+      <Avatar size="sm" color="accent">
+        <Avatar.Image alt={name as string} src={avatar} />
+        <Avatar.Fallback>
+          <PersonFill />
+        </Avatar.Fallback>
+      </Avatar>
+      <h2>{name}</h2>
+    </div>
   );
 }

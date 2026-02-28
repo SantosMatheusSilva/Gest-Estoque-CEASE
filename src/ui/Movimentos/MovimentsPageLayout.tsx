@@ -1,25 +1,25 @@
 import { PageLayout } from "../PageLayout";
 import MovimentsTable from "./MovimentsTable";
-import { IconButton } from "../IconButton";
-import { Plus } from "@gravity-ui/icons";
+import CreateMovimentForm from "./CreateMovimentForm";
+import { MovimentsTableProps } from "./MovimentsTable";
+import { fetchMovimentosComProduto } from "@/src/db/data";
+import { auth } from "@clerk/nextjs/server";
+import BaseSurface from "../Surface";
 
-export default function MovimentsPageLayout() {
+export default async function MovimentsPageLayout() {
+  const { orgId } = await auth();
+  const data = await fetchMovimentosComProduto(orgId as string);
   return (
     <PageLayout
       title="Movimentos de Estoque"
       description="Movimentação de produtos em estoque"
       actions={
         <div className="flex gap-2">
-          <IconButton>
-            <Plus />
-            Movimento
-          </IconButton>
+          <CreateMovimentForm />
         </div>
       }
     >
-      <div className="mt-5">
-        <MovimentsTable />
-      </div>
+      <MovimentsTable data={data} />
     </PageLayout>
   );
 }
