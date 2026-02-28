@@ -1,7 +1,7 @@
 // ficheiro para criação de queries a base de dados.
 // Ficheiro responsável por definir as queries ao banco de dados.
 // Apenas queries de leitura (SELECT). !!!
-
+"use server";
 import { sql } from "@/src/db/index";
 
 import {
@@ -25,6 +25,27 @@ export async function fetchUsuarioDB(clerk_user_id: string) {
         u.email
       FROM usuarios u
       WHERE u.clerk_user_id = ${clerk_user_id}
+      LIMIT 1
+    `;
+
+    return resultado[0];
+  } catch (error) {
+    console.error("Database Error:", error);
+    throw new Error("Failed to fetch usuario.");
+  }
+}
+
+export async function fetchUsuarioDbById(id: string) {
+  try {
+    const resultado = await sql<UsuarioType[]>`
+      SELECT 
+        u.id,
+        u.clerk_user_id,
+        u.created_at,
+        u.updated_at,
+        u.email
+      FROM usuarios u
+      WHERE u.id = ${id}
       LIMIT 1
     `;
 
@@ -288,28 +309,13 @@ export async function fetchMovimentoPorId(
 }
 
 export async function fetchMovimentosEstoquePorProduto(
-  business_id: string,
+  orgId: string,
   produto_id: string,
 ) {
   try {
-    const movimentosProduto = await sql<MovimentoEstoqueType[]>`
-       SELECT * FROM movimentos_estoque
-       WHERE business_id = ${business_id}
-       AND produto_id = ${produto_id}
-       ORDER BY created_at DESC
-     `;
-    return movimentosProduto[0];
-  } catch (error) {
-    console.error("Database Error:", error);
-    throw new Error("Failed to fetch movimentos do produto.");
-  }
-}
-
-export async function fetchMovimentosComProduto(orgId: string) {
-  try {
-    const movimentos = await sql`
-      SELECT 
-        m.id,
+    const movimentos = await sql<MovimentRow[]>`
+    SELECT 
+     m.id,
         m.produto_id,
         m.quantidade,
         m.tipo,
@@ -326,7 +332,48 @@ export async function fetchMovimentosComProduto(orgId: string) {
       INNER JOIN usuarios u
         ON u.id = m.user_id
       WHERE m.clerk_org_id = ${orgId}
+      AND m.produto_id = ${produto_id}
       ORDER BY m.created_at DESC
+     `;
+    return movimentos;
+  } catch (error) {
+    console.error("Database Error:", error);
+    throw new Error("Failed to fetch movimentos do produto.");
+  }
+}
+
+export type MovimentRow = {
+  id: string;
+  produto: string;
+  produto_nome: string;
+  produto_unidade: string;
+  tipo: "entrada" | "saida" | "ajuste";
+  quantidade: number;
+  motivo: string;
+  autor_clerk_user_id: string;
+};
+export async function fetchMovimentosComProduto(orgId: string) {
+  try {
+    const movimentos = await sql<MovimentRow[]>`
+      SELECT 
+     m.id,
+        m.produto_id,
+        m.quantidade,
+        m.tipo,
+        m.motivo,
+        m.observacao,
+        m.user_id,
+        m.created_at,
+        p.nome AS produto_nome,
+        p.unidade AS produto_unidade,
+        u.clerk_user_id AS autor_clerk_user_id
+      FROM movimentos_estoque m
+      INNER JOIN produtos p 
+        ON p.id = m.produto_id
+      INNER JOIN usuarios u
+        ON u.id = m.user_id
+      WHERE m.clerk_org_id = ${orgId}
+      ORDER BY m.created_at DESC   
     `;
 
     return movimentos;
@@ -492,6 +539,27 @@ export async function deletarCategoria(id_categoria: string): Promise<void> {
 }
 
 // >>>>>>>>>> PRODUTOS <<<<<<<<<<<
+export async function searchProduct(
+  query: string,
+  orgId: string,
+): Promise<ProdutoType[]> {
+  if (!query || query.length < 2) return [];
+
+  try {
+    const produtos = await sql<ProdutoType[]>`
+       SELECT *
+       FROM produtos
+       WHERE nome ILIKE ${"%" + query + "%"}
+       AND clerk_org_id = ${orgId}
+       LIMIT 10
+     `;
+
+    return produtos;
+  } catch (error) {
+    console.error("Database Error:", error);
+    throw new Error("Failed to fetch produtos.");
+  }
+}
 
 // >>>>>>>>>> DASHBOARD KPIs <<<<<<<<<<<
 

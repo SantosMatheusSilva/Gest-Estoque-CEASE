@@ -7,6 +7,7 @@ import { InventoryValueCard } from "./InventoryValueCard";
 import { TodayMovementsCard } from "./TodayMovementsCard";
 import { ProductsTable } from "./ProductsTable";
 import type { ProdutoType } from "@/src/db/definitions";
+import CreateMovimentForm from "../Movimentos/CreateMovimentForm";
 
 interface DashboardData {
   kpis: {
@@ -25,21 +26,18 @@ export default function DashboardPageLayout({ data }: { data: DashboardData }) {
       description="Visão geral do seu stock"
       actions={
         <div className="flex gap-2">
-          <IconButton>
-            <Plus />
-            Movimento
-          </IconButton>
+          <CreateMovimentForm />
         </div>
       }
     >
       {/* Grid de Cards KPI */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <TotalItemsCard 
+        <TotalItemsCard
           totalItems={data.kpis.totalStock}
           trend={{ value: "+5%", direction: "up" }}
         />
         <LowStockCard lowStockCount={data.kpis.lowStockCount} />
-        <TodayMovementsCard 
+        <TodayMovementsCard
           entradas={data.kpis.todayMovements.entradas}
           saidas={data.kpis.todayMovements.saidas}
         />
@@ -51,4 +49,3 @@ export default function DashboardPageLayout({ data }: { data: DashboardData }) {
     </PageLayout>
   );
 }
-

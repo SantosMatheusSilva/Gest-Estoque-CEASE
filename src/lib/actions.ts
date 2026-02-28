@@ -4,7 +4,7 @@
 "use server";
 
 import { sql } from "../db";
-import type { Produto, CreateProduto } from "../db/definitions";
+import type { Produto, CreateProduto, ProdutoType } from "../db/definitions";
 import { auth } from "@clerk/nextjs/server"; // ← NOVO
 
 import type {
@@ -23,14 +23,16 @@ import { fetchUsuarioDB } from "../db/data";
 // ========== PRODUTOS ==========
 
 // 1) LISTAR TODOS
-export async function getAllProdutos(clerk_org_id: string): Promise<Produto[]> {
-  const result = await sql`
+export async function getAllProdutos(
+  clerk_org_id: string,
+): Promise<ProdutoType[]> {
+  const result = await sql<ProdutoType[]>`
     SELECT *
     FROM produtos
     WHERE clerk_org_id = ${clerk_org_id}
     ORDER BY created_at DESC
   `;
-  return result as unknown as Produto[];
+  return result;
 }
 
 // 2) CRIAR
@@ -61,14 +63,33 @@ export async function createProduto(produto: CreateProduto): Promise<Produto> {
 }
 
 // 3) BUSCAR POR ID
-export async function getProdutoById(id: string): Promise<Produto | null> {
-  const result = await sql`
-    SELECT *
-    FROM produtos
-    WHERE id = ${id}
+export async function getProdutoById(
+  id: string,
+  orgId: string,
+): Promise<ProdutoType> {
+  const result = await sql<ProdutoType[]>`
+    SELECT
+      p.id,
+      p.nome,
+      p.quantidade_estoque,
+      p.preco_venda,
+      p.img_url,
+      p.descricao,
+      p.id_categoria,
+      p.created_at,
+      p.updated_at,
+      p.adicionado_por,
+      p.sku,
+      p.ativo,
+      p.preco_custo,
+      p.estoque_minimo,
+      p.is_final,
+      p.unidade,
+      p.business_id
+    FROM produtos p
+    WHERE p.id = ${id} AND p.clerk_org_id = ${orgId}
   `;
-  const rows = result as unknown as Produto[];
-  return rows[0] ?? null;
+  return result[0];
 }
 
 // 4) ATUALIZAR
@@ -626,18 +647,14 @@ export async function deleteProdutoAction(
 
 // 1. Schema de Validação
 const CreateMovimentoEstoqueSchema = z.object({
-  produto_id: z.string().uuid("Selecione um produto válido"),
+  produto_id: z.string("Selecione um produto!").trim(),
 
   //business_id: z.string().uuid("Business ID inválido"),
 
-  quantidade: z.string().transform((val) => {
-    const num = Number(val);
-    if (isNaN(num)) throw new Error("A quantidade deve ser um número");
-    if (!Number.isInteger(num))
-      throw new Error("A quantidade deve ser um número inteiro");
-    if (num <= 0) throw new Error("A quantidade deve ser maior que zero");
-    return num;
-  }),
+  quantidade: z.coerce
+    .number({ error: "A quantidade deve ser um número" })
+    .int("A quantidade deve ser um número inteiro")
+    .gt(0, "A quantidade deve ser maior que zero"),
 
   tipo: z.enum(["entrada", "saida", "ajuste"], {
     message: "Tipo de movimento inválido.",
@@ -765,7 +782,15 @@ export async function createMovimentoEstoqueAction(
     };
   }
 
+<<<<<<< Updated upstream
   revalidatePath("/aplicacao/produtos");
   revalidatePath(`/aplicacao/${orgId}/produtos`);
   redirect(`/aplicacao/${orgId}/produtos`);
+=======
+  console.log("Movimento de estoque registado com sucesso.");
+
+  revalidatePath(`/aplicacao/${orgId}/produtos`);
+  revalidatePath(`/aplicacao/${orgId}/movimentos`);
+  redirect(`/aplicacao/${orgId}/movimentos`);
+>>>>>>> Stashed changes
 }

@@ -3,26 +3,30 @@ import { fetchMovimentosComProduto } from "@/src/db/data";
 import { auth } from "@clerk/nextjs/server";
 import UserAvatar from "../Usuario/UserAvatar";
 import { Plus, Minus } from "@gravity-ui/icons";
+import { Chip } from "@heroui/react";
 
-type MovimentRow = {
+export type MovimentRow = {
   id: string;
   produto: string;
+  produto_nome: string;
+  produto_unidade: string;
   tipo: "entrada" | "saida" | "ajuste";
   quantidade: number;
   motivo: string;
-  autor: string;
+  autor_clerk_user_id: string;
 };
 
-type MovimentsTableProps = {
+export type MovimentsTableProps = {
   data: MovimentRow[];
 };
 
-export default async function MovimentsTable() {
-  const { orgId } = (await auth()) as { orgId: string };
-  const data = await fetchMovimentosComProduto(orgId);
+export default async function MovimentsTable({ data }: MovimentsTableProps) {
+  //const { orgId } = await auth();
+  //const data = await fetchMovimentosComProduto(orgId as string);
 
+  console.log(data);
   return (
-    <BaseSurface>
+    <BaseSurface variant="default">
       <div className="w-full overflow-x-auto">
         <table className="min-w-full border-collapse">
           <thead>
@@ -51,18 +55,36 @@ export default async function MovimentsTable() {
                   key={movimento.id}
                   className="border-b text-sm hover:bg-gray-50"
                 >
-                  <td className="px-4 py-3">{movimento.produto}</td>
+                  <td className="px-4 py-3">{movimento.produto_nome}</td>
                   <td className="px-4 py-3 capitalize">
                     {movimento.tipo === "entrada" ? (
-                      <Plus></Plus>
+                      <Chip color="accent">
+                        <strong>
+                          <Plus />
+                        </strong>
+                        <Chip.Label>{movimento.tipo}</Chip.Label>
+                      </Chip>
                     ) : (
-                      <Minus></Minus>
+                      <Chip color="danger">
+                        <strong>
+                          <Minus />
+                        </strong>
+                        <Chip.Label>{movimento.tipo}</Chip.Label>
+                      </Chip>
                     )}
                   </td>
-                  <td className="px-4 py-3">{movimento.quantidade}</td>
-                  <td className="px-4 py-3">{movimento.motivo}</td>
                   <td className="px-4 py-3">
-                    {UserAvatar({ clerkUserId: movimento.autor })}
+                    <Chip>
+                      {`${movimento.quantidade} ${movimento.produto_unidade}`}{" "}
+                    </Chip>
+                  </td>
+                  <td className="px-4 py-3">
+                    <Chip size="md">
+                      <strong>{movimento.motivo}</strong>
+                    </Chip>
+                  </td>
+                  <td className="px-4 py-3">
+                    <UserAvatar clerkUserId={movimento.autor_clerk_user_id} />
                   </td>
                 </tr>
               ))
