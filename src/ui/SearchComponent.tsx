@@ -77,7 +77,7 @@ export function SearchComponent<T extends BaseItem>({
         <Label>{label}</Label>
         <SearchField.Group>
           <SearchField.SearchIcon />
-          <SearchField.Input className="w-[280px]" placeholder={placeholder} />
+          <SearchField.Input className="w-70" placeholder={placeholder} />
           <SearchField.ClearButton />
         </SearchField.Group>
         {description && <Description>{description}</Description>}
@@ -85,7 +85,7 @@ export function SearchComponent<T extends BaseItem>({
       </SearchField>
 
       {results.length > 0 && (
-        <div className="absolute top-full z-50 mt-1 w-[280px] rounded-md border bg-white shadow-md">
+        <div className="absolute top-full z-50 mt-1 w-70 rounded-md border bg-white shadow-md">
           {results.map((item) => (
             <button
               key={item.id}

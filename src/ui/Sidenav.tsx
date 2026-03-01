@@ -11,24 +11,18 @@ import {
 
 import { auth } from "@clerk/nextjs/server";
 import { NavLink } from "./NavLink";
-import { sql } from "@/src/db/index";
 
 async function Sidenav() {
-  const { orgId, userId } = await auth(); // ← userId adicionado aqui
-
+  const { orgId, orgRole, has } = await auth(); // ← userId adicionado aqui
+  //console.log("auth obj--->>>", has({ plan: "pro" }));
   let isAdmin = false;
+  let isProPlan = false;
 
-  if (userId && orgId) {
-    const membershipResult = await sql`
-    SELECT bm.role
-    FROM business_memberships bm
-    INNER JOIN usuarios u ON u.id = bm.user_id
-    INNER JOIN business b ON b.id = bm.business_id
-    WHERE u.clerk_user_id = ${userId}
-      AND b.clerk_org_id = ${orgId}
-    LIMIT 1
-  `;
-    isAdmin = membershipResult?.[0]?.role === "admin";
+  if (has({ plan: "pro" })) {
+    isProPlan = true;
+  }
+  if (orgRole === "org:admin") {
+    isAdmin = true;
   }
 
   const links = [
@@ -52,7 +46,7 @@ async function Sidenav() {
       href: `/aplicacao/${orgId}/categorias`,
       icon: <Copy className="w-5 h-5" />,
     },
-    ...(isAdmin
+    ...(isAdmin && isProPlan
       ? [
           {
             label: "Admin",

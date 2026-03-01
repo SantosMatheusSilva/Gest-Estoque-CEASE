@@ -76,7 +76,6 @@ export type Produto = {
   clerk_org_id?: string | null;
 };
 
-
 export type CreateProduto = {
   nome: string;
   quantidade: number;
@@ -103,8 +102,9 @@ export type ProdutoType = {
   preco_custo?: number;
   estoque_minimo: number;
   is_final: boolean;
-  unidade: string;
-  business_id: string;
+  unidade?: string;
+  business_id?: string;
+  clerk_org_id: string;
 };
 
 export type CreateProdutoType = {
@@ -135,15 +135,6 @@ export type UsuarioType = {
   updated_at: string;
   email: string;
 };
-
-export type CreateUsuarioType = {
-  clerk_user_id: string;
-  business_id: string;
-  //role?: "staff" | "owner" | "adm" | "manager"; // default: 'staff'
-  email: string;
-};
-
-//>>>>>>>>>> Type Usuario - clerk <<<<<<<<<<
 
 //>>>>>>>> Type Business <<<<<<<<<<<
 

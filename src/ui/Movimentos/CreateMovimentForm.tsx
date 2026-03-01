@@ -27,7 +27,7 @@ export default function CreateMovimentForm() {
     message: null,
   });
 
-  console.log(state);
+  //console.log(state);
   return (
     <Modal>
       <IconButton startIcon={<Plus />}>Adicionar Movimento</IconButton>

@@ -1,37 +1,9 @@
 @import "tailwindcss";
-
 @plugin "tailwindcss-animate";
-/* @tailwind base;
-@tailwind components; */
-@tailwind utilities;
 @import "@heroui/styles";
 
 @custom-variant dark (&:is(.dark *)); 
 
-/* :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
-} */
 
 /*
  * HeroUI Theme Customization
@@ -114,7 +86,7 @@ body {
   --warning-foreground: oklch(21.03% 0.0059 76.34);
 }
 
-@theme inline {
+/* @theme inline {
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -153,7 +125,7 @@ body {
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
-}
+} */
 
 :root {
   --radius: 0.625rem;

@@ -24,7 +24,7 @@ export default async function MovimentsTable({ data }: MovimentsTableProps) {
   //const { orgId } = await auth();
   //const data = await fetchMovimentosComProduto(orgId as string);
 
-  console.log(data);
+  //console.log(data);
   return (
     <BaseSurface variant="default">
       <div className="w-full overflow-x-auto">

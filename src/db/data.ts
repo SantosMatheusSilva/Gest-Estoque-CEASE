@@ -56,7 +56,7 @@ export async function fetchUsuarioDbById(id: string) {
   }
 }
 
-// >>>>>>>>>> FETCH BUSINESS <<<<<<<<<<<
+// >>>>>>>>>> FETCH BUSINESS <<<<<<<<<<< DESATIVADA
 
 export async function fetchBusinessDB(user_business_id: string) {
   try {
@@ -71,7 +71,7 @@ export async function fetchBusinessDB(user_business_id: string) {
   }
 }
 
-// >>>>>>>>>> FETCH BUSINESS_MEMBERSHIP <<<<<<<<<<<
+// >>>>>>>>>> FETCH BUSINESS_MEMBERSHIP <<<<<<<<<<< DESATIVADO
 export async function fetchUserBusinessMembership(
   user: UsuarioType,
   businessId: string,
@@ -133,8 +133,6 @@ export async function fetchCategoriaPorId(id: string) {
     );
   }
 }
-
-// src/db/data.ts
 
 export async function fetchCategoriaComSubcategoriaPorId(id: string) {
   try {
@@ -571,7 +569,7 @@ export async function fetchDashboardKPIs(org_id: string) {
       FROM produtos
       WHERE clerk_org_id = ${org_id} AND ativo = true
     `;
-    console.log("📊 totalStockResult:", totalStockResult); // DEBUG
+    //console.log("📊 totalStockResult:", totalStockResult); // DEBUG
     const totalStock = totalStockResult?.[0]?.total ?? 0;
 
     // Produtos com stock baixo (abaixo do mínimo)
@@ -582,7 +580,7 @@ export async function fetchDashboardKPIs(org_id: string) {
         AND ativo = true 
         AND quantidade_estoque < estoque_minimo
     `;
-    console.log("📊 lowStockResult:", lowStockResult); // DEBUG
+    //console.log("📊 lowStockResult:", lowStockResult); // DEBUG
     const lowStockCount = lowStockResult?.[0]?.count ?? 0;
 
     // Movimentos de hoje (entradas vs saídas)
@@ -595,7 +593,7 @@ export async function fetchDashboardKPIs(org_id: string) {
         AND DATE(created_at) = CURRENT_DATE
       GROUP BY tipo
     `;
-    console.log("📊 todayMovementsResult:", todayMovementsResult); // DEBUG
+    //console.log("📊 todayMovementsResult:", todayMovementsResult); // DEBUG
 
     // Valor total do inventário
     const inventoryValueResult = await sql`
@@ -603,26 +601,19 @@ export async function fetchDashboardKPIs(org_id: string) {
       FROM produtos
       WHERE clerk_org_id = ${org_id} AND ativo = true
     `;
-    console.log("📊 inventoryValueResult:", inventoryValueResult); // DEBUG
+    //console.log("📊 inventoryValueResult:", inventoryValueResult); // DEBUG
     const inventoryValue = Number(inventoryValueResult?.[0]?.valor_total ?? 0);
 
     // Processar movimentos de hoje
     const movements = { entradas: 0, saidas: 0, ajustes: 0 };
 
     if (todayMovementsResult && todayMovementsResult.length > 0) {
-      todayMovementsResult.forEach((mov: any) => {
+      todayMovementsResult.forEach((mov) => {
         if (mov.tipo === "entrada") movements.entradas = mov.total || 0;
         if (mov.tipo === "saida") movements.saidas = mov.total || 0;
         if (mov.tipo === "ajuste") movements.ajustes = Math.abs(mov.total || 0);
       });
     }
-
-    console.log("✅ KPIs finais:", {
-      totalStock,
-      lowStockCount,
-      movements,
-      inventoryValue,
-    }); // DEBUG
 
     return {
       totalStock,

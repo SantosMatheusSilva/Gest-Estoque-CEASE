@@ -19,7 +19,7 @@ export default async function AppLayout({ children, params }: Props) {
   const { userId, orgId: activeOrgId, sessionClaims } = await auth();
   // retornar caso nenhum id seja encontrado: MELHOR PARA REDIRECIONAR DEPOIS
   if (!userId) redirect("/");
-  console.log("authObj:", sessionClaims, orgId, activeOrgId);
+  //console.log("authObj:", sessionClaims, orgId, activeOrgId);
   //chamar bootstrapUser para criar o usuario na db caso nao exista.
   /* const usuarioDb = */ await bootstrapUser({
     clerkUserId: userId,

@@ -28,7 +28,7 @@ export default function ProductsPageLayout({
     >
       {produtos.length === 0 ? (
         <div>
-          <BaseSurface>
+          <BaseSurface variant="default">
             <h2 className="text-xl font-semibold">Nenhum Produto encontrado</h2>
           </BaseSurface>
         </div>

@@ -6,19 +6,10 @@
 import { sql } from "../db";
 import type { Produto, CreateProduto, ProdutoType } from "../db/definitions";
 import { auth } from "@clerk/nextjs/server"; // ← NOVO
-
-import type {
-  Categoria,
-  CriarCategoria,
-  CriarSubCategoria,
-  UsuarioType,
-} from "../db/definitions";
-
-import { string, z } from "zod";
-
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { fetchUsuarioDB } from "../db/data";
+import { z } from "zod";
 
 // ========== PRODUTOS ==========
 
@@ -120,20 +111,6 @@ export async function deleteProduto(idUUID: string): Promise<void> {
     DELETE FROM produtos
     WHERE id = ${idUUID}
   `;
-}
-
-// ========== USUÁRIO ==========
-
-export async function criarUsuario(formData: FormData) {
-  const email = formData.get("email") as string;
-  const senha = formData.get("senha") as string;
-
-  if (!email || !senha) {
-    throw new Error("Dados inválidos");
-  }
-
-  console.log("Usuário:", email);
-  console.log("Senha:", senha);
 }
 
 // ========== PRODUTOS - ACTIONS COM VALIDAÇÃO ZOD ==========
@@ -786,5 +763,6 @@ export async function createMovimentoEstoqueAction(
 
   revalidatePath(`/aplicacao/${orgId}/produtos`);
   revalidatePath(`/aplicacao/${orgId}/movimentos`);
+  revalidatePath(`/aplicacao/${orgId}/`);
   redirect(`/aplicacao/${orgId}/movimentos`);
 }
